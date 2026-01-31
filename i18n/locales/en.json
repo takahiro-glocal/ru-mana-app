@@ -1,0 +1,86 @@
+{
+  "common": {
+    "shiru": "Shiru-mana",
+    "miru": "Miru-mana",
+    "kiku": "Kiku-mana",
+    "iku": "Iku-mana",
+    "trouble": "Help",
+    "read_more": "Read More",
+    "book": "Book Now",
+    "reserved": "Reserved",
+    "post": "Post",
+    "back": "Back"
+  },
+  "dashboard": {
+    "welcome": "Welcome to RUUMANA",
+    "subtitle": "Translating culture for a harmonious journey.",
+    "welcome_mobile": "RUUMANA",
+    "subtitle_mobile": "Discover Japan's culture, more enjoyably.",
+    "shiru_desc": "Learn about Japanese manners and culture",
+    "miru_desc": "Check maps for local info and disaster safety",
+    "kiku_desc": "Community to share experiences and info",
+    "iku_desc": "Book cultural events and experiences",
+    "latest_info": "Latest Feed",
+    "info_item1": "New comment on train etiquette",
+    "info_item2": "Beautiful experience shared recently",
+    "calendar": "Calendar",
+    "calendar_placeholder": "No events today",
+    "weather": "Weather",
+    "weather_location": "Shinjuku, Tokyo"
+  },
+  "shiru": {
+    "title": "Learning Japanese Culture",
+    "search_placeholder": "Search manners...",
+    "category_all": "All",
+    "category_dining": "Dining",
+    "category_shrine": "Shrine & Temple",
+    "category_transport": "Transport",
+    "no_results": "No manners found matching your search."
+  },
+  "miru": {
+    "title": "Area & Disaster Map",
+    "filter_sightseeing": "Sightseeing",
+    "filter_shelter": "Emergency Shelter",
+    "filter_wifi": "Free Wi-Fi",
+    "filter_restroom": "Restroom",
+    "distance": "{n}m from here",
+    "status_safe": "Safe Zone"
+  },
+  "kiku": {
+    "title": "Community Feed",
+    "tab_feed": "Feed",
+    "tab_questions": "Questions",
+    "tab_tips": "Tips",
+    "post_placeholder": "Share your experience or ask a question...",
+    "reaction_count": "{n} likes",
+    "reply": "Reply",
+    "share": "Share"
+  },
+  "iku": {
+    "title": "Experiences & Events",
+    "hero_book_now": "Book Now",
+    "filter_date": "Select Date",
+    "price_label": "From {price} JPY",
+    "spots_left": "Only {n} spots left!",
+    "category_workshop": "Workshop",
+    "category_festival": "Festival",
+    "category_food": "Food Experience",
+    "category_culture": "Traditional Culture"
+  },
+  "trouble": {
+    "title": "Emergency Help",
+    "emergency_subtitle": "Stay calm. Call 110 for Police, 119 for Ambulance or Fire.",
+    "current_location": "Your Current Location (Tell the operator)",
+    "location_placeholder": "Shinjuku, Tokyo (Nearby Station: JR Shinjuku)",
+    "select_issue": "What happened?",
+    "category_medical": "Medical / Illness",
+    "category_lost": "Lost or Stolen",
+    "category_disaster": "Disaster (Earthquake)",
+    "desc_medical": "Sudden illness, injury, finding hospitals",
+    "desc_lost": "Lost passport, wallet, or phone",
+    "desc_disaster": "Earthquakes and evacuation info",
+    "support_hotline": "Multi-language Support",
+    "copy_success": "Location copied to clipboard",
+    "got_it": "Got it"
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "common": {
+    "shiru": "知るまな (Shiru)",
+    "miru": "見るまな (Miru)",
+    "kiku": "聞くまな (Kiku)",
+    "iku": "行くまな (Iku)",
+    "trouble": "帮助",
+    "read_more": "查看详情",
+    "book": "立即预约",
+    "reserved": "已预约",
+    "post": "发布",
+    "back": "返回"
+  },
+  "dashboard": {
+    "welcome": "欢迎来到 RUUMANA",
+    "subtitle": "翻译日本文化，让旅程更和谐。",
+    "welcome_mobile": "RUUMANA",
+    "subtitle_mobile": "更愉快地探索日本文化。",
+    "shiru_desc": "学习日本的礼仪与文化",
+    "miru_desc": "在地图上查看周边信息与防灾指南",
+    "kiku_desc": "分享经验与信息的交流社区",
+    "iku_desc": "预约文化活动与体验",
+    "latest_info": "最新动态",
+    "info_item1": "关于乘车规则的新评论",
+    "info_item2": "最近分享的精彩体验",
+    "calendar": "日历",
+    "calendar_placeholder": "今日无安排",
+    "weather": "天气信息",
+    "weather_location": "新宿・东京"
+  },
+  "shiru": {
+    "title": "学习日本文化",
+    "search_placeholder": "搜索礼仪...",
+    "category_all": "全部",
+    "category_dining": "饮食",
+    "category_shrine": "神社寺庙",
+    "category_transport": "交通",
+    "no_results": "未找到匹配的礼仪指南。"
+  },
+  "miru": {
+    "title": "防灾・区域地图",
+    "filter_sightseeing": "观光景点",
+    "filter_shelter": "避难所信息",
+    "filter_wifi": "免费 Wi-Fi",
+    "filter_restroom": "洗手间",
+    "distance": "距离当前位置 {n}m",
+    "status_safe": "安全区域"
+  },
+  "kiku": {
+    "title": "社区看板",
+    "tab_feed": "全部",
+    "tab_questions": "提问",
+    "tab_tips": "攻略",
+    "post_placeholder": "分享您的经验或提出问题...",
+    "reaction_count": "{n} 赞",
+    "reply": "回复",
+    "share": "分享"
+  },
+  "iku": {
+    "title": "文化体验・活动",
+    "hero_book_now": "立即预约",
+    "filter_date": "选择日期",
+    "price_label": "{price} 日元起",
+    "spots_left": "仅剩 {n} 个名额！",
+    "category_workshop": "工作坊",
+    "category_festival": "节庆活动",
+    "category_food": "美食体验",
+    "category_culture": "传统文化"
+  },
+  "trouble": {
+    "title": "紧急求助",
+    "emergency_subtitle": "紧急情况下请保持冷静。警察请拨打 110，救护车或火警请拨打 119。",
+    "current_location": "当前位置（求助时请告知对方）",
+    "location_placeholder": "东京都新宿区（最近车站：JR新宿站）",
+    "select_issue": "选择您遇到的问题",
+    "category_medical": "生病・受伤",
+    "category_lost": "物品遗失・被盗",
+    "category_disaster": "灾害（地震等）",
+    "desc_medical": "突然发烧、受伤或寻找医院",
+    "desc_lost": "遗失护照、钱包或手机",
+    "desc_disaster": "地震避難及避难场所确认",
+    "support_hotline": "多语种咨询热线",
+    "copy_success": "已复制当前位置",
+    "got_it": "我知道了"
+  }
+}

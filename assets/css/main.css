@@ -1,0 +1,15 @@
+html, body {
+  overscroll-behavior-y: contain;
+}
+
+* {
+  /*IE(Internet Explorer)・Microsoft Edgeへの対応*/
+  -ms-overflow-style: none;
+  /*Firefoxへの対応*/
+  scrollbar-width: none;
+}
+
+/*Google Chrome、Safariへの対応*/
+*.contents_box::-webkit-scrollbar {
+  display: none;
+}

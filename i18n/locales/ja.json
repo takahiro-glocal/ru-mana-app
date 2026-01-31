@@ -1,0 +1,89 @@
+{
+  "common": {
+    "shiru": "しるまな",
+    "miru": "みるまな",
+    "kiku": "きくまな",
+    "iku": "いくまな",
+    "trouble": "おたすけ",
+    "read_more": "詳しく見る",
+    "book": "予約する",
+    "reserved": "予約済み",
+    "post": "投稿する",
+    "back": "戻る",
+    "home": "ホーム",
+    "search": "検索",
+    "account": "アカウント"
+  },
+  "dashboard": {
+    "welcome": "{name} さん、こんにちは！",
+    "subtitle": "Welcome to the various culture mind!",
+    "latest_info": "最新情報",
+    "calendar": "カレンダー",
+    "weather": "天気情報",
+    "area_info": "エリア情報",
+    "more": "もっと見る"
+  },
+  "shiru": {
+    "title": "日本文化を学ぶ",
+    "tagline": "その知識や経験を良い判断や問題解決に",
+    "search_placeholder": "マナーや文化を検索...",
+    "category_label": "カテゴリー",
+    "thread_list_label": "スレッド一覧 [新着]",
+    "tab_posts": "投稿",
+    "tab_threads": "スレッド一覧",
+    "category_transport": "交通・移動",
+    "category_public": "公共施設",
+    "category_spa": "温泉・銭湯",
+    "category_cafe": "飲食店・カフェ",
+    "category_new": "新着・その他",
+    "no_results": "該当するスレッドが見つかりませんでした。"
+  },
+  "miru": {
+    "title": "防災・エリアマップ",
+    "filter_sightseeing": "観光スポット",
+    "filter_shelter": "避難所情報",
+    "filter_wifi": "フリーWi-Fi",
+    "filter_restroom": "お手洗い",
+    "distance": "現在地から {n}m",
+    "status_safe": "安全な場所",
+    "map_loading": "地図を読み込み中..."
+  },
+  "kiku": {
+    "title": "コミュニティ掲示板",
+    "tab_feed": "すべて",
+    "tab_questions": "教えて",
+    "tab_tips": "お役立ち",
+    "post_placeholder": "体験を共有したり、質問してみましょう...",
+    "reaction_count": "{n} いいね",
+    "reply": "返信",
+    "share": "共有",
+    "lang_tag": "言語: {lang}"
+  },
+  "iku": {
+    "title": "文化体験・イベント",
+    "hero_book_now": "今すぐ予約する",
+    "filter_date": "日付を選択",
+    "price_label": "{price} 円〜",
+    "spots_left": "残り {n} 枠！",
+    "category_workshop": "ワークショップ",
+    "category_festival": "お祭り",
+    "category_food": "食体験",
+    "category_culture": "伝統文化"
+  },
+  "trouble": {
+    "title": "おたすけ",
+    "emergency_subtitle": "緊急時は落ち着いて行動してください。警察は110番、救急・火災は119番です。",
+    "current_location": "現在地（通報時に伝えてください）",
+    "location_placeholder": "東京都新宿区（最寄駅：JR新宿駅）",
+    "select_issue": "お困りごとの選択",
+    "category_medical": "病気・けが",
+    "category_lost": "紛失・盗難",
+    "category_disaster": "災害（地震など）",
+    "desc_medical": "急な発熱や怪我、病院の探し方",
+    "desc_lost": "パスポートや財布を失くしたとき",
+    "desc_disaster": "地震や避難場所の確認",
+    "support_hotline": "多言語電話相談窓口",
+    "copy_success": "現在地をコピーしました",
+    "got_it": "了解しました"
+  }
+}
