@@ -5,7 +5,7 @@ export default defineNuxtConfig({
         // iOS Safari用ホーム画面アイコン
         {
           rel: 'apple-touch-icon',
-          href: '/images/logo.png', // 180x180など推奨
+          href: '/icons/logo.png', // 180x180など推奨
           sizes: '180x180'
         }
       ],
@@ -88,9 +88,9 @@ export default defineNuxtConfig({
   },
   pwa: {
     manifest: {
-      name: 'Gem Studio',
-      short_name: 'Gem Studio',
-      description: '未来の思考を、あなたの手に。ビジョナリーなAIとの対話。',
+      name: 'るうまな',
+      short_name: 'るうまな',
+      description: '知りたいマナーや解決策に、1タップでアクセス。あなたの『知りたい』を支える、暮らしのパートナー。',
       lang: 'ja',
       theme_color: '#000000', // ヘッダーの色（漆黒）
       background_color: '#000000', // スプラッシュ画面の背景
@@ -99,17 +99,17 @@ export default defineNuxtConfig({
       orientation: 'portrait',
       icons: [
         {
-          src: 'images/logo.png',
+          src: 'icons/logo.png',
           sizes: '192x192',
           type: 'image/png'
         },
         {
-          src: 'images/logo.png',
+          src: 'icons/logo.png',
           sizes: '512x512',
           type: 'image/png'
         },
         {
-          src: 'images/logo.png',
+          src: 'icons/logo.png',
           sizes: '512x512',
           type: 'image/png',
           purpose: 'maskable' // Android等で丸や四角に切り抜かれても良い設定
