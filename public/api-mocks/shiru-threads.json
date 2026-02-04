@@ -1,0 +1,17 @@
+[
+  { "id": "t1", "categoryId": "transport", "title": "駅・空港・旅先で迷ったら", "date": "2025/12/17(水) 07:33", "count": 150 },
+  { "id": "t2", "categoryId": "transport", "title": "電車の乗り換えと切符の買い方", "date": "2025/12/18(木) 08:10", "count": 85 },
+  { "id": "t3", "categoryId": "transport", "title": "タクシーの自動ドアに注意！", "date": "2025/12/19(金) 14:20", "count": 42 },
+  { "id": "t4", "categoryId": "transport", "title": "新幹線の座席マナーと荷物置き場", "date": "2025/12/20(土) 10:05", "count": 120 },
+  { "id": "t5", "categoryId": "public", "title": "公共施設でのマナーについて", "date": "2025/12/16(火) 15:20", "count": 64 },
+  { "id": "t6", "categoryId": "public", "title": "銭湯でしかられた、注意した 3", "date": "2025/12/17(水) 19:55", "count": 990 },
+  { "id": "t7", "categoryId": "public", "title": "図書館でのスマホ利用ルール", "date": "2025/12/21(日) 09:30", "count": 31 },
+  { "id": "t8", "categoryId": "spa", "title": "温泉での正しい身体の洗い方", "date": "2025/12/16(火) 12:45", "count": 210 },
+  { "id": "t9", "categoryId": "spa", "title": "温泉・公衆浴場、どうにも恥ずかしい。", "date": "2025/12/17(水) 19:55", "count": 150 },
+  { "id": "t10", "categoryId": "spa", "title": "サウナの「ととのう」作法とは？", "date": "2025/12/22(月) 21:00", "count": 88 },
+  { "id": "t11", "categoryId": "cafe", "title": "カフェでの長時間利用のマナー", "date": "2025/12/15(月) 22:11", "count": 96 },
+  { "id": "t12", "categoryId": "cafe", "title": "お持ち帰りだめですか 5", "date": "2025/12/16(火) 18:33", "count": 990 },
+  { "id": "t13", "categoryId": "cafe", "title": "お箸の持ち方・タブーとされていること", "date": "2025/12/23(火) 12:00", "count": 55 },
+  { "id": "t14", "categoryId": "new", "title": "新しい日本の習慣について", "date": "2025/12/15(月) 10:05", "count": 12 },
+  { "id": "t15", "categoryId": "new", "title": "キャッシュレス決済の普及状況", "date": "2026/01/05(月) 15:40", "count": 24 }
+]

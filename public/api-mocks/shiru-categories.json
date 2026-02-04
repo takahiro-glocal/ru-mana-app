@@ -1,0 +1,52 @@
+[
+  {
+    "id": "transport",
+    "name": "交通マナー",
+    "updateDate": "2026.01.15",
+    "threadCount": 50,
+    "bgClass": "tw-bg-[#E0F2F7]",
+    "borderClass": "tw-border-[#A5D1E1]",
+    "textClass": "tw-text-[#5FB3D5]",
+    "icon": "train"
+  },
+  {
+    "id": "public",
+    "name": "公共施設",
+    "updateDate": "2026.01.15",
+    "threadCount": 50,
+    "bgClass": "tw-bg-[#FCE7EB]",
+    "borderClass": "tw-border-[#F4A7B9]",
+    "textClass": "tw-text-[#E95295]",
+    "icon": "users"
+  },
+  {
+    "id": "spa",
+    "name": "温泉・公衆浴場",
+    "updateDate": "2026.01.15",
+    "threadCount": 50,
+    "bgClass": "tw-bg-[#E5F1F6]",
+    "borderClass": "tw-border-[#7DB9DE]",
+    "textClass": "tw-text-[#3E91FF]",
+    "icon": "waves"
+  },
+  {
+    "id": "cafe",
+    "name": "食事・カフェ",
+    "updateDate": "2026.01.15",
+    "threadCount": 50,
+    "bgClass": "tw-bg-[#FFF3E0]",
+    "borderClass": "tw-border-[#F5B169]",
+    "textClass": "tw-text-[#F39800]",
+    "icon": "utensils"
+  },
+  {
+    "id": "new",
+    "name": "新規ジャンル",
+    "updateDate": "2026.01.15",
+    "threadCount": 50,
+    "bgClass": "tw-bg-[#F3E5F5]",
+    "borderClass": "tw-border-[#B28FCE]",
+    "textClass": "tw-text-[#9C27B0]",
+    "icon": "plus"
+  }
+]

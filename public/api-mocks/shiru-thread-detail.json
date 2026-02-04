@@ -1,0 +1,74 @@
+[
+  {
+    "threadId": "t1",
+    "title": "駅・空港・旅先で迷ったら",
+    "posts": [
+      {
+        "id": "p1",
+        "userName": "スナフキン",
+        "userIcon": "https://api.dicebear.com/7.x/avataaars/svg?seed=Snufkin",
+        "date": "2025/12/17(水) 07:33",
+        "body": "新宿駅 14/15 番線で降りて、最初は Google マップが南口から出ろって言ったんだ。左右見たら、東口と西口って書いてあるんだよね。それで、出口を探してたら、京王百貨店出口に変わったんだけど、看板に見当たらなくて、東か西しか見えなかったんだ。電車を降りた後、現在地を見失ってパニック。どうしたらいい。",
+        "isOfficial": false
+      },
+      {
+        "id": "p2",
+        "userName": "kazzzz",
+        "userIcon": "https://api.dicebear.com/7.x/avataaars/svg?seed=kazzzz",
+        "date": "2025/12/23(火) 15:33",
+        "body": "まず深呼吸して落ち着きましょう。他の乗客の通行を妨げないよう、通路の端や壁際など、安全で邪魔にならない場所に移動しよう。\nそして駅係員に助けを求める、これが最も重要で適切な行動。近くの改札口や駅事務室に向かいます。\n全てのホームに設置されている呼び出し用インターホンを利用する方法もあるよ。",
+        "isOfficial": false
+      },
+      {
+        "id": "p3",
+        "userName": "しるまな公式",
+        "userIcon": "https://api.dicebear.com/7.x/bottts/svg?seed=admin",
+        "date": "2025/12/24(水) 09:00",
+        "body": "日本の主要な駅や空港は構造が複雑なことが多いです。迷った時は無理に動かず、近くの案内板（Information）を探すか、駅員さんに声をかけましょう。床に引いてある色の付いた線を辿るのも非常に有効な手段です。",
+        "isOfficial": true
+      }
+    ]
+  },
+  {
+    "threadId": "t6",
+    "title": "銭湯でしかられた、注意した 3",
+    "posts": [
+      {
+        "id": "p1",
+        "userName": "No name",
+        "userIcon": "https://api.dicebear.com/7.x/avataaars/svg?seed=none",
+        "date": "2025/12/17(水) 07:33",
+        "body": "体を洗わずに湯船に入ろうとしたら、常連さんと思われる方に厳しく注意されました。日本の公共浴場では当然のルールだと後で知りましたが、その時はパニックになりました。",
+        "isOfficial": false
+      }
+    ]
+  },
+  {
+    "threadId": "t9",
+    "title": "温泉・公衆浴場、どうにも恥ずかしい。",
+    "posts": [
+      {
+        "id": "p1",
+        "userName": "No name",
+        "userIcon": "https://api.dicebear.com/7.x/avataaars/svg?seed=shy",
+        "date": "2025/12/17(水) 07:33",
+        "body": "大勢の前で裸になる文化にまだ慣れません。タオルを巻いて入るのはマナー違反だと聞きましたが、何かコツはありますか？",
+        "isOfficial": false
+      }
+    ]
+  },
+  {
+    "threadId": "t12",
+    "title": "お持ち帰りだめですか 5",
+    "posts": [
+      {
+        "id": "p1",
+        "userName": "No name",
+        "userIcon": "https://api.dicebear.com/7.x/avataaars/svg?seed=food",
+        "date": "2025/12/16(火) 18:33",
+        "body": "定食屋で食べきれなかった分を持ち帰ろうとしたら断られました。衛生上の理由と言われましたが、もったいないと感じてしまいます。",
+        "isOfficial": false
+      }
+    ]
+  }
+]
