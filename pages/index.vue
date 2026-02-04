@@ -76,10 +76,7 @@
             </div>
             
             <div class="tw-hidden md:tw-block tw-mt-4 tw-rounded-xl tw-overflow-hidden tw-h-48 tw-relative tw-bg-gray-100">
-              <div ref="mapRef" class="tw-w-full tw-h-full"></div>
-              <div v-if="!mapLoaded" class="tw-absolute tw-inset-0 tw-flex tw-items-center tw-justify-center tw-bg-gray-200">
-                <div class="tw-animate-spin tw-rounded-full tw-h-8 tw-w-8 tw-border-b-2 tw-border-gray-900"></div>
-              </div>
+              <div ref="mapContainer" class="tw-w-full tw-h-full"></div>
             </div>
           </div>
 
@@ -160,18 +157,20 @@
 </template>
 
 <script setup lang="ts">
-import { Loader } from '@googlemaps/js-api-loader'
 import { 
   Search, X, Home, UserCircle, MapPin, CloudSun, Lightbulb, 
   Binoculars, Ear, Footprints, AlertCircle, MessageSquare, 
   ArrowUp, ChevronLeft, LayoutGrid, Settings, Download, User
 } from 'lucide-vue-next'
 
+const MAP_ID = '3d5da5a6ef6b2abd3358054a'; 
+
+const { load } = useMapsLoader();
 const localePath = useLocalePath()
 const { t } = useI18n()
 
-const mapRef = ref<HTMLElement | null>(null)
-const mapLoaded = ref(false)
+const mapContainer = ref<HTMLElement | null>(null)
+let map: google.maps.Map | null = null;
 
 const mobileFooterItems = [
   { icon: LayoutGrid, label: '防災マップ' },
@@ -186,32 +185,24 @@ declare const google: any;
  * 型定義の競合を回避しつつ、Google Mapを初期化する
  */
 const initGoogleMap = async () => {
-  const loader = new Loader({
-    apiKey: 'AIzaSyDgNpYJ3yIIkPgEB2kEAXWBwsFPa_H2no4', // 実際のキーに置換してください
-    version: 'weekly',
-  })
-
   try {
-    // 💡 型エラーを回避するため、実行時にメソッドの存在を確認して呼び出す
-    const loaderObj = loader as any
-    const importMethod = loaderObj.importLibrary ? loaderObj.importLibrary.bind(loaderObj) : null
+    await load();
 
-    if (importMethod) {
-      const { Map } = await importMethod('maps') as google.maps.MapsLibrary
-      
-      if (mapRef.value) {
-        new Map(mapRef.value, {
-          center: { lat: 35.6895, lng: 139.6917 },
-          zoom: 15,
-          disableDefaultUI: true,
-          styles: [
-            { featureType: 'all', elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
-            { featureType: 'all', elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] }
-          ]
-        })
-        mapLoaded.value = true
-      }
-    }
+    map = new google.maps.Map(mapContainer.value, {
+      center: { lat: 35.6895, lng: 139.6917 },
+      zoom: 15,
+      minZoom: 15,
+      mapId: MAP_ID, // AdvancedMarkerElementに必須
+      disableDefaultUI: true,
+      // 移動（ドラッグ）を禁止
+      gestureHandling: "none",
+      zoomControl: false,
+      scrollwheel: false,
+      disableDoubleClickZoom: true,
+      // キーボード操作による移動を禁止
+      keyboardShortcuts: false,
+      clickableIcons: false, // 地図上の標準アイコンを非表示にして視認性UP
+    });
   } catch (e) {
     console.error('Google Map Load Error:', e)
   }
