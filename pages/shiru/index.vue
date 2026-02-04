@@ -93,9 +93,6 @@
         <div class="tw-flex tw-gap-2 tw-my-6">
           <div v-for="n in categories.length" :key="n" class="tw-w-2 tw-h-2 tw-rounded-full tw-bg-gray-200"></div>
         </div>
-        <button class="tw-bg-white tw-p-5 tw-rounded-full tw-shadow-xl active:tw-scale-90 tw-transition-transform">
-          <Search class="tw-w-8 tw-h-8 tw-text-gray-300" />
-        </button>
       </div>
     </div>
   </div>
