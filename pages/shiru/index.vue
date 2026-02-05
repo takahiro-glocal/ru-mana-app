@@ -62,7 +62,11 @@
       </div>
 
       <div class="md:tw-hidden tw-flex tw-flex-col tw-items-center tw-min-h-[600px]">
-        <div class="tw-flex tw-overflow-x-auto tw-snap-x tw-snap-mandatory tw-scrollbar-hide tw-w-full tw-gap-6 tw-py-4">
+        <div 
+          ref="scrollContainer"
+          class="tw-flex tw-overflow-x-auto tw-snap-x tw-snap-mandatory tw-scrollbar-hide tw-w-full tw-gap-6 tw-py-4"
+          @scroll="handleScroll"
+        >
           <div 
             v-for="cat in categories" 
             :key="cat.id"
@@ -90,9 +94,14 @@
             </div>
           </div>
         </div>
-        <div class="tw-flex tw-gap-2 tw-my-6">
-          <div v-for="n in categories.length" :key="n" class="tw-w-2 tw-h-2 tw-rounded-full tw-bg-gray-200"></div>
-        </div>
+        
+                  <div class="tw-flex tw-justify-center tw-gap-2 tw-py-6 tw-flex-shrink-0">
+            <div 
+              v-for="(cat, idx) in categories" 
+              :key="cat.id"
+              :class="['tw-w-2.5 tw-h-2.5 tw-rounded-full tw-transition-all tw-duration-300', activeIndex === idx ? 'tw-bg-[#85C441] tw-w-6' : 'tw-bg-gray-200']"
+            ></div>
+          </div>
       </div>
     </div>
   </div>
@@ -107,6 +116,17 @@ import {
 const { categories, loadCategories } = useShiru()
 await loadCategories()
 const localePath = useLocalePath()
+
+// スクロール位置管理
+const scrollContainer = ref<HTMLElement | null>(null)
+const activeIndex = ref(0)
+
+const handleScroll = (event: Event) => {
+  const container = event.target as HTMLElement
+  const scrollLeft = container.scrollLeft
+  const itemWidth = container.offsetWidth * 0.85 // カード幅(85%) + gap
+  activeIndex.value = Math.round(scrollLeft / itemWidth)
+}
 
 // Tailwindのパージを防ぐための静的なマッピング
 const categoryOptions: Record<string, any> = {

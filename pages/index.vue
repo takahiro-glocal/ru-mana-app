@@ -114,7 +114,7 @@
           <div class="tw-bg-[#EBECEF] tw-bg-opacity-80 tw-rounded-3xl tw-p-6 tw-shadow-sm">
             <h3 class="tw-text-xs tw-font-bold tw-text-gray-400 tw-uppercase tw-mb-4">パーソナル</h3>
             <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-12 tw-gap-4">
-              <div class="tw-col-span-3 tw-flex tw-flex-col tw-gap-4">
+              <div class="tw-col-span-12 md:tw-col-span-3 tw-flex md:tw-flex-col tw-justify-center tw-gap-6 md:tw-gap-4">
                 <div class="tw-flex tw-flex-col tw-items-center">
                   <div class="tw-bg-[#BCAF92] tw-w-16 tw-h-16 tw-rounded-2xl tw-flex tw-items-center tw-justify-center tw-shadow-sm">
                     <MessageSquare class="tw-w-8 tw-h-8 tw-text-white" />
@@ -128,7 +128,7 @@
                   <span class="tw-text-[10px] tw-mt-1 tw-text-gray-500 tw-font-bold">ダウンロード</span>
                 </div>
               </div>
-              <div class="tw-col-span-9 tw-bg-[#D9A65D] tw-rounded-2xl tw-p-4 tw-text-white tw-shadow-sm">
+              <div class="tw-col-span-12 md:tw-col-span-9 tw-bg-[#D9A65D] tw-rounded-2xl tw-p-4 tw-text-white tw-shadow-sm">
                 <div class="tw-flex tw-items-start tw-gap-3 tw-mb-3">
                   <div class="tw-text-6xl tw-font-bold tw-leading-none">{{ todayDay }}</div>
                   <div class="tw-flex-1 tw-text-[10px] tw-space-y-1">
@@ -158,38 +158,50 @@
                 <Map class="tw-w-10 tw-h-10" />
                 <span class="tw-text-[9px] tw-font-bold tw-mt-1">防災マップ</span>
               </div>
-              <div class="tw-flex-1 tw-bg-[#D9A65D] tw-rounded-2xl tw-p-2 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md">
-                <div class="tw-grid tw-grid-cols-2 tw-gap-1.5">
-                  <Facebook class="tw-w-4 tw-h-4" /> <span class="tw-font-bold tw-text-[8px] tw-mt-0.5">X</span>
-                  <Youtube class="tw-w-4 tw-h-4" /> <Instagram class="tw-w-4 tw-h-4" />
+              <div class="tw-flex-1 tw-bg-[#D9A65D] tw-rounded-2xl tw-p-2 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md tw-min-h-[80px]">
+                <div class="tw-grid tw-grid-cols-2 tw-gap-2">
+                  <div class="tw-p-1 tw-rounded-full tw-bg-white">
+                    <Facebook class="tw-w-5 tw-h-5 tw-text-[#D9A65D]" />
+                  </div>
+                  <div class="tw-p-1 tw-rounded-full tw-bg-white">
+                    <Twitter class="tw-w-5 tw-h-5 tw-text-[#D9A65D]" />
+                  </div>
+                  <div class="tw-p-1 tw-rounded-full tw-bg-white">
+                    <Youtube class="tw-w-5 tw-h-5 tw-text-[#D9A65D]" />
+                  </div>
+                  <div class="tw-p-1 tw-rounded-full tw-bg-white">
+                    <Instagram class="tw-w-5 tw-h-5 tw-text-[#D9A65D]" />
+                  </div>
                 </div>
-                <span class="tw-text-[9px] tw-font-bold tw-mt-1">SNS</span>
+                <span class="tw-text-[9px] tw-font-bold tw-mt-2">SNS</span>
               </div>
             </div>
           </div>
 
-          <div class="tw-flex tw-flex-col md:tw-flex-row tw-gap-4">
-            <div class="tw-flex-1 tw-bg-white tw-rounded-[2rem] tw-p-5 tw-shadow-sm tw-flex tw-flex-col tw-justify-center">
-              <span class="tw-text-[10px] tw-text-gray-400 tw-font-bold tw-mb-3">みんな何してる？</span>
-              <div class="tw-flex tw-items-center tw-justify-between">
-                <div class="tw-flex tw-items-center -tw-space-x-3">
-                  <img src="https://i.pravatar.cc/100?u=1" class="tw-w-12 tw-h-12 tw-rounded-full tw-border-4 tw-border-white" />
-                  <img src="https://i.pravatar.cc/100?u=2" class="tw-w-12 tw-h-12 tw-rounded-full tw-border-4 tw-border-white" />
-                  <img src="https://i.pravatar.cc/100?u=3" class="tw-w-12 tw-h-12 tw-rounded-full tw-border-4 tw-border-white" />
+          <div class="tw-bg-white tw-rounded-[2rem] tw-p-5 tw-shadow-sm">
+            <div class="tw-flex tw-flex-col md:tw-flex-row tw-gap-4">
+              <div class="tw-flex-1 tw-flex tw-flex-col tw-justify-center">
+                <span class="tw-text-[10px] tw-text-gray-400 tw-font-bold tw-mb-3 uppercase">みんな何してる？</span>
+                <div class="tw-flex tw-items-center tw-justify-between">
+                  <div class="tw-flex tw-items-center -tw-space-x-3">
+                    <img src="https://i.pravatar.cc/100?u=1" class="tw-w-12 tw-h-12 tw-rounded-full tw-border-4 tw-border-white" />
+                    <img src="https://i.pravatar.cc/100?u=2" class="tw-w-12 tw-h-12 tw-rounded-full tw-border-4 tw-border-white" />
+                    <img src="https://i.pravatar.cc/100?u=3" class="tw-w-12 tw-h-12 tw-rounded-full tw-border-4 tw-border-white" />
+                  </div>
+                  <div class="tw-text-[11px] tw-text-gray-500 tw-font-bold tw-leading-tight tw-ml-2">Alex, Jhon, Piter</div>
                 </div>
-                <div class="tw-text-[11px] tw-text-gray-500 tw-font-bold tw-leading-tight">Alex, Jhon, Piter</div>
               </div>
-            </div>
-            <div class="tw-w-full md:tw-w-40 tw-bg-white tw-rounded-[2rem] tw-p-5 tw-shadow-sm tw-flex tw-items-center tw-justify-between">
-               <div class="tw-flex tw-flex-col tw-gap-2">
-                 <div class="tw-bg-[#2C3E50] tw-text-white tw-px-3 tw-py-1 tw-rounded-md tw-text-sm tw-font-bold tw-text-center">G</div>
-                 <span class="tw-text-[9px] tw-text-gray-400 tw-font-bold tw-text-center">ギャラリー</span>
-               </div>
-               <div class="tw-h-full tw-w-[1px] tw-bg-gray-100 tw-mx-1"></div>
-               <div class="tw-flex tw-flex-col tw-gap-2">
-                 <div class="tw-bg-[#2C3E50] tw-text-white tw-px-3 tw-py-1 tw-rounded-md tw-text-sm tw-font-bold tw-text-center">Q</div>
-                 <span class="tw-text-[9px] tw-text-gray-400 tw-font-bold tw-text-center">クイズ</span>
-               </div>
+
+              <div class="tw-flex tw-items-center tw-gap-4 md:tw-border-l md:tw-border-gray-100 md:tw-pl-4">
+                <div class="tw-flex-1 md:tw-w-16 tw-flex tw-flex-col tw-items-center tw-gap-1">
+                  <div class="tw-bg-[#2C3E50] tw-text-white tw-w-12 tw-h-12 md:tw-w-10 md:tw-h-10 tw-rounded-xl tw-flex tw-items-center tw-justify-center tw-text-xl tw-font-black tw-shadow-sm">G</div>
+                  <span class="tw-text-[9px] tw-text-gray-400 tw-font-bold">ギャラリー</span>
+                </div>
+                <div class="tw-flex-1 md:tw-w-16 tw-flex tw-flex-col tw-items-center tw-gap-1">
+                  <div class="tw-bg-[#2C3E50] tw-text-white tw-w-12 tw-h-12 md:tw-w-10 md:tw-h-10 tw-rounded-xl tw-flex tw-items-center tw-justify-center tw-text-xl tw-font-black tw-shadow-sm">Q</div>
+                  <span class="tw-text-[9px] tw-text-gray-400 tw-font-bold">クイズ</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -209,7 +221,7 @@
       <div v-if="isDrawerOpen" class="tw-fixed tw-inset-0 tw-bg-black tw-bg-opacity-20 tw-z-[60] tw-backdrop-blur-sm" @click="isDrawerOpen = false"></div>
     </transition>
     <transition name="drawer-slide">
-      <aside v-if="isDrawerOpen" class="tw-fixed tw-top-4 tw-right-4 tw-bottom-4 tw-w-full tw-max-w-md tw-bg-white tw-z-[70] tw-rounded-[2.5rem] tw-shadow-2xl tw-flex tw-flex-col">
+      <aside v-if="isDrawerOpen" class="tw-fixed tw-top-4 tw-right-4 tw-bottom-4 tw-w-[calc(100%-2rem)] md:tw-w-full tw-max-w-md tw-bg-white tw-z-[70] tw-rounded-[2.5rem] tw-shadow-2xl tw-flex tw-flex-col">
         <div class="tw-p-6 tw-flex tw-justify-between tw-items-center tw-flex-shrink-0">
           <div class="tw-w-6"></div>
           <h2 class="tw-text-gray-400 tw-font-bold tw-uppercase tw-tracking-widest tw-text-sm">My Account</h2>
@@ -238,9 +250,9 @@
 <script setup lang="ts">
 import { 
   Search, X, Home, UserCircle, MapPin, CloudSun, Lightbulb, 
-  Binoculars, Ear, Footprints, AlertCircle, MessageSquare, 
+  Binoculars, Ear, Footprints, MessageSquare, 
   ArrowUp, ChevronLeft, ChevronRight, LayoutGrid, Settings, Download, User,
-  Map, Facebook, Youtube, Instagram
+  Map, Facebook, Youtube, Instagram, Twitter,
 } from 'lucide-vue-next'
 
 const MAP_ID = '3d5da5a6ef6b2abd3358054a'; 
