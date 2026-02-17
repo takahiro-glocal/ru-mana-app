@@ -1,12 +1,13 @@
 <template>
   <div class="tw-min-h-screen tw-bg-[#F9F5E7] tw-p-4 md:tw-p-8">
     <div class="tw-max-w-6xl tw-mx-auto">
+      
       <header class="tw-hidden md:tw-flex tw-justify-between tw-items-center tw-mb-8">
         <div class="tw-flex tw-items-center tw-gap-4">
           <img src="/images/logo.png" alt="るうまな" class="tw-w-16 tw-h-16" />
           <div class="tw-ml-2">
             <h1 class="tw-text-4xl tw-font-bold tw-text-[#4B3E8E]">
-              こんにちは ゲストさん！
+              こんにちは {{ userDisplayName }}！
             </h1>
             <p class="tw-text-pink-500 tw-text-lg tw-font-medium">Welcome to the various culture mind!</p>
           </div>
@@ -18,7 +19,13 @@
             <X class="tw-absolute tw-right-3 tw-top-1/2 tw-transform -tw-translate-y-1/2 tw-text-white tw-w-4" />
           </div>
           <Home class="tw-text-[#BCAF92] tw-w-9 tw-h-9 tw-cursor-pointer" />
-          <UserCircle class="tw-text-[#BCAF92] tw-w-10 tw-h-10 tw-cursor-pointer" @click="isDrawerOpen = true" />
+          
+          <div v-if="user" @click="openDrawer()" class="tw-cursor-pointer">
+            <img :src="userPhotoURL" class="tw-w-10 tw-h-10 tw-rounded-full tw-border-2 tw-border-[#BCAF92]" />
+          </div>
+          <button v-else @click="isLoginModalOpen = true" class="tw-bg-[#E4007F] tw-text-white tw-font-bold tw-px-6 tw-py-2 tw-rounded-full tw-shadow-sm hover:tw-bg-[#c0006b] tw-transition-colors">
+            ログイン
+          </button>
         </div>
       </header>
 
@@ -31,7 +38,10 @@
               <input type="text" class="tw-w-full tw-bg-[#4B3E8E] tw-bg-opacity-80 tw-text-white tw-rounded-md tw-py-1.5 tw-px-10" />
               <Search class="tw-absolute tw-left-3 tw-top-1/2 tw-transform -tw-translate-y-1/2 tw-text-white tw-w-4" />
             </div>
-            <UserCircle class="tw-text-[#BCAF92] tw-w-10 tw-h-10" @click="isDrawerOpen = true" />
+            <div v-if="user" @click="openDrawer()" class="tw-cursor-pointer">
+              <img :src="userPhotoURL" class="tw-w-10 tw-h-10 tw-rounded-full tw-border-2 tw-border-[#BCAF92]" />
+            </div>
+             <UserCircle v-else class="tw-text-[#BCAF92] tw-w-10 tw-h-10" @click="isLoginModalOpen = true" />
           </div>
 
           <div class="tw-grid tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-4">
@@ -56,22 +66,17 @@
           <div class="tw-hidden md:tw-block tw-space-y-4">
             <h2 class="tw-text-xl tw-font-bold tw-text-gray-700">現在のエリア</h2>
             <div class="tw-flex tw-bg-[#2C3E50] tw-rounded-3xl tw-overflow-hidden tw-h-64 tw-shadow-lg">
-              <div class="tw-w-[42%] tw-p-6 tw-text-white tw-flex tw-flex-col tw-justify-between tw-min-w-0">
+              <div class="tw-w-[42%] tw-p-6 tw-text-white tw-flex tw-flex-col tw-justify-between">
                 <div>
                   <div class="tw-flex tw-items-center tw-gap-2 tw-mb-1">
-                    <MapPin class="tw-w-6 tw-h-6 tw-flex-shrink-0" />
-                    <span class="tw-text-xl tw-font-bold tw-truncate">東京都・新宿区</span>
+                    <MapPin class="tw-w-6 tw-h-6" />
+                    <span class="tw-text-xl tw-font-bold">東京都・新宿区</span>
                   </div>
-                  <div class="tw-text-lg tw-mb-4">{{ formattedDate }}</div>
-                  <ul class="tw-space-y-2 tw-text-sm">
-                    <li class="tw-truncate">● ● まつり <span class="tw-text-xs tw-opacity-70">[西新宿○丁目]</span></li>
-                    <li class="tw-truncate">● ● フェア <span class="tw-text-xs tw-opacity-70">[新宿○丁目]</span></li>
-                  </ul>
-                  <button class="tw-text-xs tw-mt-2 tw-opacity-80">・・・ もっと見る</button>
+                  <div class="tw-text-lg">{{ formattedDate }}</div>
                 </div>
                 <div class="tw-flex tw-items-end tw-gap-4">
-                  <CloudSun class="tw-w-12 tw-h-12 tw-text-yellow-400 tw-flex-shrink-0" />
-                  <span class="tw-text-6xl tw-font-light tw-leading-none">25度</span>
+                  <CloudSun class="tw-w-12 tw-h-12 tw-text-yellow-400" />
+                  <span class="tw-text-6xl tw-font-light leading-none">25度</span>
                 </div>
               </div>
               <div class="tw-w-[58%] tw-relative tw-bg-gray-100">
@@ -88,21 +93,18 @@
               <ul class="tw-space-y-2 tw-text-sm">
                 <li class="tw-truncate">車内ルールだよ <span class="tw-text-[10px] tw-opacity-60">[新規コメント]</span></li>
                 <li class="tw-truncate">とても素敵 <span class="tw-text-[10px] tw-opacity-60">[新規投稿]</span></li>
-                <li class="tw-truncate">車内ルールだよ <span class="tw-text-[10px] tw-opacity-60">[新規コメント]</span></li>
-                <li class="tw-truncate">とても素敵 <span class="tw-text-[10px] tw-opacity-60">[新規投稿]</span></li>
               </ul>
             </div>
             <div class="tw-col-span-1 md:tw-col-span-3 tw-bg-[#008080] tw-rounded-3xl tw-p-6 tw-text-white tw-shadow-lg">
               <div class="tw-font-bold tw-mb-1 tw-text-lg">今日は何の日</div>
-              <div class="tw-text-sm tw-opacity-80 tw-mb-3">12月25日</div>
-              <p class="tw-text-[11px] tw-leading-relaxed">●現在エリアの過去の出来事など表示<br><br>ピックアップはGemini先生にお任せ</p>
+              <p class="tw-text-[11px] tw-leading-relaxed">●現在エリアの過去の出来事など表示</p>
             </div>
             <div class="tw-col-span-1 md:tw-col-span-3 tw-flex tw-flex-col tw-items-center tw-justify-center">
               <NuxtLink :to="localePath('/trouble')" class="tw-relative tw-w-28 tw-h-28 tw-rounded-full tw-bg-white tw-border-[6px] tw-border-[#E4007F] tw-flex tw-flex-col tw-items-center tw-justify-center tw-shadow-xl active:tw-scale-95 tw-transition-transform">
                 <div class="tw-bg-[#E4007F] tw-text-white tw-w-10 tw-h-10 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-mb-1">
                   <span class="tw-font-black tw-text-2xl">!</span>
                 </div>
-                <div class="tw-text-[#E4007F] tw-font-black tw-text-[10px] tw-leading-tight tw-text-center">IN<br>TROUBLE</div>
+                <div class="tw-text-[#E4007F] tw-font-black tw-text-[10px] tw-leading-tight tw-text-center uppercase">In<br>Trouble</div>
               </NuxtLink>
               <span class="tw-text-sm tw-mt-2 tw-font-bold tw-text-gray-600">おたすけ</span>
             </div>
@@ -112,39 +114,34 @@
         <div class="tw-col-span-1 md:tw-col-span-5 tw-flex tw-flex-col tw-gap-6">
           
           <div class="tw-bg-[#EBECEF] tw-bg-opacity-80 tw-rounded-3xl tw-p-6 tw-shadow-sm">
-            <h3 class="tw-text-xs tw-font-bold tw-text-gray-400 tw-uppercase tw-mb-4">パーソナル</h3>
+            <h3 class="tw-text-xs tw-font-bold tw-text-gray-400 tw-uppercase tw-mb-4 tracking-widest">Personal</h3>
             <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-12 tw-gap-4">
-              <div class="tw-col-span-12 md:tw-col-span-3 tw-flex md:tw-flex-col tw-justify-center tw-gap-6 md:tw-gap-4">
+              <div class="tw-col-span-12 md:tw-col-span-3 tw-flex md:tw-flex-col tw-justify-center tw-gap-6">
                 <div class="tw-flex tw-flex-col tw-items-center">
-                  <div class="tw-bg-[#BCAF92] tw-w-16 tw-h-16 tw-rounded-2xl tw-flex tw-items-center tw-justify-center tw-shadow-sm">
-                    <MessageSquare class="tw-w-8 tw-h-8 tw-text-white" />
+                  <div class="tw-bg-[#BCAF92] tw-w-16 tw-h-16 tw-rounded-2xl tw-flex tw-items-center tw-justify-center tw-text-white tw-shadow-sm">
+                    <MessageSquare class="tw-w-8 tw-h-8" />
                   </div>
                   <span class="tw-text-[10px] tw-mt-1 tw-text-gray-500 tw-font-bold">投稿</span>
                 </div>
                 <div class="tw-flex tw-flex-col tw-items-center">
-                  <div class="tw-bg-[#BCAF92] tw-w-16 tw-h-16 tw-rounded-2xl tw-flex tw-items-center tw-justify-center tw-shadow-sm">
-                    <Download class="tw-w-8 tw-h-8 tw-text-white" />
+                  <div class="tw-bg-[#BCAF92] tw-w-16 tw-h-16 tw-rounded-2xl tw-flex tw-items-center tw-justify-center tw-text-white tw-shadow-sm">
+                    <Download class="tw-w-8 tw-h-8" />
                   </div>
-                  <span class="tw-text-[10px] tw-mt-1 tw-text-gray-500 tw-font-bold">ダウンロード</span>
+                  <span class="tw-text-[10px] tw-mt-1 tw-text-gray-500 tw-font-bold">DL</span>
                 </div>
               </div>
-              <div class="tw-col-span-12 md:tw-col-span-9 tw-bg-[#D9A65D] tw-rounded-2xl tw-p-4 tw-text-white tw-shadow-sm">
+              <div class="tw-col-span-12 md:tw-col-span-9 tw-bg-[#D9A65D] tw-rounded-2xl tw-p-4 tw-text-white shadow-sm">
                 <div class="tw-flex tw-items-start tw-gap-3 tw-mb-3">
-                  <div class="tw-text-6xl tw-font-bold tw-leading-none">{{ todayDay }}</div>
-                  <div class="tw-flex-1 tw-text-[10px] tw-space-y-1">
-                    <div>●本日のイベントはありません</div>
-                    <div>●通知はありません</div>
+                  <div class="tw-text-6xl tw-font-bold leading-none">{{ todayDay }}</div>
+                  <div class="tw-text-[10px] tw-space-y-1">
+                    <div>● 本日のイベントはありません</div>
+                    <div>● 通知はありません</div>
                   </div>
                 </div>
-                <div class="tw-grid tw-grid-cols-7 tw-text-center tw-text-[10px] tw-gap-y-1.5">
+                <div class="tw-grid tw-grid-cols-7 tw-text-center tw-text-[10px] tw-gap-y-1">
                   <span v-for="d in ['S','M','T','W','T','F','S']" :key="d" class="tw-opacity-60">{{ d }}</span>
-                  <div v-for="blank in firstDayOfMonth" :key="'blank-' + blank"></div>
-                  <div v-for="n in daysInMonth" :key="n" 
-                    :class="['tw-py-0.5', isToday(n) ? 'tw-bg-[#2C3E50] tw-rounded-full tw-font-bold' : '']">
-                    {{ n }}
-                  </div>
+                  <div v-for="n in 31" :key="n" :class="[n === todayDay ? 'tw-bg-[#2C3E50] tw-rounded-full tw-font-bold' : '']">{{ n }}</div>
                 </div>
-                <div class="tw-text-center tw-mt-2 tw-text-[10px] tw-opacity-70">カレンダー</div>
               </div>
             </div>
           </div>
@@ -154,24 +151,14 @@
               <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800" class="tw-w-full tw-h-full tw-object-cover" />
             </div>
             <div class="tw-w-full md:tw-w-24 tw-flex tw-flex-row md:tw-flex-col tw-gap-3">
-              <div class="tw-flex-1 tw-bg-[#BCAF92] tw-rounded-2xl tw-p-3 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md">
-                <Map class="tw-w-10 tw-h-10" />
+              <NuxtLink :to="localePath('/disaster-prevention')" class="tw-flex-1 tw-bg-[#BCAF92] tw-rounded-2xl tw-p-3 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md hover:tw-opacity-90 tw-transition-opacity">
+                <MapIcon class="tw-w-10 tw-h-10" />
                 <span class="tw-text-[9px] tw-font-bold tw-mt-1">防災マップ</span>
-              </div>
-              <div class="tw-flex-1 tw-bg-[#D9A65D] tw-rounded-2xl tw-p-2 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md tw-min-h-[80px]">
+              </NuxtLink>
+              <div class="tw-flex-1 tw-bg-[#D9A65D] tw-rounded-2xl tw-p-2 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md">
                 <div class="tw-grid tw-grid-cols-2 tw-gap-2">
-                  <div class="tw-p-1 tw-rounded-full tw-bg-white">
-                    <Facebook class="tw-w-5 tw-h-5 tw-text-[#D9A65D]" />
-                  </div>
-                  <div class="tw-p-1 tw-rounded-full tw-bg-white">
-                    <Twitter class="tw-w-5 tw-h-5 tw-text-[#D9A65D]" />
-                  </div>
-                  <div class="tw-p-1 tw-rounded-full tw-bg-white">
-                    <Youtube class="tw-w-5 tw-h-5 tw-text-[#D9A65D]" />
-                  </div>
-                  <div class="tw-p-1 tw-rounded-full tw-bg-white">
-                    <Instagram class="tw-w-5 tw-h-5 tw-text-[#D9A65D]" />
-                  </div>
+                  <Facebook class="tw-w-4 tw-h-4" /> <Twitter class="tw-w-4 tw-h-4" />
+                  <Youtube class="tw-w-4 tw-h-4" /> <Instagram class="tw-w-4 tw-h-4" />
                 </div>
                 <span class="tw-text-[9px] tw-font-bold tw-mt-2">SNS</span>
               </div>
@@ -182,23 +169,24 @@
             <div class="tw-flex tw-flex-col md:tw-flex-row tw-gap-4">
               <div class="tw-flex-1 tw-flex tw-flex-col tw-justify-center">
                 <span class="tw-text-[10px] tw-text-gray-400 tw-font-bold tw-mb-3 uppercase">みんな何してる？</span>
-                <div class="tw-flex tw-items-center tw-justify-between">
-                  <div class="tw-flex tw-items-center -tw-space-x-3">
+                <div class="tw-flex tw-items-center">
+                  <div class="tw-flex -tw-space-x-3 tw-flex-shrink-0">
                     <img src="https://i.pravatar.cc/100?u=1" class="tw-w-12 tw-h-12 tw-rounded-full tw-border-4 tw-border-white" />
                     <img src="https://i.pravatar.cc/100?u=2" class="tw-w-12 tw-h-12 tw-rounded-full tw-border-4 tw-border-white" />
                     <img src="https://i.pravatar.cc/100?u=3" class="tw-w-12 tw-h-12 tw-rounded-full tw-border-4 tw-border-white" />
                   </div>
-                  <div class="tw-text-[11px] tw-text-gray-500 tw-font-bold tw-leading-tight tw-ml-2">Alex, Jhon, Piter</div>
+                  <div class="tw-ml-3 tw-text-[11px] tw-text-gray-500 tw-font-bold">
+                    Alex, Jhon...
+                  </div>
                 </div>
               </div>
-
               <div class="tw-flex tw-items-center tw-gap-4 md:tw-border-l md:tw-border-gray-100 md:tw-pl-4">
-                <div class="tw-flex-1 md:tw-w-16 tw-flex tw-flex-col tw-items-center tw-gap-1">
-                  <div class="tw-bg-[#2C3E50] tw-text-white tw-w-12 tw-h-12 md:tw-w-10 md:tw-h-10 tw-rounded-xl tw-flex tw-items-center tw-justify-center tw-text-xl tw-font-black tw-shadow-sm">G</div>
+                <div class="tw-text-center">
+                  <div class="tw-bg-[#2C3E50] tw-text-white tw-w-10 tw-h-10 tw-rounded-xl tw-flex tw-items-center tw-justify-center tw-text-xl tw-font-black">G</div>
                   <span class="tw-text-[9px] tw-text-gray-400 tw-font-bold">ギャラリー</span>
                 </div>
-                <div class="tw-flex-1 md:tw-w-16 tw-flex tw-flex-col tw-items-center tw-gap-1">
-                  <div class="tw-bg-[#2C3E50] tw-text-white tw-w-12 tw-h-12 md:tw-w-10 md:tw-h-10 tw-rounded-xl tw-flex tw-items-center tw-justify-center tw-text-xl tw-font-black tw-shadow-sm">Q</div>
+                <div class="tw-text-center">
+                  <div class="tw-bg-[#2C3E50] tw-text-white tw-w-10 tw-h-10 tw-rounded-xl tw-flex tw-items-center tw-justify-center tw-text-xl tw-font-black">Q</div>
                   <span class="tw-text-[9px] tw-text-gray-400 tw-font-bold">クイズ</span>
                 </div>
               </div>
@@ -217,110 +205,114 @@
       </footer>
     </div>
 
-    <transition name="drawer-fade">
-      <div v-if="isDrawerOpen" class="tw-fixed tw-inset-0 tw-bg-black tw-bg-opacity-20 tw-z-[60] tw-backdrop-blur-sm" @click="isDrawerOpen = false"></div>
-    </transition>
-    <transition name="drawer-slide">
-      <aside v-if="isDrawerOpen" class="tw-fixed tw-top-4 tw-right-4 tw-bottom-4 tw-w-[calc(100%-2rem)] md:tw-w-full tw-max-w-md tw-bg-white tw-z-[70] tw-rounded-[2.5rem] tw-shadow-2xl tw-flex tw-flex-col">
-        <div class="tw-p-6 tw-flex tw-justify-between tw-items-center tw-flex-shrink-0">
-          <div class="tw-w-6"></div>
-          <h2 class="tw-text-gray-400 tw-font-bold tw-uppercase tw-tracking-widest tw-text-sm">My Account</h2>
-          <X class="tw-w-6 tw-h-6 tw-text-gray-300 tw-cursor-pointer" @click="isDrawerOpen = false" />
-        </div>
-        <div class="tw-flex-1 tw-overflow-y-auto tw-px-8">
-           <div class="tw-flex tw-flex-col tw-items-center tw-mb-10">
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" class="tw-w-28 tw-h-28 tw-bg-blue-50 tw-rounded-full tw-mb-4" />
-              <h3 class="tw-text-2xl tw-font-bold tw-text-gray-700">Alex Johnson</h3>
-              <p class="tw-text-sm tw-text-gray-400">@bus_daisuki</p>
-           </div>
-           <nav class="tw-space-y-4">
-              <button v-for="m in ['登録情報','アクティビティ','設定・言語','ポイント','履歴','フィードバック']" :key="m" class="tw-w-full tw-flex tw-items-center tw-justify-between tw-py-4 tw-border-b tw-border-gray-50 tw-text-gray-600 tw-font-bold">
-                <span>{{ m }}</span> <ChevronRight class="tw-w-5 tw-h-5 tw-text-gray-300" />
-              </button>
-           </nav>
-        </div>
-        <div class="tw-p-8 tw-flex tw-gap-4">
-          <button class="tw-flex-1 tw-py-4 tw-bg-gray-50 tw-text-gray-400 tw-rounded-2xl tw-font-bold">ログアウト</button>
-        </div>
-      </aside>
-    </transition>
+    <AuthModal :is-open="isLoginModalOpen" @close="isLoginModalOpen = false" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { 
   Search, X, Home, UserCircle, MapPin, CloudSun, Lightbulb, 
-  Binoculars, Ear, Footprints, MessageSquare, 
-  ArrowUp, ChevronLeft, ChevronRight, LayoutGrid, Settings, Download, User,
-  Map, Facebook, Youtube, Instagram, Twitter,
+  Binoculars, Ear, Footprints, MessageSquare, Download, Settings, LayoutGrid,
+  ArrowUp, ChevronLeft,
+  Map as MapIcon, Facebook, Youtube, Instagram, Twitter
 } from 'lucide-vue-next'
+import { onMounted, onUnmounted, ref, computed } from 'vue'
 
-const MAP_ID = '3d5da5a6ef6b2abd3358054a'; 
-const { load } = useMapsLoader();
+const { user, initAuth, userDisplayName, userPhotoURL } = useAuth();
+const { openDrawer } = useDrawer(); // グローバルドロワー用
 const localePath = useLocalePath();
-const isDrawerOpen = ref(false);
 
-const mapContainerPC = ref<HTMLElement | null>(null);
-
-// Date & Calendar Logic
-const now = new Date();
-const currentYear = now.getFullYear();
-const currentMonth = now.getMonth();
-const todayDay = now.getDate();
-
-const formattedDate = computed(() => {
-  const options: Intl.DateTimeFormatOptions = { month: 'numeric', day: 'numeric', weekday: 'short' };
-  return now.toLocaleDateString('ja-JP', options).replace(/\((.+)\)/, ' $1').toLowerCase();
-});
-
-const firstDayOfMonth = computed(() => new Date(currentYear, currentMonth, 1).getDay());
-const daysInMonth = computed(() => new Date(currentYear, currentMonth + 1, 0).getDate());
-const isToday = (day: number) => day === todayDay;
+const isLoginModalOpen = ref(false);
 
 const mobileFooterItems = [
   { icon: Download, label: 'ダウンロード' },
   { icon: Settings, label: '設定' },
-  { icon: User, label: 'プロフ' },
+  { icon: UserCircle, label: 'プロフ' },
   { icon: LayoutGrid, label: 'メニュー' }
-];
+]
 
-declare const google: any;
+// --- Google Maps Logic ---
+const MAP_ID = '880da9152ccc05531e5c5014'; 
+const { load } = useMapsLoader();
+const mapContainerPC = ref<HTMLElement | null>(null);
+let mapInstance: any = null;
+let userOverlay: any = null;
+let watchId: number | null = null;
+let googleMaps: any = null;
+
+const createPulseOverlayClass = (gMaps: any) => {
+  return class PulseOverlay extends gMaps.OverlayView {
+    div: HTMLElement | null = null;
+    position: any = null;
+    constructor(map: any) { super(); this.setMap(map); }
+    onAdd() {
+      const div = document.createElement('div');
+      div.className = 'user-location-pulse';
+      div.innerHTML = `<div class="pulse-ring"></div><div class="pulse-core"></div>`;
+      this.div = div;
+      const panes = this.getPanes();
+      panes.overlayMouseTarget.appendChild(div);
+    }
+    draw() {
+      if (!this.div || !this.position) return;
+      const point = this.getProjection().fromLatLngToDivPixel(this.position);
+      if (point) { this.div.style.left = point.x + 'px'; this.div.style.top = point.y + 'px'; }
+    }
+    onRemove() { if (this.div) { this.div.parentNode?.removeChild(this.div); this.div = null; } }
+    setPosition(latlng: any) { this.position = latlng; this.draw(); }
+  };
+};
 
 const initGoogleMap = async () => {
   try {
     await load();
-    if (mapContainerPC.value) {
-      new google.maps.Map(mapContainerPC.value, {
+    googleMaps = (window as any).google.maps;
+    if (mapContainerPC.value && googleMaps) {
+      mapInstance = new googleMaps.Map(mapContainerPC.value, {
         center: { lat: 35.6895, lng: 139.6917 },
-        zoom: 15,
-        minZoom: 15,
+        zoom: 16,
         mapId: MAP_ID,
         disableDefaultUI: true,
-        gestureHandling: "none",
-        zoomControl: false,
-        scrollwheel: false,
-        disableDoubleClickZoom: true,
-        keyboardShortcuts: false,
-        clickableIcons: false,
+        gestureHandling: "greedy",
       });
+      const PulseOverlayClass = createPulseOverlayClass(googleMaps);
+      userOverlay = new PulseOverlayClass(mapInstance);
+      startTracking();
     }
-  } catch (e) {
-    console.error('Map failed', e);
-  }
+  } catch (e) { console.error('Map failed', e); }
 }
 
-onMounted(() => {
-  initGoogleMap();
+const startTracking = () => {
+  if (navigator.geolocation && googleMaps) {
+    watchId = navigator.geolocation.watchPosition((position) => {
+      const pos = new googleMaps.LatLng(position.coords.latitude, position.coords.longitude);
+      if (userOverlay) userOverlay.setPosition(pos);
+      if (mapInstance) mapInstance.panTo(pos);
+    }, null, { enableHighAccuracy: true });
+  }
+};
+
+const now = new Date();
+const todayDay = now.getDate();
+const formattedDate = computed(() => {
+  return now.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', weekday: 'short' }).toLowerCase();
+});
+
+onMounted(() => { 
+  initAuth(); 
+  initGoogleMap(); 
+});
+
+onUnmounted(() => {
+  if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+  if (userOverlay) userOverlay.setMap(null);
 });
 </script>
 
-<style scoped>
-.tw-scrollbar-hide::-webkit-scrollbar { display: none; }
-.tw-scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* Drawer Transitions */
-.drawer-fade-enter-active, .drawer-fade-leave-active { transition: opacity 0.4s ease; }
-.drawer-fade-enter-from, .drawer-fade-leave-to { opacity: 0; }
-.drawer-slide-enter-active, .drawer-slide-leave-active { transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
-.drawer-slide-enter-from, .drawer-slide-leave-to { transform: translateX(110%); }
+<style>
+/* Global styles for Map Pulse (Must be non-scoped) */
+.user-location-pulse { position: absolute; pointer-events: none; width: 0; height: 0; overflow: visible; z-index: 1000; }
+.pulse-core { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 16px; height: 16px; background-color: #E4007F; border: 3px solid #FFFFFF; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.3); z-index: 2; }
+.pulse-ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; border-radius: 50%; background-color: rgba(228, 0, 127, 0.4); animation: pulse-animation 2s infinite ease-out; z-index: 1; }
+@keyframes pulse-animation { 0% { width: 20px; height: 20px; opacity: 0.8; } 100% { width: 80px; height: 80px; opacity: 0; } }
 </style>

@@ -51,3 +51,32 @@ interface ShiruThreadDetail {
   title: string;       // スレッドタイトル
   posts: ShiruPost[];  // 投稿配列
 }
+
+/**
+ * 文化・マナーガイドのデータ構造
+ */
+interface CultureGuide {
+  id: string;
+  categoryId: string;
+  title: string;
+  icon: string; // アイコン名を文字列で保持 (例: 'droplets')
+  desc: string;
+  good: string;
+  bad: string;
+}
+
+/**
+ * カテゴリIDをキーとしたガイドのマップ
+ */
+interface CultureGuideMap {
+  [key: string]: CultureGuide[];
+}
+
+// types/settings.d.ts
+
+interface BrowsingHistory {
+  threadId: string;
+  categoryId: string;
+  title: string;
+  viewedAt: string; // ISO string
+}

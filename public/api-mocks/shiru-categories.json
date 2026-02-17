@@ -40,13 +40,43 @@
     "icon": "utensils"
   },
   {
-    "id": "new",
-    "name": "新規ジャンル",
+    "id": "shopping",
+    "name": "買い物・支払い",
     "updateDate": "2026.01.15",
-    "threadCount": 50,
+    "threadCount": 30,
     "bgClass": "tw-bg-[#F3E5F5]",
-    "borderClass": "tw-border-[#B28FCE]",
+    "borderClass": "tw-border-[#CE93D8]",
     "textClass": "tw-text-[#9C27B0]",
-    "icon": "plus"
+    "icon": "shopping-bag"
+  },
+  {
+    "id": "hotel",
+    "name": "宿泊・旅館",
+    "updateDate": "2026.01.15",
+    "threadCount": 30,
+    "bgClass": "tw-bg-[#E8F5E9]",
+    "borderClass": "tw-border-[#81C784]",
+    "textClass": "tw-text-[#4CAF50]",
+    "icon": "bed"
+  },
+  {
+    "id": "culture",
+    "name": "参拝・伝統",
+    "updateDate": "2026.01.15",
+    "threadCount": 30,
+    "bgClass": "tw-bg-[#FFEBEE]",
+    "borderClass": "tw-border-[#E57373]",
+    "textClass": "tw-text-[#F44336]",
+    "icon": "landmark"
+  },
+  {
+    "id": "trash",
+    "name": "ゴミ・トイレ",
+    "updateDate": "2026.01.15",
+    "threadCount": 45,
+    "bgClass": "tw-bg-[#ECEFF1]",
+    "borderClass": "tw-border-[#90A4AE]",
+    "textClass": "tw-text-[#607D8B]",
+    "icon": "trash-2"
   }
 ]
