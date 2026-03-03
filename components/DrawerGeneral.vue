@@ -25,8 +25,19 @@
         <h3 class="tw-font-bold tw-text-gray-700 tw-mb-4">通知設定</h3>
         <div class="tw-flex tw-items-center tw-justify-between tw-p-2">
           <span class="tw-text-sm tw-text-gray-600">プッシュ通知を受け取る</span>
-          <div class="tw-w-12 tw-h-7 tw-bg-[#85C441] tw-rounded-full tw-relative tw-cursor-pointer">
-            <div class="tw-absolute tw-right-1 tw-top-1 tw-w-5 tw-h-5 tw-bg-white tw-rounded-full"></div>
+          <div
+            @click="toggleNotification"
+            :class="[
+              'tw-w-12 tw-h-7 tw-rounded-full tw-relative tw-cursor-pointer tw-transition-colors tw-duration-300',
+              notificationEnabled ? 'tw-bg-[#85C441]' : 'tw-bg-gray-300'
+            ]"
+          >
+            <div
+              :class="[
+                'tw-absolute tw-top-1 tw-w-5 tw-h-5 tw-bg-white tw-rounded-full tw-transition-all tw-duration-300',
+                notificationEnabled ? 'tw-right-1' : 'tw-left-1'
+              ]"
+            ></div>
           </div>
         </div>
       </section>
@@ -39,17 +50,31 @@
 const { locale, setLocale } = useI18n()
 const currentLocale = computed(() => locale.value)
 
-/**
- * ★修正ポイント:
- * 'as const' を付与することで、codeプロパティを string ではなく 
- * "ja" | "en" | "zh" というリテラル型として認識させます。
- */
 const availableLocales = [
   { code: 'ja', name: '日本語' },
   { code: 'en', name: 'English' },
   { code: 'zh', name: '简体中文' },
 ] as const
 
+// --- 通知設定の永続化 ---
+const NOTIFICATION_KEY = 'ru-mana-notification-enabled'
+const notificationEnabled = ref(true)
+
+onMounted(() => {
+  if (process.client) {
+    const stored = localStorage.getItem(NOTIFICATION_KEY)
+    if (stored !== null) {
+      notificationEnabled.value = stored === 'true'
+    }
+  }
+})
+
+const toggleNotification = () => {
+  notificationEnabled.value = !notificationEnabled.value
+  if (process.client) {
+    localStorage.setItem(NOTIFICATION_KEY, String(notificationEnabled.value))
+  }
+}
 </script>
 
 <style scoped>

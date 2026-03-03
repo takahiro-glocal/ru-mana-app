@@ -1,20 +1,41 @@
 <template>
-  <!-- <div class="tw-min-h-screen tw-bg-[#F9F5E7]"> -->
-    <!-- <SettingsHeader title="アクティビティ" /> -->
-    <!-- <div class="tw-p-4 tw-max-w-2xl tw-mx-auto"> -->
-      <div v-if="activities.length === 0" class="tw-text-center tw-py-20 tw-text-gray-400">
+      <div v-if="isLoading" class="tw-text-center tw-py-20 tw-text-gray-400">
+        <p>読み込み中...</p>
+      </div>
+      <div v-else-if="activities.length === 0" class="tw-text-center tw-py-20 tw-text-gray-400">
         <p>まだアクティビティはありません</p>
       </div>
       <div v-else class="tw-space-y-4">
-        <div v-for="i in 3" :key="i" class="tw-bg-white tw-p-4 tw-rounded-2xl tw-shadow-sm">
-          <p class="tw-text-sm tw-text-gray-600">投稿しました</p>
-          <p class="tw-text-xs tw-text-gray-400 tw-mt-1">2025/02/18</p>
+        <div v-for="activity in activities" :key="activity.id" class="tw-bg-white tw-p-4 tw-rounded-2xl tw-shadow-sm">
+          <p class="tw-text-sm tw-text-gray-600 tw-line-clamp-2">{{ activity.body }}</p>
+          <p class="tw-text-xs tw-text-gray-400 tw-mt-1">{{ formatDate(activity.createdAt) }}</p>
         </div>
       </div>
-    <!-- </div> -->
-  <!-- </div> -->
 </template>
 
 <script setup lang="ts">
-const activities = ref([]) // 将来的にuseFirestoreから取得
+import type { Post } from '~/composables/useFirestore'
+
+const { user } = useAuth()
+const { getUserPosts } = useFirestore()
+
+const activities = ref<Post[]>([])
+const isLoading = ref(true)
+
+const formatDate = (timestamp: any) => {
+  if (!timestamp?.toDate) return ''
+  const d = timestamp.toDate()
+  return d.toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })
+}
+
+onMounted(async () => {
+  if (user.value?.uid) {
+    try {
+      activities.value = await getUserPosts(user.value.uid)
+    } catch (e) {
+      console.error('Failed to load activities:', e)
+    }
+  }
+  isLoading.value = false
+})
 </script>
