@@ -59,18 +59,21 @@
               <Lightbulb class="tw-w-14 tw-h-14 tw-mb-2" />
               <span class="tw-font-bold tw-text-lg">しるまな</span>
             </NuxtLink>
-            <NuxtLink :to="localePath('/miru')" class="tw-bg-[#F26522] tw-aspect-square tw-rounded-2xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-sm hover:tw-opacity-90 tw-transition-all">
-              <Binoculars class="tw-w-14 tw-h-14 tw-mb-2" />
-              <span class="tw-font-bold tw-text-lg">みるまな</span>
-            </NuxtLink>
-            <NuxtLink :to="localePath('/kiku')" class="tw-bg-[#E4007F] tw-aspect-square tw-rounded-2xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-sm hover:tw-opacity-90 tw-transition-all">
+            <div class="tw-relative tw-aspect-square tw-rounded-2xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-sm tw-cursor-pointer tw-overflow-hidden" @click="showComingSoon('みるまな')">
+              <div class="tw-absolute tw-inset-0 tw-bg-[#F26522] tw-bg-cover tw-bg-center" style="background-image: url('/img/shiru-theme.png');"></div>
+              <div class="tw-relative tw-z-10 tw-flex tw-flex-col tw-items-center tw-justify-center">
+                <Binoculars class="tw-w-14 tw-h-14 tw-mb-2" />
+                <span class="tw-font-bold tw-text-lg">みるまな</span>
+              </div>
+            </div>
+            <div class="tw-bg-[#E4007F] tw-aspect-square tw-rounded-2xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-sm tw-cursor-pointer" @click="showComingSoon('きくまな')">
               <Ear class="tw-w-14 tw-h-14 tw-mb-2" />
               <span class="tw-font-bold tw-text-lg">きくまな</span>
-            </NuxtLink>
-            <NuxtLink :to="localePath('/iku')" class="tw-bg-[#0099DD] tw-aspect-square tw-rounded-2xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-sm hover:tw-opacity-90 tw-transition-all">
+            </div>
+            <div class="tw-bg-[#0099DD] tw-aspect-square tw-rounded-2xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-sm tw-cursor-pointer" @click="showComingSoon('いくまな')">
               <Footprints class="tw-w-14 tw-h-14 tw-mb-2" />
               <span class="tw-font-bold tw-text-lg">いくまな</span>
-            </NuxtLink>
+            </div>
           </div>
 
           <div class="tw-hidden md:tw-block tw-space-y-4">
