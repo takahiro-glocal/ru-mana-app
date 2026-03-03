@@ -1,16 +1,20 @@
-import { 
-  collection, 
-  addDoc, 
-  query, 
-  where, 
-  orderBy, 
-  onSnapshot, 
-  serverTimestamp, 
-  doc, 
-  updateDoc, 
+import {
+  collection,
+  collectionGroup,
+  addDoc,
+  query,
+  where,
+  orderBy,
+  limit as firestoreLimit,
+  onSnapshot,
+  getDocs,
+  serverTimestamp,
+  doc,
+  updateDoc,
   deleteDoc,
   increment,
-  getDoc
+  getDoc,
+  setDoc
 } from "firebase/firestore";
 
 export interface Post {
@@ -42,6 +46,7 @@ export const useFirestore = () => {
   // State
   const posts = ref<Post[]>([]);
   const threads = ref<Thread[]>([]); // スレッド一覧用
+  const allThreads = ref<Thread[]>([]); // 全スレッド (検索用)
   const isLoading = ref(false);
 
   // --- Posts Logic (Existing) ---
@@ -96,9 +101,95 @@ export const useFirestore = () => {
     await updateDoc(postRef, { likes: increment(1) });
   };
 
-  const getUserPosts = async (userId: string) => {
-    // Implementation for getting user posts (omitted for brevity as per instructions)
-    return [];
+  /**
+   * ユーザーの投稿履歴を取得 (collectionGroup query)
+   */
+  const getUserPosts = async (userId: string): Promise<Post[]> => {
+    const q = query(
+      collectionGroup($firestore, 'posts'),
+      where('userId', '==', userId),
+      orderBy('createdAt', 'desc'),
+      firestoreLimit(20)
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(d => ({
+      id: d.id,
+      ...d.data()
+    } as Post));
+  };
+
+  /**
+   * ポイント取得 (users/{uid} ドキュメントから)
+   */
+  const getUserPoints = async (userId: string): Promise<number> => {
+    const userDoc = await getDoc(doc($firestore, 'users', userId));
+    return userDoc.exists() ? (userDoc.data().points || 0) : 0;
+  };
+
+  /**
+   * ポイント加算
+   */
+  const addPoints = async (userId: string, amount: number, reason: string) => {
+    const userRef = doc($firestore, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    if (!userDoc.exists()) {
+      await setDoc(userRef, { points: amount });
+    } else {
+      await updateDoc(userRef, { points: increment(amount) });
+    }
+    // ポイント履歴を追加
+    await addDoc(collection($firestore, `users/${userId}/point_history`), {
+      amount,
+      reason,
+      createdAt: serverTimestamp()
+    });
+  };
+
+  /**
+   * ポイント履歴取得
+   */
+  const getPointHistory = async (userId: string) => {
+    const q = query(
+      collection($firestore, `users/${userId}/point_history`),
+      orderBy('createdAt', 'desc'),
+      firestoreLimit(20)
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  };
+
+  /**
+   * フィードバック送信 → Firestore保存
+   */
+  const submitFeedback = async (content: string, userId: string, userName: string) => {
+    await addDoc(collection($firestore, 'feedback'), {
+      content,
+      userId,
+      userName,
+      createdAt: serverTimestamp(),
+      status: 'new'
+    });
+  };
+
+  /**
+   * 最新スレッドを全カテゴリ横断で取得（ホーム更新フィード用）
+   */
+  const subscribeToLatestThreads = (limitCount: number = 5) => {
+    isLoading.value = true;
+    const q = query(
+      collection($firestore, 'threads'),
+      orderBy('updatedAt', 'desc')
+    );
+
+    return onSnapshot(q, (snapshot) => {
+      const fetched = snapshot.docs.map(d => ({
+        id: d.id,
+        ...d.data()
+      } as Thread));
+      allThreads.value = fetched;
+      threads.value = fetched.slice(0, limitCount);
+      isLoading.value = false;
+    });
   };
 
   // --- ★ New: Threads Logic ---
@@ -150,7 +241,8 @@ export const useFirestore = () => {
 
   return {
     posts: readonly(posts),
-    threads: readonly(threads), // Expose threads
+    threads: readonly(threads),
+    allThreads: readonly(allThreads),
     isLoading: readonly(isLoading),
     subscribeToPosts,
     addPost,
@@ -158,7 +250,12 @@ export const useFirestore = () => {
     deletePost,
     likePost,
     getUserPosts,
-    subscribeToCategoryThreads, // New
-    createThread // New
+    getUserPoints,
+    addPoints,
+    getPointHistory,
+    submitFeedback,
+    subscribeToLatestThreads,
+    subscribeToCategoryThreads,
+    createThread
   };
 };

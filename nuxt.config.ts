@@ -145,6 +145,7 @@ export default defineNuxtConfig({
       appId: process.env.APP_ID,
       measurementId: process.env.MEASUREMENT_ID,
       googleFcmPublicVapidKey: process.env.GOOGLE_FCM_PUBLICVAPIDKEY,
+      openWeatherApiKey: process.env.OPEN_WEATHER_API_KEY,
     }
   },
   ssr: false,

@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig();
@@ -18,6 +19,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   const app = initializeApp(firebaseConfig);
   const firestore = getFirestore(app);
   const auth = getAuth(app);
+  const storage = getStorage(app);
 
   // オフライン永続化 (ブラウザのみ)
   if (process.client) {
@@ -34,6 +36,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     provide: {
       firestore,
       auth,
+      storage,
     },
   };
 });
