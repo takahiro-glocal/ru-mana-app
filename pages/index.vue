@@ -264,11 +264,6 @@ const localePath = useLocalePath();
 const isLoginModalOpen = ref(false);
 
 // --- PWA Install Prompt ---
-interface BeforeInstallPromptEvent extends Event {
-  prompt(): Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-}
-
 let deferredPrompt: BeforeInstallPromptEvent | null = null;
 if (process.client) {
   window.addEventListener('beforeinstallprompt', (e: Event) => {
@@ -288,7 +283,7 @@ const handleInstall = async () => {
 };
 
 // --- Mobile Footer Actions ---
-const mobileFooterItems = computed(() => [
+const mobileFooterItems = computed<MobileFooterItem[]>(() => [
   { icon: Download, label: t('dashboard.download'), action: () => handleInstall() },
   { icon: Settings, label: t('dashboard.settings'), action: () => openDrawer('general') },
   { icon: UserCircle, label: t('dashboard.profile'), action: () => user.value ? openDrawer('profile') : (isLoginModalOpen.value = true) },
@@ -296,7 +291,7 @@ const mobileFooterItems = computed(() => [
 ])
 
 // --- SNS Links ---
-const snsLinks = [
+const snsLinks: SnsLink[] = [
   { icon: Facebook, label: 'Facebook', url: 'https://www.facebook.com/' },
   { icon: Twitter, label: 'Twitter', url: 'https://x.com/' },
   { icon: Youtube, label: 'YouTube', url: 'https://www.youtube.com/' },
@@ -395,12 +390,6 @@ let unsubLatest: (() => void) | null = null;
 // --- Google Maps Logic ---
 const MAP_ID = '880da9152ccc05531e5c5014'; 
 const { load } = useMapsLoader();
-// Google Maps types
-interface PulseOverlayInstance {
-  setPosition(latlng: google.maps.LatLng): void;
-  setMap(map: google.maps.Map | null): void;
-}
-
 const mapContainerPC = ref<HTMLElement | null>(null);
 let mapInstance: google.maps.Map | null = null;
 let userOverlay: PulseOverlayInstance | null = null;
@@ -442,7 +431,9 @@ const initGoogleMap = async () => {
         zoom: 16,
         mapId: MAP_ID,
         disableDefaultUI: true,
-        gestureHandling: "greedy",
+        gestureHandling: "none",
+        zoomControl: false,
+        scrollwheel: false,
       });
       const PulseOverlayClass = createPulseOverlayClass(googleMaps);
       userOverlay = new PulseOverlayClass(mapInstance);

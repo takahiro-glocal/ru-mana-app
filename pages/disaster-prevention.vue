@@ -173,25 +173,9 @@ let userMarker: google.maps.Marker | null = null
 const markers: google.maps.Marker[] = []
 const circles: google.maps.Circle[] = []
 
-interface LocationData {
-  lat: number
-  lng: number
-  type: string
-  title: string
-  range?: number
-}
-
 const selectedFacility = ref<LocationData | null>(null)
 
-interface Category {
-  id: string
-  label: string
-  color: string
-  iconColor: string
-  active: boolean
-}
-
-const categories = ref<Category[]>([
+const categories = ref<DisasterCategory[]>([
   { id: 'medical', label: t('disaster.cat_medical'), color: '#F87171', iconColor: '#F87171', active: true },
   { id: 'evac',    label: t('disaster.cat_evacuation'), color: '#4ADE80', iconColor: '#4ADE80', active: true },
   { id: 'store',   label: t('disaster.cat_grocery'), color: '#2DD4BF', iconColor: '#2DD4BF', active: false },

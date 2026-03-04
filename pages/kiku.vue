@@ -132,7 +132,7 @@ const activeTab = ref('feed');
 const newPostContent = ref('');
 
 // Mock Data
-const posts = ref([
+const posts = ref<KikuPost[]>([
   {
     id: 1,
     userName: 'Alex Smith',
