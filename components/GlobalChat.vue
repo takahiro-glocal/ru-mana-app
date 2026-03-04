@@ -1,32 +1,33 @@
 <template>
-  <!-- FAB Button -->
-  <button
-    v-show="!isChatOpen"
-    @click="openChat"
-    class="tw-fixed tw-bottom-24 md:tw-bottom-8 tw-right-4 md:tw-right-8 tw-z-[55] tw-w-14 tw-h-14 tw-bg-[#4B3E8E] tw-rounded-full tw-shadow-lg tw-flex tw-items-center tw-justify-center tw-text-white hover:tw-bg-[#3d3275] active:tw-scale-90 tw-transition-all"
-    :aria-label="$t('chat.open')"
-  >
-    <MessageCircle class="tw-w-6 tw-h-6" />
-    <span
-      v-if="messages.length === 0"
-      class="tw-absolute -tw-top-1 -tw-right-1 tw-w-4 tw-h-4 tw-bg-[#E4007F] tw-rounded-full tw-animate-pulse"
-    ></span>
-  </button>
+  <div>
+    <!-- FAB Button -->
+    <button
+      v-show="!isChatOpen"
+      @click="openChat"
+      class="tw-fixed tw-bottom-24 md:tw-bottom-8 tw-right-4 md:tw-right-8 tw-z-[55] tw-w-14 tw-h-14 tw-bg-[#4B3E8E] tw-rounded-full tw-shadow-lg tw-flex tw-items-center tw-justify-center tw-text-white hover:tw-bg-[#3d3275] active:tw-scale-90 tw-transition-all"
+      :aria-label="$t('chat.open')"
+    >
+      <MessageCircle class="tw-w-6 tw-h-6" />
+      <span
+        v-if="messages.length === 0"
+        class="tw-absolute -tw-top-1 -tw-right-1 tw-w-4 tw-h-4 tw-bg-[#E4007F] tw-rounded-full tw-animate-pulse"
+      ></span>
+    </button>
 
-  <!-- Chat Panel Backdrop (mobile only) -->
-  <Transition name="chat-fade">
-    <div
-      v-if="isChatOpen"
-      class="tw-fixed tw-inset-0 tw-bg-black/20 tw-backdrop-blur-sm tw-z-[75] md:tw-hidden"
-      @click="closeChat"
-    ></div>
-  </Transition>
+    <!-- Chat Panel Backdrop (mobile only) -->
+    <Transition name="chat-fade">
+      <div
+        v-if="isChatOpen"
+        class="tw-fixed tw-inset-0 tw-bg-black/20 tw-backdrop-blur-sm tw-z-[75] md:tw-hidden"
+        @click="closeChat"
+      ></div>
+    </Transition>
 
-  <!-- Chat Panel -->
-  <Transition name="chat-slide">
-    <div
-      v-if="isChatOpen"
-      class="tw-fixed tw-z-[80]
+    <!-- Chat Panel -->
+    <Transition name="chat-slide">
+      <div
+        v-if="isChatOpen"
+        class="tw-fixed tw-z-[80]
         tw-bottom-0 tw-left-0 tw-right-0 tw-top-12
         md:tw-bottom-8 md:tw-right-8 md:tw-left-auto md:tw-top-auto
         md:tw-w-[400px] md:tw-h-[600px]
@@ -140,7 +141,8 @@
         </button>
       </div>
     </div>
-  </Transition>
+    </Transition>
+  </div>
 </template>
 
 <script setup lang="ts">
