@@ -63,6 +63,7 @@
               <div class="tw-absolute tw-inset-0">
                 <SkyAnimation :show-logo="false" compact />
               </div>
+              <div class="tw-absolute tw-inset-0 tw-bg-black/30"></div>
               <div class="tw-relative tw-z-10 tw-flex tw-flex-col tw-items-center tw-justify-center">
                 <Binoculars class="tw-w-14 tw-h-14 tw-mb-2" />
                 <span class="tw-font-bold tw-text-lg">みるまな</span>
@@ -100,8 +101,33 @@
             </div>
           </div>
 
-          <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-10 tw-gap-4">
-            <div class="tw-col-span-1 md:tw-col-span-4 tw-bg-[#2C3E50] tw-rounded-3xl tw-p-6 tw-text-white tw-shadow-lg">
+          <!-- モバイル: おたすけボタン + Update を横並び -->
+          <div class="md:tw-hidden tw-flex tw-gap-3">
+            <NuxtLink :to="localePath('/trouble')" class="tw-flex tw-items-center tw-gap-3 tw-bg-white tw-rounded-2xl tw-p-3 tw-shadow-sm tw-border-2 tw-border-[#E4007F] active:tw-scale-95 tw-transition-transform tw-flex-shrink-0">
+              <div class="tw-bg-[#E4007F] tw-text-white tw-w-10 tw-h-10 tw-rounded-full tw-flex tw-items-center tw-justify-center">
+                <span class="tw-font-black tw-text-xl">!</span>
+              </div>
+              <div>
+                <div class="tw-text-[#E4007F] tw-font-black tw-text-xs tw-uppercase">In Trouble</div>
+                <div class="tw-text-gray-500 tw-text-[10px] tw-font-bold">おたすけ</div>
+              </div>
+            </NuxtLink>
+            <div class="tw-flex-1 tw-bg-[#2C3E50] tw-rounded-2xl tw-p-3 tw-text-white tw-shadow-sm tw-min-w-0">
+              <div class="tw-flex tw-items-center tw-gap-1 tw-text-[#E4007F] tw-mb-1 tw-font-bold tw-text-xs">
+                <ArrowUp class="tw-w-3 tw-h-3" /> Update
+              </div>
+              <ul v-if="latestThreads.length > 0" class="tw-space-y-1">
+                <li v-for="thread in latestThreads.slice(0, 3)" :key="thread.id" class="tw-truncate tw-cursor-pointer hover:tw-opacity-80 tw-text-[11px]" @click="navigateTo(localePath(`/shiru/category/${thread.categoryId}/thread/${thread.id}`))">
+                  {{ thread.title }}
+                </li>
+              </ul>
+              <p v-else class="tw-text-[11px] tw-opacity-60">更新はありません</p>
+            </div>
+          </div>
+
+          <!-- PC: 従来の3カラムレイアウト -->
+          <div class="tw-hidden md:tw-grid tw-grid-cols-10 tw-gap-4">
+            <div class="tw-col-span-4 tw-bg-[#2C3E50] tw-rounded-3xl tw-p-6 tw-text-white tw-shadow-lg">
               <div class="tw-flex tw-items-center tw-gap-2 tw-text-[#E4007F] tw-mb-3 tw-font-bold">
                 <ArrowUp class="tw-w-5 tw-h-5" /> Update
               </div>
@@ -112,11 +138,11 @@
               </ul>
               <p v-else class="tw-text-sm tw-opacity-60">更新はありません</p>
             </div>
-            <div class="tw-col-span-1 md:tw-col-span-3 tw-bg-[#008080] tw-rounded-3xl tw-p-6 tw-text-white tw-shadow-lg">
+            <div class="tw-col-span-3 tw-bg-[#008080] tw-rounded-3xl tw-p-6 tw-text-white tw-shadow-lg">
               <div class="tw-font-bold tw-mb-1 tw-text-lg">今日は何の日</div>
               <p class="tw-text-[11px] tw-leading-relaxed">{{ todayEvent }}</p>
             </div>
-            <div class="tw-col-span-1 md:tw-col-span-3 tw-flex tw-flex-col tw-items-center tw-justify-center">
+            <div class="tw-col-span-3 tw-flex tw-flex-col tw-items-center tw-justify-center">
               <NuxtLink :to="localePath('/trouble')" class="tw-relative tw-w-28 tw-h-28 tw-rounded-full tw-bg-white tw-border-[6px] tw-border-[#E4007F] tw-flex tw-flex-col tw-items-center tw-justify-center tw-shadow-xl active:tw-scale-95 tw-transition-transform">
                 <div class="tw-bg-[#E4007F] tw-text-white tw-w-10 tw-h-10 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-mb-1">
                   <span class="tw-font-black tw-text-2xl">!</span>
