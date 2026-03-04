@@ -3,20 +3,20 @@
     <div v-if="isOpen" class="tw-fixed tw-inset-0 tw-z-[100] tw-flex tw-items-center tw-justify-center tw-p-4">
       <div class="tw-absolute tw-inset-0 tw-bg-black/40 tw-backdrop-blur-sm" @click="close"></div>
       
-      <div class="tw-relative tw-w-full tw-max-w-md tw-bg-white tw-rounded-[2.5rem] tw-shadow-2xl tw-overflow-hidden tw-flex tw-flex-col">
-        <div class="tw-bg-[#4B3E8E] tw-h-32 tw-flex tw-items-center tw-justify-center tw-relative">
+      <div class="tw-relative tw-w-full tw-max-w-md tw-max-h-[calc(100vh-2rem)] tw-bg-white tw-rounded-[2.5rem] tw-shadow-2xl tw-overflow-y-auto tw-flex tw-flex-col">
+        <div class="tw-bg-[#4B3E8E] tw-h-24 md:tw-h-32 tw-flex tw-items-center tw-justify-center tw-relative tw-flex-shrink-0">
           <div class="tw-absolute tw-top-[-50%] tw-left-[-20%] tw-w-64 tw-h-64 tw-bg-[#E4007F] tw-rounded-full tw-opacity-20 tw-blur-3xl"></div>
           <div class="tw-absolute tw-bottom-[-50%] tw-right-[-20%] tw-w-64 tw-h-64 tw-bg-[#85C441] tw-rounded-full tw-opacity-20 tw-blur-3xl"></div>
           
-          <img src="/images/logo.png" alt="Logo" class="tw-w-20 tw-h-20 tw-bg-white tw-rounded-full tw-p-1 tw-shadow-lg tw-z-10" />
+          <img src="/images/logo.png" alt="Logo" class="tw-w-16 tw-h-16 md:tw-w-20 md:tw-h-20 tw-bg-white tw-rounded-full tw-p-1 tw-shadow-lg tw-z-10" />
           
           <button @click="close" class="tw-absolute tw-top-4 tw-right-4 tw-text-white/70 hover:tw-text-white tw-bg-black/10 tw-rounded-full tw-p-1">
             <X class="tw-w-6 tw-h-6" />
           </button>
         </div>
 
-        <div class="tw-p-8">
-          <h2 class="tw-text-center tw-text-2xl tw-font-bold tw-text-gray-800 tw-mb-6">
+        <div class="tw-p-6 md:tw-p-8">
+          <h2 class="tw-text-center tw-text-xl md:tw-text-2xl tw-font-bold tw-text-gray-800 tw-mb-4 md:tw-mb-6">
             {{ isRegister ? $t('auth.account_create') : $t('auth.welcome_back') }}
           </h2>
 
