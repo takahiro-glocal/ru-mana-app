@@ -237,5 +237,241 @@
     "support_hotline": "Multi-language Support",
     "copy_success": "Location copied to clipboard",
     "got_it": "Got it"
+  },
+  "guides": {
+    "transport": {
+      "phone": {
+        "title": "Phone Calls & Noise on Transit",
+        "desc": "Talking on the phone is considered rude on trains and buses in Japan. Set your phone to silent mode. Be aware of sound leaking from earphones. Near priority seats, it's polite to turn your phone off entirely.",
+        "good": "Set phone to silent mode",
+        "bad": "Talk loudly on the phone"
+      },
+      "backpack": {
+        "title": "Backpacks & Large Bags",
+        "desc": "On crowded trains, carry your backpack in front of you or place it on the overhead rack. Keep large suitcases out of doorways so others can board and exit easily.",
+        "good": "Carry in front or use overhead rack",
+        "bad": "Wear backpack on your back"
+      },
+      "queue": {
+        "title": "Lining Up to Board",
+        "desc": "Platforms in Japan have marked boarding positions. Line up in order and wait for everyone to exit the train before boarding. Cutting in line is considered extremely rude.",
+        "good": "Wait in line for your turn",
+        "bad": "Cut into the queue"
+      },
+      "priority": {
+        "title": "Priority Seats",
+        "desc": "Priority seats are reserved for elderly passengers, pregnant women, people with disabilities, and those with small children. If you see someone who needs the seat, please offer yours.",
+        "good": "Offer your seat to those in need",
+        "bad": "Pretend to sleep in priority seats"
+      },
+      "eating": {
+        "title": "Eating on Trains",
+        "desc": "Eating on commuter trains and buses is generally not acceptable. However, eating is fine on bullet trains (Shinkansen) and limited express trains. Avoid strongly scented foods.",
+        "good": "Enjoy food on Shinkansen/express trains",
+        "bad": "Eat on commuter trains"
+      }
+    },
+    "public": {
+      "noise": {
+        "title": "Quiet Spaces",
+        "desc": "Libraries, hospitals, and museums are quiet zones. If you receive a phone call, step outside before answering. Keep your voice low in these spaces.",
+        "good": "Stay quiet and respectful",
+        "bad": "Talk loudly"
+      },
+      "queue": {
+        "title": "Queuing Culture",
+        "desc": "Japanese people take queuing very seriously. Whether at ATMs, cash registers, or restrooms, always join the end of the line and wait your turn patiently.",
+        "good": "Join the end of the line",
+        "bad": "Ignore the queue"
+      },
+      "shoes": {
+        "title": "Removing Shoes",
+        "desc": "You must remove your shoes at temples, traditional inns (ryokan), some restaurants, and clinics. A raised floor at the entrance is the signal to take shoes off. Use the provided slippers if available.",
+        "good": "Remove shoes at the entrance step",
+        "bad": "Walk in with shoes on"
+      },
+      "trash": {
+        "title": "Few Public Trash Cans",
+        "desc": "Japan has very few public trash cans. Carry a small bag with you for your waste and dispose of it at your accommodation or at a convenience store. Littering is prohibited.",
+        "good": "Take your trash with you",
+        "bad": "Litter on the street"
+      }
+    },
+    "spa": {
+      "wash": {
+        "title": "Wash Before Entering the Bath",
+        "desc": "Before entering the communal bath, you must rinse your body or wash at the shower station. This is the most important bathing rule in Japan — it keeps the shared water clean for everyone.",
+        "good": "Wash your body before bathing",
+        "bad": "Get into the bath without washing"
+      },
+      "towel": {
+        "title": "Towel Etiquette",
+        "desc": "Never put your towel in the bath water. Place your small towel on top of your head or on the edge of the bath. Leave your large towel in the changing room.",
+        "good": "Place towel on your head or shelf",
+        "bad": "Dip your towel in the bath"
+      },
+      "dry": {
+        "title": "Before Returning to the Changing Room",
+        "desc": "Before going back to the changing room, lightly towel off your body while still in the bathing area. Walking back dripping wet makes the floor slippery and is inconsiderate to others.",
+        "good": "Towel off in the bathing area",
+        "bad": "Walk back soaking wet"
+      },
+      "tattoo": {
+        "title": "Tattoos",
+        "desc": "Many onsen and sento (public baths) prohibit entry for people with tattoos. Check in advance if tattoos are accepted, or consider using private baths (kashikiri buro).",
+        "good": "Check tattoo policy beforehand",
+        "bad": "Enter a no-tattoo facility without asking"
+      },
+      "swim": {
+        "title": "Swimwear",
+        "desc": "Swimwear is not allowed in Japanese onsen and sento (except for some mixed-gender water park facilities). Bathing nude is the standard practice.",
+        "good": "Bathe nude (Japanese style)",
+        "bad": "Wear swimwear in the bath"
+      }
+    },
+    "cafe": {
+      "itadakimasu": {
+        "title": "\"Itadakimasu\" & \"Gochisousama\"",
+        "desc": "Say \"itadakimasu\" (I humbly receive) before eating, and \"gochisousama deshita\" (thank you for the meal) after. This beautiful Japanese custom expresses gratitude for the food and the people who prepared it.",
+        "good": "Say greetings before and after meals",
+        "bad": "Start eating without a word"
+      },
+      "chopsticks": {
+        "title": "Chopstick Etiquette",
+        "desc": "Never stick chopsticks upright in rice — this resembles a funeral ritual and is deeply offensive. Also never pass food chopstick-to-chopstick, as this mirrors another funeral custom. Avoid hovering chopsticks over dishes indecisively.",
+        "good": "Rest chopsticks on the holder",
+        "bad": "Stick chopsticks upright in rice"
+      },
+      "slurp": {
+        "title": "Slurping Noodles",
+        "desc": "In Japan, it's perfectly acceptable to slurp noodles like ramen and soba. In fact, it's considered a way to show you're enjoying the food and to enhance the flavor.",
+        "good": "Slurp your noodles audibly",
+        "bad": "Worry too much about making noise"
+      },
+      "tipping": {
+        "title": "No Tipping Culture",
+        "desc": "Japan has no tipping culture. Tips are not expected at restaurants, taxis, or hotels. Leaving a tip may actually cause confusion or embarrassment. Good service is simply the standard.",
+        "good": "Pay the exact bill amount",
+        "bad": "Leave a tip on the table"
+      },
+      "oshibori": {
+        "title": "Oshibori (Hot Towel) Usage",
+        "desc": "Restaurants in Japan often provide an oshibori (warm towel). It is meant for wiping your hands only. Using it to wipe your face or neck is considered poor manners.",
+        "good": "Use it to wipe your hands",
+        "bad": "Wipe your face with it"
+      }
+    },
+    "shopping": {
+      "cash": {
+        "title": "Cash Tray Payment",
+        "desc": "At registers, place your money on the cash tray rather than handing it directly to the cashier. This is the Japanese way. Cashless payment (IC cards, QR codes) is also widely accepted.",
+        "good": "Place money on the tray",
+        "bad": "Hand money directly to the cashier"
+      },
+      "bag": {
+        "title": "Plastic Bags Are Charged",
+        "desc": "Since 2020, plastic bags are charged at all stores in Japan. Bring your own eco-bag (reusable bag). At convenience stores, you'll be asked \"Do you need a bag?\"",
+        "good": "Bring your own eco-bag",
+        "bad": "Buy a bag every time"
+      },
+      "taxfree": {
+        "title": "Tax-Free Shopping",
+        "desc": "Foreign tourists can get a consumption tax exemption at qualifying stores when spending ¥5,000 or more. You'll need your passport. Tax-free items must not be opened until you leave Japan.",
+        "good": "Bring passport for tax-free processing",
+        "bad": "Open tax-free items in Japan"
+      },
+      "fitting": {
+        "title": "Fitting Room Etiquette",
+        "desc": "When trying on clothes, always ask a staff member before using the fitting room. Use the face cover provided to prevent makeup from staining the garments.",
+        "good": "Use the face cover provided",
+        "bad": "Enter the fitting room without asking"
+      }
+    },
+    "hotel": {
+      "shoes": {
+        "title": "Indoor Footwear",
+        "desc": "At ryokan (traditional inns) and some hotel areas, remove your shoes at the entrance and switch to slippers. On tatami mat floors, remove even the slippers — walk in socks or barefoot.",
+        "good": "Remove shoes, switch to slippers",
+        "bad": "Walk in with shoes on"
+      },
+      "yukata": {
+        "title": "How to Wear a Yukata",
+        "desc": "Ryokan provide yukata (light cotton robes). Wrap the left side over the right (as seen from outside). Wrapping right over left is reserved for dressing the deceased — an important detail to remember.",
+        "good": "Left side over right (correct)",
+        "bad": "Right side over left (reversed)"
+      },
+      "checkout": {
+        "title": "Check-out Time",
+        "desc": "Japanese accommodations are strict about check-out times, usually 10:00–11:00 AM. If you need a late check-out, always ask the front desk in advance.",
+        "good": "Check out on time",
+        "bad": "Overstay without notice"
+      },
+      "quiet": {
+        "title": "Quiet Hours",
+        "desc": "At ryokan and hotels, keep quiet after 10 PM. Ryokan in particular may have thin walls, so being considerate of neighboring rooms is important.",
+        "good": "Keep quiet after 10 PM",
+        "bad": "Make noise late at night"
+      }
+    },
+    "culture": {
+      "shrine": {
+        "title": "Visiting Shrines & Temples",
+        "desc": "At Shinto shrines, follow the ritual: bow twice, clap twice, bow once. Bow before passing through the torii gate and walk along the sides of the path (the center is reserved for gods). At Buddhist temples, press your palms together without clapping.",
+        "good": "Two bows, two claps, one bow (shrines)",
+        "bad": "Walk down the center of the path"
+      },
+      "bowing": {
+        "title": "Bowing Culture",
+        "desc": "In Japan, bowing replaces handshaking. A 15° bow is for greetings, 30° for thank you, and 45° for deep apology. Simply follow the other person's lead and bow naturally in return.",
+        "good": "Bow naturally in return",
+        "bad": "Ignore the bow"
+      },
+      "gifts": {
+        "title": "Gift-Giving Etiquette",
+        "desc": "Give and receive gifts with both hands. It's polite to be modest when opening gifts in front of others. Avoid sets of 4 items, as the number four sounds like \"death\" (shi) in Japanese.",
+        "good": "Give and receive with both hands",
+        "bad": "Hand over carelessly with one hand"
+      },
+      "photo": {
+        "title": "Photography Manners",
+        "desc": "Avoid photographing people without permission. Many temples, shrines, and museums have restricted photography areas. Always check for signs before taking photos.",
+        "good": "Check if photography is allowed first",
+        "bad": "Photograph people without permission"
+      }
+    },
+    "trash": {
+      "sorting": {
+        "title": "Waste Sorting",
+        "desc": "Japan requires detailed waste sorting: burnable, non-burnable, recyclable, PET bottles, cans, and glass. Sorting rules vary by municipality, so check the local guidelines carefully.",
+        "good": "Follow local sorting rules",
+        "bad": "Throw everything in one bin"
+      },
+      "carry": {
+        "title": "Carry Your Trash",
+        "desc": "There are very few trash cans on Japanese streets. Carry a small bag with you for your waste. This practice is the foundation of Japan's famously clean streets.",
+        "good": "Carry a trash bag with you",
+        "bad": "Litter on the street"
+      },
+      "convenience": {
+        "title": "Convenience Store Bins",
+        "desc": "Trash cans outside convenience stores are intended only for items purchased at that store. Bringing household waste or trash from other stores is prohibited.",
+        "good": "Only dispose of items bought there",
+        "bad": "Bring in household waste"
+      },
+      "recycle": {
+        "title": "Recycling Awareness",
+        "desc": "Separate PET bottles into cap, label, and bottle before disposal. Recycling bins next to vending machines are for cans and PET bottles only.",
+        "good": "Separate labels and caps",
+        "bad": "Throw in whole without separating"
+      }
+    }
+  },
+  "translate": {
+    "button": "Translate",
+    "translating": "Translating...",
+    "powered_by": "Powered by AI",
+    "original": "Show original",
+    "translated": "Show translation",
+    "error": "Translation failed"
   }
 }

@@ -67,8 +67,8 @@ export const useAuth = () => {
 
   // ユーザー表示名取得（なければメールの一部、それもなければゲスト）
   const userDisplayName = computed(() => {
-    if (!user.value) return "ゲストさん";
-    return user.value.displayName || user.value.email?.split('@')[0] || "名無しさん";
+    if (!user.value) return "Guest";
+    return user.value.displayName || user.value.email?.split('@')[0] || "Guest";
   });
 
   // ユーザーアイコン取得

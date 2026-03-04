@@ -72,17 +72,17 @@
                   <h3 class="tw-text-xl tw-font-black tw-text-gray-800">{{ cat.name }}</h3>
                   
                   <div class="tw-mt-4 tw-bg-white/60 tw-backdrop-blur-sm tw-p-1 tw-rounded-full tw-flex tw-text-[10px] tw-font-bold tw-shadow-sm">
-                    <button 
-                      @click="activeTab = 'threads'"
-                      :class="['tw-flex-1 tw-py-2 tw-rounded-full tw-transition-all', activeTab === 'threads' ? 'tw-bg-white tw-shadow-sm tw-text-gray-800' : 'tw-text-gray-400']"
-                    >
-                      {{ $t('shiru.tab_threads') }}
-                    </button>
                     <button
                       @click="activeTab = 'guides'"
                       :class="['tw-flex-1 tw-py-2 tw-rounded-full tw-transition-all', activeTab === 'guides' ? 'tw-bg-white tw-shadow-sm tw-text-gray-800' : 'tw-text-gray-400']"
                     >
-                      {{ $t('shiru.tab_guides') }}
+                      {{ $t('shiru.tab_rules') }}
+                    </button>
+                    <button
+                      @click="activeTab = 'threads'"
+                      :class="['tw-flex-1 tw-py-2 tw-rounded-full tw-transition-all', activeTab === 'threads' ? 'tw-bg-white tw-shadow-sm tw-text-gray-800' : 'tw-text-gray-400']"
+                    >
+                      {{ $t('shiru.tab_qa') }}
                     </button>
                   </div>
                 </div>
@@ -175,8 +175,8 @@
             </div>
 
             <div class="tw-bg-gray-200 tw-p-1.5 tw-rounded-full tw-flex tw-gap-1">
-               <button @click="activeTab = 'threads'" :class="['tw-px-6 tw-py-2 tw-rounded-full tw-text-xs tw-font-bold tw-transition-all', activeTab === 'threads' ? 'tw-bg-white tw-shadow-sm tw-text-gray-800' : 'tw-text-gray-400']">{{ $t('shiru.tab_qa') }}</button>
                <button @click="activeTab = 'guides'" :class="['tw-px-6 tw-py-2 tw-rounded-full tw-text-xs tw-font-bold tw-transition-all', activeTab === 'guides' ? 'tw-bg-white tw-shadow-sm tw-text-gray-800' : 'tw-text-gray-400']">{{ $t('shiru.tab_rules') }}</button>
+               <button @click="activeTab = 'threads'" :class="['tw-px-6 tw-py-2 tw-rounded-full tw-text-xs tw-font-bold tw-transition-all', activeTab === 'threads' ? 'tw-bg-white tw-shadow-sm tw-text-gray-800' : 'tw-text-gray-400']">{{ $t('shiru.tab_qa') }}</button>
             </div>
           </div>
           
@@ -262,7 +262,9 @@
 import type { Component } from 'vue'
 import {
   Lightbulb, Search, Home, UserCircle, ChevronRight, Train, Users, Waves, Utensils, Plus,
-  MessageSquare, BookOpen, CheckCircle, XCircle, Shirt, Droplets, VolumeX, Backpack, ArrowUp
+  MessageSquare, BookOpen, CheckCircle, XCircle, Shirt, Droplets, VolumeX, Backpack, ArrowUp,
+  ShoppingBag, Bed, Landmark, Trash2, Heart, Footprints, AlertCircle, Soup, Banknote,
+  Receipt, Clock, Gift, Camera, Recycle
 } from 'lucide-vue-next'
 
 const route = useRoute()
@@ -286,7 +288,7 @@ const { loadGuides, getGuidesByCategory, isLoading: isGuideLoading } = useCultur
 const cid = computed(() => route.params.cid as string)
 const carouselRef = ref<HTMLElement | null>(null)
 const activeIndex = ref(0)
-const activeTab = ref<'threads' | 'guides'>('threads')
+const activeTab = ref<'threads' | 'guides'>('guides')
 
 let isInitialScroll = true
 let unsubscribe: (() => void) | null = null
@@ -296,17 +298,26 @@ const themeMap: Record<string, CategoryTheme> = {
   public: { bg: 'tw-bg-[#FCE7EB]', border: 'tw-border-[#F4A7B9]', text: 'tw-text-[#E95295]', dot: 'tw-bg-[#F4A7B9]', btnBg: 'tw-bg-[#E95295]' },
   spa: { bg: 'tw-bg-[#E5F1F6]', border: 'tw-border-[#7DB9DE]', text: 'tw-text-[#3E91FF]', dot: 'tw-bg-[#7DB9DE]', btnBg: 'tw-bg-[#3E91FF]' },
   cafe: { bg: 'tw-bg-[#FFF3E0]', border: 'tw-border-[#F5B169]', text: 'tw-text-[#F39800]', dot: 'tw-bg-[#F5B169]', btnBg: 'tw-bg-[#F39800]' },
+  shopping: { bg: 'tw-bg-[#F3E5F5]', border: 'tw-border-[#CE93D8]', text: 'tw-text-[#9C27B0]', dot: 'tw-bg-[#CE93D8]', btnBg: 'tw-bg-[#9C27B0]' },
+  hotel: { bg: 'tw-bg-[#E8F5E9]', border: 'tw-border-[#81C784]', text: 'tw-text-[#4CAF50]', dot: 'tw-bg-[#81C784]', btnBg: 'tw-bg-[#4CAF50]' },
+  culture: { bg: 'tw-bg-[#FFEBEE]', border: 'tw-border-[#E57373]', text: 'tw-text-[#F44336]', dot: 'tw-bg-[#E57373]', btnBg: 'tw-bg-[#F44336]' },
+  trash: { bg: 'tw-bg-[#ECEFF1]', border: 'tw-border-[#90A4AE]', text: 'tw-text-[#607D8B]', dot: 'tw-bg-[#90A4AE]', btnBg: 'tw-bg-[#607D8B]' },
   new: { bg: 'tw-bg-[#F3E5F5]', border: 'tw-border-[#B28FCE]', text: 'tw-text-[#9C27B0]', dot: 'tw-bg-[#B28FCE]', btnBg: 'tw-bg-[#9C27B0]' }
 }
 const getTheme = (id: string): CategoryTheme => themeMap[id] || themeMap.new
 
 const getCategoryIcon = (name: string) => {
-  const icons: Record<string, Component> = { train: Train, users: Users, waves: Waves, utensils: Utensils, plus: Plus }
+  const icons: Record<string, Component> = { train: Train, users: Users, waves: Waves, utensils: Utensils, 'shopping-bag': ShoppingBag, bed: Bed, landmark: Landmark, 'trash-2': Trash2, plus: Plus }
   return icons[name] || Plus
 }
 
 const mapGuideIcon = (iconName: string) => {
-  const iconMap: Record<string, Component> = { droplets: Droplets, shirt: Shirt, waves: Waves, 'volume-x': VolumeX, backpack: Backpack }
+  const iconMap: Record<string, Component> = {
+    droplets: Droplets, shirt: Shirt, waves: Waves, 'volume-x': VolumeX, backpack: Backpack,
+    users: Users, utensils: Utensils, heart: Heart, footprints: Footprints, 'alert-circle': AlertCircle,
+    soup: Soup, banknote: Banknote, 'shopping-bag': ShoppingBag, receipt: Receipt, 'trash-2': Trash2,
+    clock: Clock, landmark: Landmark, gift: Gift, camera: Camera, recycle: Recycle
+  }
   return iconMap[iconName] || BookOpen
 }
 
@@ -319,7 +330,7 @@ const getGuides = (categoryId: string) => getGuidesByCategory(categoryId).value
 const formatDate = (date: FirebaseTimestamp | Date | string | null) => {
   if (!date) return ''
   const d = (typeof date === 'object' && 'seconds' in date) ? new Date(date.seconds * 1000) : new Date(date)
-  return d.toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+  return d.toLocaleString(locale.value, { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
 const onMobileScroll = (e: Event) => {
@@ -336,7 +347,7 @@ const onMobileScroll = (e: Event) => {
 
 const switchCategory = (id: string) => {
   router.push(localePath(`/shiru/category/${id}`))
-  activeTab.value = 'threads'
+  activeTab.value = 'guides'
 }
 
 // Thread Creation
@@ -388,7 +399,7 @@ onUnmounted(() => {
   if (unsubscribe) unsubscribe()
 })
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 useHead(() => ({
   title: currentCategory.value ? `${currentCategory.value.name} | ${t('shiru.title')}` : t('shiru.title')

@@ -94,6 +94,7 @@ const props = defineProps<{
 const emit = defineEmits(['close']);
 
 const { loginWithGoogle, registerWithEmail, loginWithEmail } = useAuth();
+const { t } = useI18n();
 
 const isRegister = ref(false);
 const email = ref('');
@@ -124,7 +125,7 @@ const handleGoogleLogin = async () => {
     await loginWithGoogle();
     close();
   } catch (_e: unknown) {
-    errorMsg.value = 'Googleログインに失敗しました';
+    errorMsg.value = t('auth.google_login_error');
   } finally {
     isLoading.value = false;
   }
@@ -144,13 +145,13 @@ const handleSubmit = async () => {
     // Firebaseのエラーコードに応じた簡易メッセージ
     const firebaseError = e as { code?: string };
     if (firebaseError.code === 'auth/email-already-in-use') {
-      errorMsg.value = 'このメールアドレスは既に使用されています';
+      errorMsg.value = t('auth.email_in_use');
     } else if (firebaseError.code === 'auth/wrong-password' || firebaseError.code === 'auth/user-not-found') {
-      errorMsg.value = 'メールアドレスまたはパスワードが正しくありません';
+      errorMsg.value = t('auth.wrong_credentials');
     } else if (firebaseError.code === 'auth/weak-password') {
-      errorMsg.value = 'パスワードが弱すぎます';
+      errorMsg.value = t('auth.weak_password');
     } else {
-      errorMsg.value = 'エラーが発生しました。もう一度お試しください。';
+      errorMsg.value = t('auth.generic_error');
     }
   } finally {
     isLoading.value = false;

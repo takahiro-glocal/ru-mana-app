@@ -14,7 +14,7 @@
 
         <div class="tw-hidden md:tw-flex tw-items-center tw-gap-6">
           <div class="tw-relative">
-            <input type="text" class="tw-bg-[#4B3E8E] tw-bg-opacity-10 tw-rounded-md tw-py-2 tw-px-10 tw-w-80 tw-text-sm" placeholder="[スレッド内検索]">
+            <input type="text" class="tw-bg-[#4B3E8E] tw-bg-opacity-10 tw-rounded-md tw-py-2 tw-px-10 tw-w-80 tw-text-sm" :placeholder="$t('shiru.thread_search_placeholder')">
             <Search class="tw-absolute tw-left-3 tw-top-1/2 tw-transform -tw-translate-y-1/2 tw-text-gray-500 tw-w-4" />
           </div>
           <div class="tw-flex tw-items-center tw-gap-4 tw-text-gray-300">
@@ -43,7 +43,7 @@
         <div class="tw-p-6">
           <h3 class="tw-text-[10px] tw-font-bold tw-text-gray-400 tw-uppercase tw-tracking-widest tw-mb-4">Related Threads</h3>
           <div class="tw-space-y-1">
-            <div v-if="siblings.length === 0" class="tw-text-xs tw-text-gray-400">関連スレッドはありません</div>
+            <div v-if="siblings.length === 0" class="tw-text-xs tw-text-gray-400">{{ $t('thread.no_related') }}</div>
             <div 
               v-for="t in siblings" 
               :key="t.id"
@@ -65,7 +65,7 @@
       <main class="tw-flex-1 tw-relative tw-flex tw-flex-col tw-bg-white tw-overflow-hidden">
         
         <nav class="tw-hidden md:tw-flex tw-items-center tw-gap-2 tw-text-[10px] tw-text-gray-400 tw-pt-6 tw-px-10">
-          <span class="tw-cursor-pointer hover:tw-text-gray-600" @click="() => $router.push(localePath('/shiru'))">しるまな</span>
+          <span class="tw-cursor-pointer hover:tw-text-gray-600" @click="() => $router.push(localePath('/shiru'))">{{ $t('shiru.title') }}</span>
           <ChevronRight class="tw-w-3 tw-h-3" />
           <span class="tw-cursor-pointer hover:tw-text-gray-600" @click="() => $router.push(localePath(`/shiru/category/${cid}`))">
             {{ currentCategory?.name }}
@@ -123,19 +123,32 @@
                      </div>
                   </div>
 
-                  <p class="tw-text-sm md:tw-text-base tw-text-gray-700 tw-leading-relaxed tw-whitespace-pre-wrap">{{ post.body }}</p>
+                  <p class="tw-text-sm md:tw-text-base tw-text-gray-700 tw-leading-relaxed tw-whitespace-pre-wrap">{{ showTranslation[post.id] && getTranslation(post.id) ? getTranslation(post.id) : post.body }}</p>
+
+                  <div v-if="getTranslation(post.id) || isTranslating(post.id)" class="tw-mt-2 tw-flex tw-items-center tw-gap-2">
+                    <button
+                      @click="showTranslation[post.id] = !showTranslation[post.id]"
+                      class="tw-text-[10px] tw-text-[#4B3E8E] tw-font-bold hover:tw-underline"
+                      v-if="getTranslation(post.id)"
+                    >
+                      {{ showTranslation[post.id] ? $t('translate.original') : $t('translate.translated') }}
+                    </button>
+                    <span v-if="isTranslating(post.id)" class="tw-text-[10px] tw-text-gray-400">{{ $t('translate.translating') }}</span>
+                    <span v-if="getTranslation(post.id)" class="tw-text-[9px] tw-text-gray-300">{{ $t('translate.powered_by') }}</span>
+                  </div>
+
                   <div class="tw-absolute tw-top-4 -tw-left-2 tw-w-4 tw-h-4 tw-bg-white tw-border-l tw-border-b tw-border-gray-100 tw-rotate-45"></div>
-                  
+
                   <div v-if="user && post.userId === user.uid" class="tw-absolute tw-top-2 tw-right-2">
                     <button @click="toggleMenu(post.id)" class="tw-p-1 tw-rounded-full hover:tw-bg-gray-100 tw-text-gray-300">
                       <MoreVertical class="tw-w-4 tw-h-4" />
                     </button>
                     <div v-if="activeMenuId === post.id" class="tw-absolute tw-right-0 tw-top-6 tw-bg-white tw-shadow-lg tw-rounded-xl tw-border tw-border-gray-100 tw-z-10 tw-overflow-hidden tw-w-24 tw-animate-fade-in">
                       <button @click="startEdit(post)" class="tw-w-full tw-text-left tw-px-4 tw-py-2 tw-text-xs tw-font-bold tw-text-gray-600 hover:tw-bg-gray-50 tw-flex tw-items-center tw-gap-2">
-                        <Edit2 class="tw-w-3 tw-h-3" /> 編集
+                        <Edit2 class="tw-w-3 tw-h-3" /> {{ $t('thread.edit') }}
                       </button>
                       <button @click="confirmDelete(post.id)" class="tw-w-full tw-text-left tw-px-4 tw-py-2 tw-text-xs tw-font-bold tw-text-red-500 hover:tw-bg-red-50 tw-flex tw-items-center tw-gap-2">
-                        <Trash2 class="tw-w-3 tw-h-3" /> 削除
+                        <Trash2 class="tw-w-3 tw-h-3" /> {{ $t('thread.delete') }}
                       </button>
                     </div>
                   </div>
@@ -150,14 +163,22 @@
                       isLiked(post.id) ? 'tw-text-[#85C441]' : 'tw-text-gray-400 hover:tw-text-[#85C441]'
                     ]"
                   >
-                    <ArrowUp class="tw-w-3 tw-h-3" /> 役に立った ({{ post.likes || 0 }})
+                    <ArrowUp class="tw-w-3 tw-h-3" /> {{ $t('thread.helpful') }} ({{ post.likes || 0 }})
                   </button>
 
-                  <button 
-                    @click="handleReply(post)" 
+                  <button
+                    @click="handleReply(post)"
                     class="tw-flex tw-items-center tw-gap-1.5 tw-text-[10px] tw-font-bold tw-text-gray-400 hover:tw-text-[#E4007F] tw-transition-colors"
                   >
-                    <MessageSquare class="tw-w-3 tw-h-3" /> 返信
+                    <MessageSquare class="tw-w-3 tw-h-3" /> {{ $t('thread.reply') }}
+                  </button>
+
+                  <button
+                    v-if="!hasTranslation(post.id) && !isTranslating(post.id)"
+                    @click="handleTranslate(post)"
+                    class="tw-flex tw-items-center tw-gap-1.5 tw-text-[10px] tw-font-bold tw-text-gray-400 hover:tw-text-[#4B3E8E] tw-transition-colors"
+                  >
+                    <Languages class="tw-w-3 tw-h-3" /> {{ $t('translate.button') }}
                   </button>
                 </div>
               </div>
@@ -168,16 +189,16 @@
             <div class="tw-w-32 tw-h-32 tw-bg-gray-100 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-mb-6">
               <MessageSquare class="tw-w-16 tw-h-16 tw-text-gray-300" />
             </div>
-            <h3 class="tw-text-xl tw-font-bold tw-text-gray-600 tw-mb-2">まだ投稿がありません</h3>
+            <h3 class="tw-text-xl tw-font-bold tw-text-gray-600 tw-mb-2">{{ $t('thread.no_posts') }}</h3>
             <p class="tw-text-sm tw-text-gray-400 tw-max-w-xs">
-              このスレッドの最初の投稿者になりませんか？<br>あなたの知識や経験が誰かの助けになります。
+              {{ $t('thread.be_first') }}<br>{{ $t('thread.be_first_sub') }}
             </p>
           </div>
           
           <div v-else class="tw-h-full tw-flex tw-items-center tw-justify-center">
             <div class="tw-animate-pulse tw-flex tw-flex-col tw-items-center tw-gap-4">
               <div class="tw-w-12 tw-h-12 tw-bg-[#85C441] tw-rounded-xl tw-opacity-20"></div>
-              <span class="tw-text-xs tw-text-gray-300">読み込み中...</span>
+              <span class="tw-text-xs tw-text-gray-300">{{ $t('common.loading') }}</span>
             </div>
           </div>
         </div>
@@ -185,8 +206,8 @@
         <div class="tw-absolute tw-bottom-0 tw-left-0 tw-right-0 tw-p-4 md:tw-p-6 tw-bg-white tw-border-t tw-border-gray-100 tw-z-40 tw-shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.05)]">
           
           <div v-if="editingPostId" class="tw-max-w-4xl tw-mx-auto tw-mb-2 tw-flex tw-items-center tw-justify-between tw-bg-[#E4007F] tw-bg-opacity-10 tw-px-4 tw-py-2 tw-rounded-lg">
-             <span class="tw-text-xs tw-font-bold tw-text-[#E4007F]">編集モード中...</span>
-             <button @click="cancelEdit" class="tw-text-xs tw-text-gray-500 hover:tw-text-gray-800">キャンセル</button>
+             <span class="tw-text-xs tw-font-bold tw-text-[#E4007F]">{{ $t('thread.editing_mode') }}</span>
+             <button @click="cancelEdit" class="tw-text-xs tw-text-gray-500 hover:tw-text-gray-800">{{ $t('thread.cancel') }}</button>
           </div>
 
           <div v-if="replyTarget" class="tw-max-w-4xl tw-mx-auto tw-mb-2 tw-flex tw-items-center tw-justify-between tw-bg-blue-50 tw-border tw-border-blue-100 tw-px-4 tw-py-2 tw-rounded-lg">
@@ -206,7 +227,7 @@
                 rows="1" 
                 ref="textareaRef"
                 :class="['tw-w-full tw-bg-gray-50 tw-border-none tw-rounded-3xl tw-py-3.5 tw-px-6 tw-text-sm tw-resize-none focus:tw-ring-2 focus:tw-ring-[#85C441] tw-placeholder-gray-300 tw-transition-all', isSending ? 'tw-opacity-50' : '']"
-                :placeholder="editingPostId ? '内容を修正して更新' : (replyTarget ? '返信を入力...' : 'このスレッドにコメントする...')"
+                :placeholder="editingPostId ? t('thread.edit_placeholder') : (replyTarget ? t('thread.reply_placeholder') : t('thread.comment_placeholder'))"
                 @input="autoResize"
                 :disabled="isSending"
               ></textarea>
@@ -230,10 +251,10 @@
 </template>
 
 <script setup lang="ts">
-import { 
+import {
   Lightbulb, UserCircle, ArrowUp, ArrowDown,
   MessageSquare, Send, Search, FileText, Home,
-  MoreVertical, Trash2, Edit2, ChevronRight, X
+  MoreVertical, Trash2, Edit2, ChevronRight, X, Languages
 } from 'lucide-vue-next'
 import { type Post } from '@/composables/useFirestore'
 import { doc, onSnapshot } from 'firebase/firestore'
@@ -266,8 +287,11 @@ const {
 const { user, userDisplayName, userPhotoURL, initAuth } = useAuth()
 const { openDrawer } = useDrawer()
 const { addHistory } = useUserHistory()
+const { translateText, getTranslation, isTranslating, hasTranslation } = useTranslation()
+const { t, locale } = useI18n()
 
 const isLoginModalOpen = ref(false)
+const showTranslation = ref<Record<string, boolean>>({})
 
 // Local State
 const inputBody = ref('')
@@ -304,6 +328,10 @@ const themeMap: Record<string, ThreadTheme> = {
   public:    { dot: 'tw-bg-[#F4A7B9]', textBg: 'tw-bg-[#E95295]' },
   spa:       { dot: 'tw-bg-[#7DB9DE]', textBg: 'tw-bg-[#3E91FF]' },
   cafe:      { dot: 'tw-bg-[#F5B169]', textBg: 'tw-bg-[#F39800]' },
+  shopping:  { dot: 'tw-bg-[#CE93D8]', textBg: 'tw-bg-[#9C27B0]' },
+  hotel:     { dot: 'tw-bg-[#81C784]', textBg: 'tw-bg-[#4CAF50]' },
+  culture:   { dot: 'tw-bg-[#E57373]', textBg: 'tw-bg-[#F44336]' },
+  trash:     { dot: 'tw-bg-[#90A4AE]', textBg: 'tw-bg-[#607D8B]' },
   new:       { dot: 'tw-bg-[#B28FCE]', textBg: 'tw-bg-[#9C27B0]' }
 }
 const getTheme = (id: string): ThreadTheme => themeMap[id] || themeMap.new
@@ -316,17 +344,17 @@ const formatDate = (date: FirebaseTimestamp | Date | string | null) => {
   const now = new Date()
   const diff = now.getTime() - d.getTime()
 
-  if (diff < 60000) return '今すぐ'
-  if (diff < 3600000) return `${Math.floor(diff / 60000)}分前`
-  if (diff < 86400000) return `${Math.floor(diff / 3600000)}時間前`
+  if (diff < 60000) return t('thread.just_now')
+  if (diff < 3600000) return t('thread.minutes_ago', { n: Math.floor(diff / 60000) })
+  if (diff < 86400000) return t('thread.hours_ago', { n: Math.floor(diff / 3600000) })
 
-  return d.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+  return d.toLocaleDateString(locale.value, { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
 const formatDateShort = (date: FirebaseTimestamp | Date | string | null) => {
   if (!date) return ''
   const d = (typeof date === 'object' && 'seconds' in date) ? new Date(date.seconds * 1000) : new Date(date)
-  return d.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })
+  return d.toLocaleDateString(locale.value, { month: 'numeric', day: 'numeric' })
 }
 
 // Computed Infos
@@ -437,7 +465,7 @@ const handleSubmit = async () => {
     inputBody.value = ''
     if (textareaRef.value) textareaRef.value.style.height = 'auto'
   } catch (e) {
-    alert('送信に失敗しました。')
+    alert(t('thread.send_failed'))
     console.error(e)
   } finally {
     isSending.value = false
@@ -467,12 +495,12 @@ const cancelEdit = () => {
 }
 
 const confirmDelete = async (postId: string) => {
-  if (confirm('本当にこの投稿を削除しますか？')) {
+  if (confirm(t('thread.delete_confirm'))) {
     try {
       await deletePost(tid.value, postId)
       activeMenuId.value = null
     } catch (e) {
-      alert('削除に失敗しました')
+      alert(t('thread.delete_failed'))
     }
   }
 }
@@ -502,6 +530,13 @@ const handleReply = (post: Post) => {
 
 const cancelReply = () => {
    replyTarget.value = null
+}
+
+const handleTranslate = async (post: Post) => {
+  const result = await translateText(post.id, post.body)
+  if (result) {
+    showTranslation.value[post.id] = true
+  }
 }
 
 const scrollToPost = (targetId: string | undefined) => {

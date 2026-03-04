@@ -159,21 +159,7 @@
           <div class="tw-bg-[#EBECEF] tw-bg-opacity-80 tw-rounded-3xl tw-p-6 tw-shadow-sm">
             <h3 class="tw-text-xs tw-font-bold tw-text-gray-400 tw-uppercase tw-mb-4 tracking-widest">{{ $t('dashboard.personal') }}</h3>
             <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-12 tw-gap-4">
-              <div class="tw-col-span-12 md:tw-col-span-3 tw-flex md:tw-flex-col tw-justify-center tw-gap-6">
-                <div class="tw-flex tw-flex-col tw-items-center">
-                  <div class="tw-bg-[#BCAF92] tw-w-16 tw-h-16 tw-rounded-2xl tw-flex tw-items-center tw-justify-center tw-text-white tw-shadow-sm">
-                    <MessageSquare class="tw-w-8 tw-h-8" />
-                  </div>
-                  <span class="tw-text-[10px] tw-mt-1 tw-text-gray-500 tw-font-bold">{{ $t('dashboard.post_label') }}</span>
-                </div>
-                <div class="tw-flex tw-flex-col tw-items-center">
-                  <div class="tw-bg-[#BCAF92] tw-w-16 tw-h-16 tw-rounded-2xl tw-flex tw-items-center tw-justify-center tw-text-white tw-shadow-sm">
-                    <Download class="tw-w-8 tw-h-8" />
-                  </div>
-                  <span class="tw-text-[10px] tw-mt-1 tw-text-gray-500 tw-font-bold">{{ $t('dashboard.dl_label') }}</span>
-                </div>
-              </div>
-              <div class="tw-col-span-12 md:tw-col-span-9 tw-bg-[#D9A65D] tw-rounded-2xl tw-p-4 tw-text-white shadow-sm">
+              <div class="tw-col-span-12 tw-bg-[#D9A65D] tw-rounded-2xl tw-p-4 tw-text-white shadow-sm">
                 <div class="tw-flex tw-items-start tw-gap-3 tw-mb-3">
                   <div class="tw-text-6xl tw-font-bold leading-none">{{ todayDay }}</div>
                   <div class="tw-text-[10px] tw-space-y-1">
@@ -263,7 +249,7 @@
 <script setup lang="ts">
 import {
   Search, X, Home, UserCircle, MapPin, CloudSun, Cloud, Sun, CloudRain, CloudSnow, Lightbulb,
-  Binoculars, Ear, Footprints, MessageSquare, Download, Settings, LayoutGrid,
+  Binoculars, Ear, Footprints, Download, Settings, LayoutGrid,
   ArrowUp, ChevronLeft,
   Map as MapIcon, Facebook, Youtube, Instagram, Twitter
 } from 'lucide-vue-next'
@@ -329,7 +315,7 @@ const showComingSoon = (name: string) => {
 // --- Weather ---
 const weather = reactive({
   temp: '--',
-  area: '取得中...',
+  area: 'Loading...',
   condition: 'cloudy' as 'clear' | 'cloudy' | 'rain' | 'snow'
 });
 
@@ -347,7 +333,7 @@ const fetchWeather = async (lat: number, lng: number) => {
     const config = useRuntimeConfig();
     const apiKey = config.public.openWeatherApiKey;
     if (!apiKey) {
-      weather.area = '東京都・新宿区';
+      weather.area = 'Tokyo / Shinjuku';
       weather.temp = '25';
       return;
     }
@@ -355,7 +341,7 @@ const fetchWeather = async (lat: number, lng: number) => {
       `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=metric&lang=ja&appid=${apiKey}`
     );
     weather.temp = Math.round(data.main.temp).toString();
-    weather.area = data.name || '不明';
+    weather.area = data.name || 'Unknown';
     const mainWeather = data.weather?.[0]?.main?.toLowerCase() || '';
     if (mainWeather.includes('clear')) weather.condition = 'clear';
     else if (mainWeather.includes('rain') || mainWeather.includes('drizzle')) weather.condition = 'rain';
@@ -363,7 +349,7 @@ const fetchWeather = async (lat: number, lng: number) => {
     else weather.condition = 'cloudy';
   } catch (e) {
     console.error('Weather fetch failed:', e);
-    weather.area = '東京都・新宿区';
+    weather.area = 'Tokyo / Shinjuku';
     weather.temp = '25';
   }
 };
