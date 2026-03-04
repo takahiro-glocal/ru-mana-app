@@ -55,15 +55,14 @@
           </div>
 
           <div class="tw-grid tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-4">
-            <NuxtLink :to="localePath('/shiru')" class="tw-relative tw-aspect-square tw-rounded-2xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-sm hover:tw-opacity-90 tw-transition-all tw-overflow-hidden">
+            <NuxtLink :to="localePath('/shiru')" class="tw-bg-[#85C441] tw-aspect-square tw-rounded-2xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-sm hover:tw-opacity-90 tw-transition-all">
+              <Lightbulb class="tw-w-14 tw-h-14 tw-mb-2" />
+              <span class="tw-font-bold tw-text-lg">しるまな</span>
+            </NuxtLink>
+            <div class="tw-relative tw-aspect-square tw-rounded-2xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-sm tw-cursor-pointer tw-overflow-hidden" @click="showComingSoon('みるまな')">
               <div class="tw-absolute tw-inset-0">
                 <SkyAnimation :show-logo="false" compact />
               </div>
-              <Lightbulb class="tw-relative tw-z-10 tw-w-14 tw-h-14 tw-mb-2" />
-              <span class="tw-relative tw-z-10 tw-font-bold tw-text-lg">しるまな</span>
-            </NuxtLink>
-            <div class="tw-relative tw-aspect-square tw-rounded-2xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-sm tw-cursor-pointer tw-overflow-hidden" @click="showComingSoon('みるまな')">
-              <div class="tw-absolute tw-inset-0 tw-bg-cover tw-bg-center" :style="miruBgStyle"></div>
               <div class="tw-relative tw-z-10 tw-flex tw-flex-col tw-items-center tw-justify-center">
                 <Binoculars class="tw-w-14 tw-h-14 tw-mb-2" />
                 <span class="tw-font-bold tw-text-lg">みるまな</span>
@@ -247,18 +246,9 @@ import { onMounted, onUnmounted, ref, reactive, computed } from 'vue'
 const { user, initAuth, userDisplayName, userPhotoURL } = useAuth();
 const { openDrawer } = useDrawer();
 const { threads: latestThreads, allThreads: allThreadsForSearch, subscribeToLatestThreads } = useFirestore();
-const { skyGradient } = useSkyGradient();
 const localePath = useLocalePath();
 
 const isLoginModalOpen = ref(false);
-
-// --- みるまなボタン背景: 画像優先、フォールバックに時刻ベースグラデーション ---
-const miruBgStyle = computed(() => ({
-  background: skyGradient.value,
-  backgroundImage: "url('/img/shiru-theme.png')",
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-}));
 
 // --- PWA Install Prompt ---
 let deferredPrompt: any = null;
