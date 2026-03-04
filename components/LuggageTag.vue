@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import "/node_modules/flag-icons/css/flag-icons.min.css";
+import "flag-icons/css/flag-icons.min.css";
 const { t } = useI18n()
 
 interface Props {
@@ -72,7 +72,7 @@ const centerText = ref<string>('')
 const centerImageSrc = ref<string>('')
 
 // 中部クリック処理
-const handleMiddleClick = async (): Promise<void> => {
+const handleMiddleClick = (): void => {
     if (isMiddleTorn.value) return
 
     if (luggageTagRef.value) {
@@ -85,18 +85,13 @@ const handleMiddleClick = async (): Promise<void> => {
 
         setTimeout(() => {
             isUpperFaded.value = true
-
             emit('clickTicket', 'greeting')
-
-            // 修正: パスから /public を削除
-            // centerText.value = '国の文化を知る'
-            // centerImageSrc.value = '/images/rmp_luggage_ticket1.png'
         }, 800)
     }, 200)
 }
 
 // 下部クリック処理
-const handleLowerClick = async (): Promise<void> => {
+const handleLowerClick = (): void => {
     if (isLowerTorn.value) return
 
     if (luggageTagRef.value) {
@@ -109,19 +104,14 @@ const handleLowerClick = async (): Promise<void> => {
         setTimeout(() => {
             isUpperFaded.value = true
             isMiddleFaded.value = true
-
             emit('clickTicket', 'quiz')
-
-            // 修正: パスから /public を削除
-            // centerText.value = 'クイズに挑戦する'
-            // centerImageSrc.value = '/images/rmp_luggage_ticket2.png'
         }, 800)
     }, 200)
 }
 
 const style = computed(() => {
     let result = ''
-    if (props.height) result += `width: ${props.height};`
+    if (props.height) result += `height: ${props.height};`
     if (props.width) result += `width: ${props.width};`
     return result
 })

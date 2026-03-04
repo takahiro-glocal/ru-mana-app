@@ -1,19 +1,10 @@
 <template>
     <div class="cultural-platform-container" @click="returnFlagToOriginalPosition(currentCenteredFlag ?? '')">
-        <!-- <v-btn class="reflesh-btn" @click.stop="regenerateFlags" icon variant="outlined" color="white">
-            <v-icon color="white" size="large">mdi-reload</v-icon>
-        </v-btn> -->
         <!-- 背景グラデーション -->
         <div class="background-gradient" :style="{ background: bgColor }"></div>
 
         <!-- メインコンテンツ領域 -->
         <div class="main-content">
-            <!-- タイトルテキスト -->
-            <!-- <v-card class="title-section" color="rgba(265, 234, 163, 0.8)" rounded="lg">
-        <h1 class="main-title">Enjoy Neighbor Culture</h1>
-        <p class="subtitle">世界の文化を繋ぐプラットフォーム</p>
-      </v-card> -->
-
             <!-- メインアニメーション領域 -->
             <div class="main-animation-area" ref="animationArea">
                 <!-- 回転する国旗群 - 5層構造 -->
@@ -50,7 +41,7 @@
                 <div class="site-logo" ref="siteLogo">
                     <div class="logo-circle">
                         <div class="logo-placeholder" rounded="circle" color="transparent" elevation="2">
-                            <v-img src="~/public/images/logo.png" alt="Logo" width="140" height="140" cover
+                            <v-img src="/images/logo.png" alt="Logo" width="140" height="140" cover
                                 rounded="circle"></v-img>
                         </div>
                     </div>
@@ -61,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import "/node_modules/flag-icons/css/flag-icons.min.css";
+import "flag-icons/css/flag-icons.min.css";
 import { countries } from '~/utils/countries';
 import { useDisplay } from 'vuetify'
 
@@ -563,83 +554,8 @@ const checkForDuplicates = (layers: any[]) => {
     };
 };
 
-// 国旗クリック処理（アニメーション付き）
-const handleClickFlag = (country: Country, layerIndex: number, flagIndex: number, event: Event) => {
-    // const flagKey = `${layerIndex}-${flagIndex}`;
-
-    // // 既にアニメーション中の場合は無視
-    // if (animatingFlags.value.has(flagKey)) {
-    //     return;
-    // }
-
-    // // 既に中央に表示されている同じ国旗がクリックされた場合は元の位置に戻す
-    // if (currentCenteredFlag.value === flagKey) {
-    //     returnFlagToOriginalPosition(flagKey);
-    //     return;
-    // }
-
-    // console.log('Flag clicked:', country);
-
-    // // 既存の中央の国旗を元の位置に戻す
-    // if (currentCenteredFlag.value && currentCenteredFlag.value !== flagKey) {
-    //     returnFlagToOriginalPosition(currentCenteredFlag.value);
-    // }
-
-    // // アニメーション中フラグを設定
-    // animatingFlags.value.add(flagKey);
-
-    // // クリックされた要素の現在位置を取得
-    // const clickedElement = event.currentTarget as HTMLElement;
-    // const flagOrbit = clickedElement.closest('.flag-orbit') as HTMLElement;
-
-    // if (!flagOrbit || !animationArea.value || !siteLogo.value) {
-    //     console.error('Required elements not found');
-    //     return;
-    // }
-
-    // // 現在の位置を正確に計算
-    // const flagRect = flagOrbit.getBoundingClientRect();
-    // const animationAreaRect = animationArea.value.getBoundingClientRect();
-
-    // // 現在位置をアニメーション領域の中心からの相対位置として計算
-    // const currentX = flagRect.left + flagRect.width / 2 - (animationAreaRect.left + animationAreaRect.width / 2);
-    // const currentY = flagRect.top + flagRect.height / 2 - (animationAreaRect.top + animationAreaRect.height / 2);
-
-    // // ロゴは中央にあるので目標位置は (0, 0)
-    // const targetX = 0;
-    // const targetY = 0;
-
-    // // 移動距離を計算
-    // const moveX = targetX - currentX;
-    // const moveY = targetY - currentY;
-
-    // console.log('Position data:', {
-    //     current: { x: currentX, y: currentY },
-    //     target: { x: targetX, y: targetY },
-    //     move: { x: moveX, y: moveY }
-    // });
-
-    // // CSS変数として移動距離を設定
-    // flagOrbit.style.setProperty('--move-x', `${moveX}px`);
-    // flagOrbit.style.setProperty('--move-y', `${moveY}px`);
-
-    // // アニメーション完了後の処理（中央で固定表示）
-    // const handleAnimationEnd = () => {
-    //     // 中央位置で固定するためのクラスを追加
-    //     flagOrbit.classList.add('flag-centered');
-    //     // 現在中央の国旗として設定
-    //     currentCenteredFlag.value = flagKey;
-    // };
-
-    // // アニメーション完了イベントを監視
-    // flagOrbit.addEventListener('animationend', handleAnimationEnd, { once: true });
-
-    // // ユーザーフィードバック
-    // setTimeout(() => {
-    //     // openMenuDialog(flag);
-    //     emit('clickFlag', country)
-    // }, 1500);
-
+// 国旗クリック処理
+const handleClickFlag = (country: Country, _layerIndex: number, _flagIndex: number, _event: Event) => {
     emit('clickFlag', country)
 };
 
@@ -750,12 +666,6 @@ if (process.dev) {
     (window as any).resetCenteredFlags = resetCenteredFlags;
     (window as any).returnToOriginal = (flagKey: string) => returnFlagToOriginalPosition(flagKey);
     (window as any).getCurrentCentered = () => currentCenteredFlag.value;
-    (window as any).testTimeColor = (hour: number, minute: number = 0, second: number = 0) => {
-        const colors = getSkyColors(hour, minute, second);
-        console.log(`時刻 ${hour}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')} の色:`, colors);
-        return colors;
-    };
-    // 時刻の色テスト（新形式対応）
     (window as any).testTimeColor = (hour: number, minute: number = 0, second: number = 0) => {
         const skyData = getSkyColors(hour, minute, second);
         console.log(`時刻 ${hour}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')} の空:`, skyData);

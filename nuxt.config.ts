@@ -28,7 +28,15 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     '@vite-pwa/nuxt',
     '@nuxtjs/tailwindcss',
+    'vuetify-nuxt-module',
   ],
+  vuetify: {
+    vuetifyOptions: {
+      theme: {
+        defaultTheme: 'light',
+      },
+    },
+  },
   // 💡 ここに Tailwind CSS の設定を追加します
   tailwindcss: {
     // どの設定ファイルをTailwind CSSの設定として使用するかを指定します。
