@@ -80,3 +80,22 @@ interface BrowsingHistory {
   title: string;
   viewedAt: string; // ISO string
 }
+
+interface Country {
+    id: string
+    name: string
+    nameEng: string
+    code: string
+    flag: string
+    initialX?: number
+    initialY?: number
+    initialZ?: number
+    initialAngle?: number
+    rotationDuration?: number
+    layerRadius?: number
+    rotationDirection?: string
+    randomDelay?: number
+    randomDuration?: number
+    initialZ?: number
+    animationName?: 'perspective3D' | 'perspective3DR'
+}

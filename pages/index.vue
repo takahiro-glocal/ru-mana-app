@@ -60,7 +60,7 @@
               <span class="tw-font-bold tw-text-lg">しるまな</span>
             </NuxtLink>
             <div class="tw-relative tw-aspect-square tw-rounded-2xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-sm tw-cursor-pointer tw-overflow-hidden" @click="showComingSoon('みるまな')">
-              <div class="tw-absolute tw-inset-0 tw-bg-[#F26522] tw-bg-cover tw-bg-center" style="background-image: url('/img/shiru-theme.png');"></div>
+              <div class="tw-absolute tw-inset-0 tw-bg-[#F26522] tw-bg-cover tw-bg-center" style="background-image: url('/images/shiru-theme.png');"></div>
               <div class="tw-relative tw-z-10 tw-flex tw-flex-col tw-items-center tw-justify-center">
                 <Binoculars class="tw-w-14 tw-h-14 tw-mb-2" />
                 <span class="tw-font-bold tw-text-lg">みるまな</span>
