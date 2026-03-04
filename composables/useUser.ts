@@ -2,7 +2,7 @@
 // 本番ではFirebase Auth等を使用してください
 export const useUser = () => {
   const userId = useState<string>('app-user-id', () => '');
-  const userName = useState<string>('app-user-name', () => 'ゲストさん');
+  const userName = useState<string>('app-user-name', () => 'Guest');
   const userIcon = useState<string>('app-user-icon', () => '');
 
   const initUser = () => {

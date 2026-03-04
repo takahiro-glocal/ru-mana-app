@@ -255,7 +255,7 @@ import {
 } from 'lucide-vue-next'
 import { onMounted, onUnmounted, ref, reactive, computed } from 'vue'
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { user, initAuth, userDisplayName, userPhotoURL } = useAuth();
 const { openDrawer } = useDrawer();
 const { threads: latestThreads, allThreads: allThreadsForSearch, subscribeToLatestThreads } = useFirestore();
@@ -338,7 +338,7 @@ const fetchWeather = async (lat: number, lng: number) => {
       return;
     }
     const data = await $fetch<WeatherResponse>(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=metric&lang=ja&appid=${apiKey}`
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=metric&lang=${locale.value}&appid=${apiKey}`
     );
     weather.temp = Math.round(data.main.temp).toString();
     weather.area = data.name || 'Unknown';
@@ -355,37 +355,22 @@ const fetchWeather = async (lat: number, lng: number) => {
 };
 
 // --- Today's Event (今日は何の日) ---
-const todayEvents: Record<string, string> = {
-  '1-1': '元日 — 新しい年の始まり',
-  '1-7': '七草の節句 — 七草粥を食べる日',
-  '2-3': '節分 — 豆まきで邪気を払う日',
-  '2-11': '建国記念の日',
-  '2-14': 'バレンタインデー',
-  '3-3': 'ひな祭り — 女の子の健やかな成長を願う',
-  '3-14': 'ホワイトデー',
-  '3-21': '春分の日',
-  '4-29': '昭和の日',
-  '5-3': '憲法記念日',
-  '5-5': 'こどもの日 — 端午の節句',
-  '6-21': '夏至',
-  '7-7': '七夕 — 願い事を短冊に書く日',
-  '7-17': '海の日',
-  '8-11': '山の日',
-  '8-15': '終戦記念日',
-  '9-15': '敬老の日',
-  '9-23': '秋分の日',
-  '10-31': 'ハロウィン',
-  '11-3': '文化の日',
-  '11-15': '七五三',
-  '11-23': '勤労感謝の日',
-  '12-22': '冬至',
-  '12-25': 'クリスマス',
-  '12-31': '大晦日 — 年越しそばを食べる日',
+const todayEventKeys: Record<string, string> = {
+  '1-1': 'events.jan1', '1-7': 'events.jan7', '2-3': 'events.feb3',
+  '2-11': 'events.feb11', '2-14': 'events.feb14', '3-3': 'events.mar3',
+  '3-14': 'events.mar14', '3-21': 'events.mar21', '4-29': 'events.apr29',
+  '5-3': 'events.may3', '5-5': 'events.may5', '6-21': 'events.jun21',
+  '7-7': 'events.jul7', '7-17': 'events.jul17', '8-11': 'events.aug11',
+  '8-15': 'events.aug15', '9-15': 'events.sep15', '9-23': 'events.sep23',
+  '10-31': 'events.oct31', '11-3': 'events.nov3', '11-15': 'events.nov15',
+  '11-23': 'events.nov23', '12-22': 'events.dec22', '12-25': 'events.dec25',
+  '12-31': 'events.dec31',
 };
 
 const todayEvent = computed(() => {
   const key = `${now.getMonth() + 1}-${now.getDate()}`;
-  return todayEvents[key] || t('dashboard.default_event', { month: now.getMonth() + 1, day: now.getDate() });
+  const i18nKey = todayEventKeys[key];
+  return i18nKey ? t(i18nKey) : t('dashboard.default_event', { month: now.getMonth() + 1, day: now.getDate() });
 });
 
 // --- Search ---
@@ -478,8 +463,10 @@ const startTracking = () => {
 
 const now = new Date();
 const todayDay = now.getDate();
+const localeMap: Record<string, string> = { ja: 'ja-JP', en: 'en-US', zh: 'zh-CN' };
 const formattedDate = computed(() => {
-  return now.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', weekday: 'short' }).toLowerCase();
+  const loc = localeMap[locale.value] || locale.value;
+  return now.toLocaleDateString(loc, { month: 'numeric', day: 'numeric', weekday: 'short' }).toLowerCase();
 });
 
 onMounted(() => {

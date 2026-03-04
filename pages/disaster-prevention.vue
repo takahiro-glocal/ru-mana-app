@@ -145,7 +145,7 @@ import {
 // --- Auth & Utils ---
 const { userDisplayName, userPhotoURL } = useAuth()
 const localePath = useLocalePath()
-const { t } = useI18n()
+const { t, tm } = useI18n()
 const { load } = useMapsLoader()
 
 // --- State ---
@@ -191,21 +191,20 @@ const generateMockData = (center: google.maps.LatLngLiteral) => {
   const range = 0.015 // 散らばり具合（約1.5km程度）
 
   const typeList = categories.value.map(c => c.id)
-  
-  // 施設名のプレフィックス（それっぽく見せるため）
+
   const prefixes: Record<string, string[]> = {
-    medical: ['中央', '駅前', '市民', 'さくら', 'こども'],
-    evac: ['第一', '中央', '南', '北', '公園'],
-    store: ['マート', 'ストア', '市場', 'ショップ'],
-    police: ['駅前', '中央', '北', '南'],
-    public: ['センター', '会館', '役所', '図書館']
+    medical: tm('disaster_mock.medical_prefix') as string[],
+    evac: tm('disaster_mock.evac_prefix') as string[],
+    store: tm('disaster_mock.store_prefix') as string[],
+    police: tm('disaster_mock.police_prefix') as string[],
+    public: tm('disaster_mock.public_prefix') as string[]
   }
   const suffixes: Record<string, string> = {
-    medical: 'クリニック',
-    evac: '避難所',
-    store: '商店',
-    police: '交番',
-    public: '公民館'
+    medical: t('disaster_mock.medical_suffix'),
+    evac: t('disaster_mock.evac_suffix'),
+    store: t('disaster_mock.store_suffix'),
+    police: t('disaster_mock.police_suffix'),
+    public: t('disaster_mock.public_suffix')
   }
 
   for (let i = 0; i < count; i++) {

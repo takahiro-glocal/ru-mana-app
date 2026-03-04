@@ -19,7 +19,7 @@
           <div class="tw-bg-blue-600 tw-p-4 tw-rounded-full tw-mb-3">
             <ShieldAlert class="tw-w-8 tw-h-8 tw-text-white" />
           </div>
-          <span class="tw-text-xs tw-text-gray-500 tw-font-bold tw-uppercase">Police</span>
+          <span class="tw-text-xs tw-text-gray-500 tw-font-bold tw-uppercase">{{ $t('trouble.police') }}</span>
           <span class="tw-text-2xl tw-font-black tw-text-blue-700">110</span>
         </button>
 
@@ -30,7 +30,7 @@
           <div class="tw-bg-red-600 tw-p-4 tw-rounded-full tw-mb-3">
             <Flame class="tw-w-8 tw-h-8 tw-text-white" />
           </div>
-          <span class="tw-text-xs tw-text-gray-500 tw-font-bold tw-uppercase">Ambulance</span>
+          <span class="tw-text-xs tw-text-gray-500 tw-font-bold tw-uppercase">{{ $t('trouble.ambulance') }}</span>
           <span class="tw-text-2xl tw-font-black tw-text-red-700">119</span>
         </button>
       </section>
@@ -78,11 +78,11 @@
         </div>
         <div class="tw-space-y-4">
           <div @click="() => makeCall('03-5320-7744')" class="tw-flex tw-justify-between tw-items-center tw-cursor-pointer hover:tw-bg-gray-50 tw-p-2 tw-rounded-lg">
-            <span class="tw-text-sm tw-text-gray-700">Himawari (Medical Info)</span>
+            <span class="tw-text-sm tw-text-gray-700">{{ $t('trouble.himawari') }}</span>
             <span class="tw-text-sm tw-font-bold tw-text-blue-600">03-5320-7744</span>
           </div>
           <div @click="() => makeCall('0570-000-911')" class="tw-flex tw-justify-between tw-items-center tw-cursor-pointer hover:tw-bg-gray-50 tw-p-2 tw-rounded-lg">
-            <span class="tw-text-sm tw-text-gray-700">Japan Visitor Hotline</span>
+            <span class="tw-text-sm tw-text-gray-700">{{ $t('trouble.visitor_hotline') }}</span>
             <span class="tw-text-sm tw-font-bold tw-text-blue-600">0570-000-911</span>
           </div>
         </div>
@@ -110,7 +110,7 @@
               </li>
             </ul>
             <button @click="() => selectedGuide = null" class="tw-w-full tw-mt-8 tw-py-4 tw-bg-gray-900 tw-text-white tw-rounded-2xl tw-font-bold">
-              Got it
+              {{ $t('trouble.got_it') }}
             </button>
           </div>
         </div>
@@ -145,48 +145,48 @@ const { t } = useI18n();
 
 const selectedGuide = ref<HelpCategory | null>(null);
 
-const helpCategories: HelpCategory[] = [
-  { 
-    id: 'medical', 
-    icon: Stethoscope, 
+const helpCategories = computed<HelpCategory[]>(() => [
+  {
+    id: 'medical',
+    icon: Stethoscope,
     colorClass: 'tw-bg-red-500',
     steps: [
-      'Stay calm and check your surroundings for safety.',
-      'If unconscious or bleeding heavily, call 119 immediately.',
-      'Find the nearest AED if necessary.',
-      'Prepare your passport and insurance information.'
+      t('trouble_steps.medical_1'),
+      t('trouble_steps.medical_2'),
+      t('trouble_steps.medical_3'),
+      t('trouble_steps.medical_4'),
     ]
   },
-  { 
-    id: 'lost', 
-    icon: Search, 
+  {
+    id: 'lost',
+    icon: Search,
     colorClass: 'tw-bg-blue-500',
     steps: [
-      'Go to the nearest "Koban" (Police Box).',
-      'Fill out a "Lost Property Report" (Ishitsubutsu-todoke).',
-      'If you lost a credit card, contact your bank immediately.',
-      'Check the station office if lost on a train.'
+      t('trouble_steps.lost_1'),
+      t('trouble_steps.lost_2'),
+      t('trouble_steps.lost_3'),
+      t('trouble_steps.lost_4'),
     ]
   },
-  { 
-    id: 'disaster', 
-    icon: Bomb, 
+  {
+    id: 'disaster',
+    icon: Bomb,
     colorClass: 'tw-bg-orange-500',
     steps: [
-      'Drop, Cover, and Hold On during an earthquake.',
-      'Check the "Mirumana" map for the nearest evacuation shelter.',
-      'Follow the instructions of local staff or police.',
-      'Use "Disaster Message Board (171)" to contact family.'
+      t('trouble_steps.disaster_1'),
+      t('trouble_steps.disaster_2'),
+      t('trouble_steps.disaster_3'),
+      t('trouble_steps.disaster_4'),
     ]
   }
-];
+]);
 
 // ---------------------------------------------------------
 // Functions (Arrow Notation)
 // ---------------------------------------------------------
 
 const makeCall = (number: string): void => {
-  if (confirm(`Do you want to call ${number}?`)) {
+  if (confirm(t('trouble_steps.call_confirm', { number }))) {
     window.location.href = `tel:${number}`;
   }
 };
@@ -199,7 +199,7 @@ const copyLocation = async (): Promise<void> => {
   const loc = t('trouble.location_placeholder');
   try {
     await navigator.clipboard.writeText(loc);
-    alert('Location copied to clipboard');
+    alert(t('trouble.copy_success'));
   } catch (err) {
     console.error('Failed to copy: ', err);
   }
