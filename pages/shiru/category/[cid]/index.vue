@@ -7,13 +7,13 @@
             <Lightbulb class="tw-w-6 md:tw-w-10 tw-h-6 md:tw-h-10 tw-text-white" />
           </div>
           <div>
-            <h1 class="tw-text-xl md:tw-text-4xl tw-font-bold tw-text-gray-800">しるまな</h1>
-            <p class="tw-text-[9px] md:tw-text-sm tw-text-gray-500 tw-font-medium">その知識や経験を良い判断や問題解決に</p>
+            <h1 class="tw-text-xl md:tw-text-4xl tw-font-bold tw-text-gray-800">{{ $t('shiru.title') }}</h1>
+            <p class="tw-text-[9px] md:tw-text-sm tw-text-gray-500 tw-font-medium">{{ $t('shiru.tagline') }}</p>
           </div>
         </div>
         <div class="tw-flex tw-items-center tw-gap-3 md:tw-gap-6">
           <div class="tw-hidden md:tw-flex tw-relative">
-            <input type="text" class="tw-bg-[#4B3E8E] tw-bg-opacity-10 tw-rounded-md tw-py-2 tw-px-10 tw-w-80 tw-text-sm" placeholder="[スレッド内検索]">
+            <input type="text" class="tw-bg-[#4B3E8E] tw-bg-opacity-10 tw-rounded-md tw-py-2 tw-px-10 tw-w-80 tw-text-sm" :placeholder="$t('shiru.thread_search_placeholder')">
             <Search class="tw-absolute tw-left-3 tw-top-1/2 tw-transform -tw-translate-y-1/2 tw-text-gray-500 tw-w-4" />
           </div>
           <div class="tw-flex tw-items-center tw-gap-2 md:tw-gap-4">
@@ -48,7 +48,7 @@
 
       <main class="tw-flex-1 tw-relative tw-flex tw-flex-col md:tw-p-10 tw-overflow-hidden">
         <nav class="tw-hidden md:tw-flex tw-items-center tw-gap-2 tw-text-[10px] tw-text-gray-400 tw-mb-6">
-          <span class="tw-cursor-pointer hover:tw-text-gray-600" @click="() => $router.push(localePath('/shiru'))">しるまな</span>
+          <span class="tw-cursor-pointer hover:tw-text-gray-600" @click="() => $router.push(localePath('/shiru'))">{{ $t('shiru.title') }}</span>
           <ChevronRight class="tw-w-3 tw-h-3" />
           <span class="tw-text-gray-600">{{ currentCategory?.name }}</span>
         </nav>
@@ -76,13 +76,13 @@
                       @click="activeTab = 'threads'"
                       :class="['tw-flex-1 tw-py-2 tw-rounded-full tw-transition-all', activeTab === 'threads' ? 'tw-bg-white tw-shadow-sm tw-text-gray-800' : 'tw-text-gray-400']"
                     >
-                      スレッド
+                      {{ $t('shiru.tab_threads') }}
                     </button>
-                    <button 
+                    <button
                       @click="activeTab = 'guides'"
                       :class="['tw-flex-1 tw-py-2 tw-rounded-full tw-transition-all', activeTab === 'guides' ? 'tw-bg-white tw-shadow-sm tw-text-gray-800' : 'tw-text-gray-400']"
                     >
-                      るうまなガイド
+                      {{ $t('shiru.tab_guides') }}
                     </button>
                   </div>
                 </div>
@@ -95,15 +95,15 @@
                         @click="openCreateModal"
                         :class="['tw-w-full tw-py-3 tw-rounded-xl tw-font-bold tw-text-white tw-shadow-md tw-flex tw-items-center tw-justify-center tw-gap-2 active:tw-scale-95 tw-transition-all', getTheme(cat.id).btnBg || 'tw-bg-[#85C441]']"
                       >
-                        <Plus class="tw-w-5 tw-h-5" /> 新しいスレッドを作成
+                        <Plus class="tw-w-5 tw-h-5" /> {{ $t('shiru.create_new_thread') }}
                       </button>
                     </div>
 
                     <div v-if="threadsLoading" class="tw-py-10 tw-text-center tw-text-gray-400 tw-text-xs">
-                      読み込み中...
+                      {{ $t('common.loading') }}
                     </div>
                     <div v-else-if="currentThreads.length === 0" class="tw-py-10 tw-text-center tw-text-gray-400 tw-text-xs">
-                      スレッドがまだありません
+                      {{ $t('shiru.no_threads') }}
                     </div>
                     
                     <div v-else class="tw-divide-y tw-divide-gray-50">
@@ -133,8 +133,8 @@
                   </div>
                   <div v-else class="tw-space-y-4">
                     <div v-if="getGuides(cat.id).length === 0" class="tw-text-center tw-py-8 tw-text-gray-400 tw-text-xs">
-                        <span v-if="isGuideLoading">読み込み中...</span>
-                        <span v-else>まだガイドがありません</span>
+                        <span v-if="isGuideLoading">{{ $t('common.loading') }}</span>
+                        <span v-else>{{ $t('shiru.no_guides') }}</span>
                      </div>
                     <div v-for="guide in getGuides(cat.id)" :key="guide.id" class="tw-bg-white tw-border tw-border-gray-100 tw-rounded-2xl tw-p-4 tw-shadow-sm">
                         <div class="tw-flex tw-items-center tw-gap-2 tw-mb-3">
@@ -170,22 +170,22 @@
                 @click="openCreateModal"
                 :class="['tw-px-4 tw-py-2 tw-rounded-full tw-text-xs tw-font-bold tw-text-white tw-shadow-md tw-flex tw-items-center tw-gap-1 hover:tw-opacity-90 tw-transition-opacity', getTheme(cid).btnBg || 'tw-bg-[#85C441]']"
               >
-                <Plus class="tw-w-4 tw-h-4" /> スレッド作成
+                <Plus class="tw-w-4 tw-h-4" /> {{ $t('shiru.create_thread') }}
               </button>
             </div>
 
             <div class="tw-bg-gray-200 tw-p-1.5 tw-rounded-full tw-flex tw-gap-1">
-               <button @click="activeTab = 'threads'" :class="['tw-px-6 tw-py-2 tw-rounded-full tw-text-xs tw-font-bold tw-transition-all', activeTab === 'threads' ? 'tw-bg-white tw-shadow-sm tw-text-gray-800' : 'tw-text-gray-400']">みんなのQ&A</button>
-               <button @click="activeTab = 'guides'" :class="['tw-px-6 tw-py-2 tw-rounded-full tw-text-xs tw-font-bold tw-transition-all', activeTab === 'guides' ? 'tw-bg-white tw-shadow-sm tw-text-gray-800' : 'tw-text-gray-400']">ルールとマナー</button>
+               <button @click="activeTab = 'threads'" :class="['tw-px-6 tw-py-2 tw-rounded-full tw-text-xs tw-font-bold tw-transition-all', activeTab === 'threads' ? 'tw-bg-white tw-shadow-sm tw-text-gray-800' : 'tw-text-gray-400']">{{ $t('shiru.tab_qa') }}</button>
+               <button @click="activeTab = 'guides'" :class="['tw-px-6 tw-py-2 tw-rounded-full tw-text-xs tw-font-bold tw-transition-all', activeTab === 'guides' ? 'tw-bg-white tw-shadow-sm tw-text-gray-800' : 'tw-text-gray-400']">{{ $t('shiru.tab_rules') }}</button>
             </div>
           </div>
           
           <div v-if="activeTab === 'threads'" class="tw-animate-fade-in">
              <div v-if="threadsLoading" class="tw-py-20 tw-text-center tw-text-gray-400">
-                読み込み中...
+                {{ $t('common.loading') }}
              </div>
              <div v-else-if="currentThreads.length === 0" class="tw-py-20 tw-text-center tw-text-gray-400">
-                まだスレッドがありません。最初の投稿を作成してみましょう！
+                {{ $t('shiru.no_threads_create') }}
              </div>
              <div v-else class="tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 tw-gap-x-12">
                 <div v-for="thread in currentThreads" :key="thread.id" class="tw-flex tw-items-center tw-justify-between tw-py-4 tw-border-b tw-border-gray-100 tw-cursor-pointer hover:tw-bg-gray-50 tw-px-2" @click="() => $router.push(localePath(`/shiru/category/${cid}/thread/${thread.id}`))">
@@ -207,8 +207,8 @@
           <div v-else class="tw-animate-fade-in">
              <div v-if="currentGuides.length === 0" class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-h-64 tw-text-gray-400">
                <BookOpen class="tw-w-12 tw-h-12 tw-mb-2 tw-opacity-20" />
-               <p v-if="isGuideLoading">読み込み中...</p>
-               <p v-else>このカテゴリのガイドはまだありません</p>
+               <p v-if="isGuideLoading">{{ $t('common.loading') }}</p>
+               <p v-else>{{ $t('shiru.no_guide_category') }}</p>
              </div>
              
              <div class="tw-grid tw-grid-cols-2 tw-gap-6">
@@ -355,7 +355,7 @@ const handleCreateThread = async (data: { title: string, body: string }) => {
     router.push(localePath(`/shiru/category/${cid.value}/thread/${threadId}`))
   } catch (e) {
     console.error("Failed to create thread", e)
-    alert("スレッドの作成に失敗しました。")
+    alert(t('thread.create_failed'))
   }
 }
 
@@ -388,8 +388,10 @@ onUnmounted(() => {
   if (unsubscribe) unsubscribe()
 })
 
+const { t } = useI18n()
+
 useHead(() => ({
-  title: currentCategory.value ? `${currentCategory.value.name} | しるまな` : 'しるまな'
+  title: currentCategory.value ? `${currentCategory.value.name} | ${t('shiru.title')}` : t('shiru.title')
 }))
 </script>
 

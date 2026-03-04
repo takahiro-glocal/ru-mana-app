@@ -1,9 +1,9 @@
 <template>
       <div v-if="isLoading" class="tw-text-center tw-py-20 tw-text-gray-400">
-        <p>読み込み中...</p>
+        <p>{{ $t('common.loading') }}</p>
       </div>
       <div v-else-if="activities.length === 0" class="tw-text-center tw-py-20 tw-text-gray-400">
-        <p>まだアクティビティはありません</p>
+        <p>{{ $t('activity.no_activity') }}</p>
       </div>
       <div v-else class="tw-space-y-4">
         <div v-for="activity in activities" :key="activity.id" class="tw-bg-white tw-p-4 tw-rounded-2xl tw-shadow-sm">

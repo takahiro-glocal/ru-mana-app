@@ -7,8 +7,8 @@
             <Lightbulb class="tw-w-6 md:tw-w-10 tw-h-6 md:tw-h-10 tw-text-white" />
           </div>
           <div>
-            <h1 class="tw-text-xl md:tw-text-4xl tw-font-bold tw-text-gray-800">しるまな</h1>
-            <p class="tw-text-[9px] md:tw-text-sm tw-text-gray-500 tw-font-medium">その知識や経験を良い判断や問題解決に</p>
+            <h1 class="tw-text-xl md:tw-text-4xl tw-font-bold tw-text-gray-800">{{ $t('shiru.title') }}</h1>
+            <p class="tw-text-[9px] md:tw-text-sm tw-text-gray-500 tw-font-medium">{{ $t('shiru.tagline') }}</p>
           </div>
         </div>
 

@@ -8,8 +8,8 @@
             <Lightbulb class="tw-w-6 md:tw-w-10 tw-h-6 md:tw-h-10 tw-text-white" />
           </div>
           <div>
-            <h1 class="tw-text-xl md:tw-text-4xl tw-font-bold tw-text-gray-800">しるまな</h1>
-            <p class="tw-text-[9px] md:tw-text-sm tw-text-gray-500 tw-font-medium">その知識や経験を良い判断や問題解決に</p>
+            <h1 class="tw-text-xl md:tw-text-4xl tw-font-bold tw-text-gray-800">{{ $t('shiru.title') }}</h1>
+            <p class="tw-text-[9px] md:tw-text-sm tw-text-gray-500 tw-font-medium">{{ $t('shiru.tagline') }}</p>
           </div>
         </div>
 
@@ -17,7 +17,7 @@
           <div class="tw-relative">
             <input type="text"
               class="tw-bg-[#4B3E8E] tw-bg-opacity-10 tw-rounded-md tw-py-2 tw-px-10 tw-w-80 tw-text-sm"
-              placeholder="[スレッド内検索]">
+              :placeholder="$t('shiru.thread_search_placeholder')">
             <Search class="tw-absolute tw-left-3 tw-top-1/2 tw-transform -tw-translate-y-1/2 tw-text-gray-500 tw-w-4" />
           </div>
           <div class="tw-flex tw-items-center tw-gap-4 tw-text-gray-300">
@@ -43,7 +43,7 @@
 
     <div class="tw-max-w-6xl tw-mx-auto tw-p-4 md:tw-p-10">
       <nav class="tw-text-[10px] tw-text-gray-400 tw-mb-6 tw-hidden md:tw-block">
-        しるまな / カテゴリー
+        {{ $t('shiru.breadcrumb') }}
       </nav>
 
       <div class="tw-hidden md:tw-flex tw-flex-col tw-gap-6">
@@ -65,7 +65,7 @@
               <p class="tw-text-xs tw-text-gray-400 tw-mt-1">{{ cat.updateDate }} update</p>
             </div>
             <div class="tw-text-2xl tw-font-bold tw-text-gray-700">
-              {{ getThreadCount(cat.id) }}スレッド
+              {{ getThreadCount(cat.id) }}{{ $t('shiru.thread_count') }}
             </div>
           </div>
         </div>
@@ -88,11 +88,11 @@
               <div class="tw-flex-1 tw-p-6 tw-flex tw-flex-col tw-justify-between tw-items-center">
                 <div class="tw-w-full tw-text-center tw-mt-4">
                   <p class="tw-text-gray-400 tw-text-sm font-bold">{{ getThreadCount(cat.id) }} Threads</p>
-                  <p class="tw-text-gray-400 tw-text-xs tw-mt-1">最新のスレッドをチェック</p>
+                  <p class="tw-text-gray-400 tw-text-xs tw-mt-1">{{ $t('shiru.latest_threads') }}</p>
                 </div>
                 <button @click="() => $router.push(localePath(`/shiru/category/${cat.id}`))"
                   class="tw-bg-[#85C441] tw-text-white tw-px-10 tw-py-4 tw-rounded-full tw-font-bold tw-shadow-lg tw-mb-4 active:tw-scale-95 tw-transition-transform">
-                  一覧を見る
+                  {{ $t('shiru.view_all') }}
                 </button>
               </div>
             </div>
@@ -229,8 +229,10 @@ const getIcon = (name: string) => {
   return icons[name] || Plus
 }
 
+const { t } = useI18n()
+
 useHead({
-  title: 'しるまな | るうまな'
+  title: t('shiru.page_title')
 })
 </script>
 

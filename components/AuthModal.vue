@@ -17,7 +17,7 @@
 
         <div class="tw-p-8">
           <h2 class="tw-text-center tw-text-2xl tw-font-bold tw-text-gray-800 tw-mb-6">
-            {{ isRegister ? 'アカウント作成' : 'おかえりなさい！' }}
+            {{ isRegister ? $t('auth.account_create') : $t('auth.welcome_back') }}
           </h2>
 
           <button 
@@ -30,11 +30,11 @@
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
             </svg>
-            Googleで{{ isRegister ? '登録' : 'ログイン' }}
+            {{ isRegister ? $t('auth.google_register') : $t('auth.google_login') }}
           </button>
 
           <div class="tw-relative tw-text-center tw-mb-6">
-            <span class="tw-bg-white tw-px-4 tw-text-xs tw-text-gray-400 tw-relative tw-z-10">またはメールアドレスで</span>
+            <span class="tw-bg-white tw-px-4 tw-text-xs tw-text-gray-400 tw-relative tw-z-10">{{ $t('auth.or_email') }}</span>
             <div class="tw-absolute tw-top-1/2 tw-left-0 tw-w-full tw-h-px tw-bg-gray-100 tw-z-0"></div>
           </div>
 
@@ -43,7 +43,7 @@
               <input 
                 v-model="email" 
                 type="email" 
-                placeholder="メールアドレス" 
+                :placeholder="$t('auth.email')" 
                 required
                 class="tw-w-full tw-bg-gray-50 tw-text-gray-800 tw-rounded-2xl tw-py-3 tw-px-5 tw-border-2 tw-border-transparent focus:tw-border-[#85C441] focus:tw-bg-white tw-outline-none tw-transition-all"
               />
@@ -52,7 +52,7 @@
               <input 
                 v-model="password" 
                 type="password" 
-                placeholder="パスワード (6文字以上)" 
+                :placeholder="$t('auth.password')" 
                 required
                 minlength="6"
                 class="tw-w-full tw-bg-gray-50 tw-text-gray-800 tw-rounded-2xl tw-py-3 tw-px-5 tw-border-2 tw-border-transparent focus:tw-border-[#85C441] focus:tw-bg-white tw-outline-none tw-transition-all"
@@ -68,13 +68,13 @@
               :disabled="isLoading"
               class="tw-w-full tw-bg-[#E4007F] tw-text-white tw-font-bold tw-py-3.5 tw-rounded-full tw-shadow-lg active:tw-scale-95 tw-transition-all hover:tw-bg-[#c0006b] disabled:tw-opacity-50"
             >
-              {{ isLoading ? '処理中...' : (isRegister ? 'アカウント作成' : 'ログイン') }}
+              {{ isLoading ? $t('auth.processing') : (isRegister ? $t('auth.account_create') : $t('common.login')) }}
             </button>
           </form>
 
           <div class="tw-text-center tw-mt-6">
             <button @click="toggleMode" class="tw-text-sm tw-text-gray-500 hover:tw-text-[#4B3E8E] tw-font-bold">
-              {{ isRegister ? 'すでにアカウントをお持ちの方はこちら' : 'アカウントをお持ちでない方はこちら' }}
+              {{ isRegister ? $t('auth.have_account') : $t('auth.no_account') }}
             </button>
           </div>
         </div>

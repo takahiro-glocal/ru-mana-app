@@ -1,12 +1,12 @@
 <template>
   <div class="tw-h-full">
     <div v-if="history.length === 0" class="tw-text-center tw-py-20 tw-text-gray-400">
-      <p>履歴はありません</p>
+      <p>{{ $t('history.no_history') }}</p>
     </div>
     
     <div v-else class="tw-space-y-4">
       <div class="tw-flex tw-justify-end">
-        <button @click="clearHistory" class="tw-text-xs tw-text-red-500 tw-font-bold hover:tw-underline">履歴を全削除</button>
+        <button @click="clearHistory" class="tw-text-xs tw-text-red-500 tw-font-bold hover:tw-underline">{{ $t('history.clear_all') }}</button>
       </div>
       
       <div 

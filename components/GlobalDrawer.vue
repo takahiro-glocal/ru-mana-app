@@ -35,7 +35,7 @@
                 </button>
               </nav>
               <div class="tw-mt-10">
-                <button @click="handleLogout" class="tw-w-full tw-py-4 tw-bg-gray-50 tw-text-gray-400 tw-rounded-2xl tw-font-bold hover:tw-bg-red-50 hover:tw-text-red-500">ログアウト</button>
+                <button @click="handleLogout" class="tw-w-full tw-py-4 tw-bg-gray-50 tw-text-gray-400 tw-rounded-2xl tw-font-bold hover:tw-bg-red-50 hover:tw-text-red-500">{{ $t('common.logout') }}</button>
               </div>
             </div>
             <div v-else-if="currentStep === 'profile'" key="profile"><DrawerProfile /></div>
@@ -52,20 +52,21 @@
 
 <script setup lang="ts">
 import { ChevronLeft, ChevronRight, X, User, History, Settings, Award, MessageCircle } from 'lucide-vue-next'
+const { t } = useI18n()
 const { user, userDisplayName, userPhotoURL, logout } = useAuth()
 const { isDrawerOpen, currentStep, closeDrawer } = useDrawer()
 
-const menuItems = [
-  { id: 'profile', label: '登録情報', icon: User },
-  { id: 'general', label: '設定・言語', icon: Settings },
-  { id: 'points', label: 'ポイント', icon: Award },
-  { id: 'history', label: '履歴', icon: History },
-  { id: 'feedback', label: 'フィードバック', icon: MessageCircle },
-] as const
+const menuItems = computed(() => [
+  { id: 'profile', label: t('drawer.profile_info'), icon: User },
+  { id: 'general', label: t('drawer.settings_language'), icon: Settings },
+  { id: 'points', label: t('drawer.points'), icon: Award },
+  { id: 'history', label: t('drawer.history'), icon: History },
+  { id: 'feedback', label: t('drawer.feedback'), icon: MessageCircle },
+])
 
 const currentStepTitle = computed(() => {
   if (currentStep.value === 'menu') return 'My Account'
-  return menuItems.find(i => i.id === currentStep.value)?.label || ''
+  return menuItems.value.find(i => i.id === currentStep.value)?.label || ''
 })
 
 const handleLogout = async () => {
