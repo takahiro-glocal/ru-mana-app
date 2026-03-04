@@ -1,7 +1,8 @@
-import { 
-  signInWithPopup, 
-  GoogleAuthProvider, 
-  createUserWithEmailAndPassword, 
+import {
+  signInWithRedirect,
+  getRedirectResult,
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
@@ -15,21 +16,25 @@ export const useAuth = () => {
   const user = useState<User | null>('firebase-user', () => null);
   const isAuthLoading = useState<boolean>('auth-loading', () => true);
 
-  // 初期化：状態監視
+  // 初期化：状態監視 + リダイレクト結果の処理
   const initAuth = () => {
     if (process.client) {
       onAuthStateChanged($auth, (currentUser) => {
         user.value = currentUser;
         isAuthLoading.value = false;
       });
+      // Googleリダイレクトログインの結果を処理
+      getRedirectResult($auth).catch((error) => {
+        console.error("Redirect result error:", error);
+      });
     }
   };
 
-  // Googleログイン
+  // Googleログイン（リダイレクト方式 — COOPエラー回避）
   const loginWithGoogle = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup($auth, provider);
+      await signInWithRedirect($auth, provider);
     } catch (error) {
       console.error("Google Login Error:", error);
       throw error;

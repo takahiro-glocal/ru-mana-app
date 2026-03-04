@@ -1,4 +1,4 @@
-import { VertexAI } from '@google-cloud/vertexai'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -8,21 +8,14 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'text and targetLang are required' })
   }
 
-  const config = useRuntimeConfig()
-  const projectId = config.public.projectId || process.env.PROJECT_ID
+  const geminiApiKey = process.env.GEMINI_API_KEY
 
-  if (!projectId) {
-    throw createError({ statusCode: 500, statusMessage: 'PROJECT_ID is not configured' })
+  if (!geminiApiKey) {
+    throw createError({ statusCode: 500, statusMessage: 'GEMINI_API_KEY is not configured' })
   }
 
-  const vertexAI = new VertexAI({
-    project: projectId,
-    location: process.env.VERTEX_AI_LOCATION || 'asia-northeast1',
-  })
-
-  const model = vertexAI.getGenerativeModel({
-    model: 'gemini-2.5-flash',
-  })
+  const genAI = new GoogleGenerativeAI(geminiApiKey)
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
   const langNames: Record<string, string> = {
     ja: 'Japanese',
@@ -50,8 +43,7 @@ ${text}`
 
   try {
     const result = await model.generateContent(prompt)
-    const response = result.response
-    const translatedText = response.candidates?.[0]?.content?.parts?.[0]?.text?.trim()
+    const translatedText = result.response.text()?.trim()
 
     if (!translatedText) {
       throw createError({ statusCode: 500, statusMessage: 'No translation returned' })
