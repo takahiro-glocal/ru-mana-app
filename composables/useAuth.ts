@@ -1,4 +1,5 @@
 import {
+  signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
   GoogleAuthProvider,
@@ -6,31 +7,37 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  browserLocalPersistence,
+  setPersistence,
   type User
 } from "firebase/auth";
+import { shallowRef, computed } from "vue";
 
-// グローバルフラグ: リスナー登録済みかどうか
+// モジュールレベル: 全コンポーネントで共有
+const user = shallowRef<User | null>(null);
+const isAuthLoading = shallowRef(true);
 let authInitialized = false;
 
 export const useAuth = () => {
   const { $auth } = useNuxtApp();
 
-  // ユーザー状態 (nullの場合はゲスト)
-  const user = useState<User | null>('firebase-user', () => null);
-  const isAuthLoading = useState<boolean>('auth-loading', () => true);
-
   // 自動初期化: composable呼び出し時にリスナーを1回だけ登録
   if (process.client && !authInitialized) {
     authInitialized = true;
+
+    // 明示的に永続化方式を設定
+    setPersistence($auth, browserLocalPersistence).catch((err) => {
+      console.warn("Auth persistence setup failed:", err);
+    });
 
     onAuthStateChanged($auth, (currentUser) => {
       user.value = currentUser;
       isAuthLoading.value = false;
     });
 
-    // Googleリダイレクトログインの結果を処理
+    // リダイレクトログインの結果を処理（フォールバック時用）
     getRedirectResult($auth).catch((error) => {
-      if (error?.code !== 'auth/redirect-cancelled-by-user') {
+      if (error?.code !== "auth/redirect-cancelled-by-user") {
         console.error("Redirect result error:", error);
       }
     });
@@ -39,14 +46,24 @@ export const useAuth = () => {
   // 後方互換のため残す (何もしない)
   const initAuth = () => {};
 
-  // Googleログイン（リダイレクト方式 — COOPエラー回避）
+  // Googleログイン（ポップアップ優先、失敗時リダイレクト）
   const loginWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
     try {
-      const provider = new GoogleAuthProvider();
-      await signInWithRedirect($auth, provider);
-    } catch (error) {
-      console.error("Google Login Error:", error);
-      throw error;
+      await signInWithPopup($auth, provider);
+    } catch (error: unknown) {
+      const code = (error as { code?: string })?.code;
+      // ポップアップがブロックされた場合のみリダイレクトにフォールバック
+      if (
+        code === "auth/popup-blocked" ||
+        code === "auth/popup-closed-by-user" ||
+        code === "auth/cancelled-popup-request"
+      ) {
+        await signInWithRedirect($auth, provider);
+      } else {
+        console.error("Google Login Error:", error);
+        throw error;
+      }
     }
   };
 
@@ -82,13 +99,13 @@ export const useAuth = () => {
   // ユーザー表示名取得
   const userDisplayName = computed(() => {
     if (!user.value) return "Guest";
-    return user.value.displayName || user.value.email?.split('@')[0] || "Guest";
+    return user.value.displayName || user.value.email?.split("@")[0] || "Guest";
   });
 
   // ユーザーアイコン取得
   const userPhotoURL = computed(() => {
     if (user.value?.photoURL) return user.value.photoURL;
-    const seed = user.value?.uid || 'guest';
+    const seed = user.value?.uid || "guest";
     return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
   });
 

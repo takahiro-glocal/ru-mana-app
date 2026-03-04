@@ -1,9 +1,9 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
+import { initializeFirestore, persistentLocalCache, persistentSingleTabManager } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin((_nuxtApp) => {
   const config = useRuntimeConfig();
 
   const firebaseConfig = {
@@ -17,20 +17,16 @@ export default defineNuxtPlugin((nuxtApp) => {
   };
 
   const app = initializeApp(firebaseConfig);
-  const firestore = getFirestore(app);
+
+  // Firestore: 新しいキャッシュAPI (enableIndexedDbPersistence は非推奨)
+  const firestore = initializeFirestore(app, {
+    localCache: persistentLocalCache({
+      tabManager: persistentSingleTabManager({}),
+    }),
+  });
+
   const auth = getAuth(app);
   const storage = getStorage(app);
-
-  // オフライン永続化 (ブラウザのみ)
-  if (process.client) {
-    enableIndexedDbPersistence(firestore).catch((err) => {
-      if (err.code == 'failed-precondition') {
-        console.warn('Persistence failed to enable: Multiple tabs open');
-      } else if (err.code == 'unimplemented') {
-        console.warn('Persistence is not available in this browser');
-      }
-    });
-  }
 
   return {
     provide: {

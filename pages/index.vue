@@ -185,13 +185,13 @@
                 <MapIcon class="tw-w-10 tw-h-10" />
                 <span class="tw-text-[9px] tw-font-bold tw-mt-1">{{ $t('dashboard.disaster_map') }}</span>
               </NuxtLink>
-              <div class="tw-flex-1 tw-bg-[#D9A65D] tw-rounded-2xl tw-p-2 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md">
-                <div class="tw-grid tw-grid-cols-2 tw-gap-2">
-                  <a v-for="sns in snsLinks" :key="sns.label" :href="sns.url" target="_blank" rel="noopener noreferrer" class="hover:tw-opacity-70 tw-transition-opacity">
-                    <component :is="sns.icon" class="tw-w-4 tw-h-4" />
+              <div class="tw-flex-1 tw-bg-[#D9A65D] tw-rounded-2xl tw-p-3 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md">
+                <div class="tw-grid tw-grid-cols-2 tw-gap-3">
+                  <a v-for="sns in snsLinks" :key="sns.label" :href="sns.url" target="_blank" rel="noopener noreferrer" class="tw-p-1.5 tw-rounded-lg hover:tw-bg-white/20 tw-transition-all">
+                    <component :is="sns.icon" class="tw-w-5 tw-h-5" />
                   </a>
                 </div>
-                <span class="tw-text-[9px] tw-font-bold tw-mt-2">{{ $t('dashboard.sns') }}</span>
+                <span class="tw-text-[9px] tw-font-bold tw-mt-1.5">{{ $t('dashboard.sns') }}</span>
               </div>
             </div>
           </div>
