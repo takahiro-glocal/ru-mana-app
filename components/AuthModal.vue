@@ -123,7 +123,7 @@ const handleGoogleLogin = async () => {
   try {
     await loginWithGoogle();
     close();
-  } catch (e: any) {
+  } catch (_e: unknown) {
     errorMsg.value = 'Googleログインに失敗しました';
   } finally {
     isLoading.value = false;
@@ -140,13 +140,14 @@ const handleSubmit = async () => {
       await loginWithEmail(email.value, password.value);
     }
     close();
-  } catch (e: any) {
+  } catch (e: unknown) {
     // Firebaseのエラーコードに応じた簡易メッセージ
-    if (e.code === 'auth/email-already-in-use') {
+    const firebaseError = e as { code?: string };
+    if (firebaseError.code === 'auth/email-already-in-use') {
       errorMsg.value = 'このメールアドレスは既に使用されています';
-    } else if (e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found') {
+    } else if (firebaseError.code === 'auth/wrong-password' || firebaseError.code === 'auth/user-not-found') {
       errorMsg.value = 'メールアドレスまたはパスワードが正しくありません';
-    } else if (e.code === 'auth/weak-password') {
+    } else if (firebaseError.code === 'auth/weak-password') {
       errorMsg.value = 'パスワードが弱すぎます';
     } else {
       errorMsg.value = 'エラーが発生しました。もう一度お試しください。';

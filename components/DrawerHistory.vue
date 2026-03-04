@@ -43,7 +43,7 @@ const formatDate = (iso: string) => {
   return new Date(iso).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
-const goToThread = (item: any) => {
+const goToThread = (item: BrowsingHistory) => {
   closeDrawer() // ドロワーを閉じる
   router.push(localePath(`/shiru/category/${item.categoryId}/thread/${item.threadId}`)) // 遷移する
 }

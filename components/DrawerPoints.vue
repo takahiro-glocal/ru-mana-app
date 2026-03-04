@@ -28,10 +28,10 @@ const { user } = useAuth()
 const { getUserPoints, getPointHistory } = useFirestore()
 
 const points = ref(0)
-const history = ref<any[]>([])
+const history = ref<PointHistoryItem[]>([])
 const isLoading = ref(true)
 
-const formatDate = (timestamp: any) => {
+const formatDate = (timestamp: FirebaseTimestamp | null) => {
   if (!timestamp?.toDate) return ''
   const d = timestamp.toDate()
   return d.toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })

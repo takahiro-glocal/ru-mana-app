@@ -277,7 +277,16 @@ const isSending = ref(false)
 const activeMenuId = ref<string | null>(null)
 const editingPostId = ref<string | null>(null)
 const replyTarget = ref<Post | null>(null)
-const currentThreadData = ref<any>(null)
+interface ThreadData {
+  id: string;
+  title: string;
+  createdAt: FirebaseTimestamp | null;
+  updatedAt: FirebaseTimestamp | null;
+  categoryId: string;
+  postCount: number;
+}
+
+const currentThreadData = ref<ThreadData | null>(null)
 
 const likedPostIds = ref<string[]>([])
 let unsubscribePosts: (() => void) | null = null
@@ -285,33 +294,38 @@ let unsubscribeThread: (() => void) | null = null
 let unsubscribeCategory: (() => void) | null = null
 
 // カラーパレット
-const themeMap: Record<string, any> = {
+interface ThreadTheme {
+  dot: string;
+  textBg: string;
+}
+
+const themeMap: Record<string, ThreadTheme> = {
   transport: { dot: 'tw-bg-[#A5D1E1]', textBg: 'tw-bg-[#5FB3D5]' },
   public:    { dot: 'tw-bg-[#F4A7B9]', textBg: 'tw-bg-[#E95295]' },
   spa:       { dot: 'tw-bg-[#7DB9DE]', textBg: 'tw-bg-[#3E91FF]' },
   cafe:      { dot: 'tw-bg-[#F5B169]', textBg: 'tw-bg-[#F39800]' },
   new:       { dot: 'tw-bg-[#B28FCE]', textBg: 'tw-bg-[#9C27B0]' }
 }
-const getTheme = (id: string) => themeMap[id] || themeMap.new
+const getTheme = (id: string): ThreadTheme => themeMap[id] || themeMap.new
 
 // Formatters
-const formatDate = (date: any) => {
+const formatDate = (date: FirebaseTimestamp | Date | string | null) => {
   if (!date) return ''
-  const d = (date.seconds) ? new Date(date.seconds * 1000) : new Date(date)
-  
+  const d = (typeof date === 'object' && 'seconds' in date) ? new Date(date.seconds * 1000) : new Date(date)
+
   const now = new Date()
   const diff = now.getTime() - d.getTime()
-  
+
   if (diff < 60000) return '今すぐ'
   if (diff < 3600000) return `${Math.floor(diff / 60000)}分前`
   if (diff < 86400000) return `${Math.floor(diff / 3600000)}時間前`
-  
+
   return d.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
-const formatDateShort = (date: any) => {
+const formatDateShort = (date: FirebaseTimestamp | Date | string | null) => {
   if (!date) return ''
-  const d = (date.seconds) ? new Date(date.seconds * 1000) : new Date(date)
+  const d = (typeof date === 'object' && 'seconds' in date) ? new Date(date.seconds * 1000) : new Date(date)
   return d.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })
 }
 

@@ -1,5 +1,7 @@
 // types/app.d.ts
 
+import type { Component } from 'vue'
+
 interface AppNavigation {
   title: string;
   path: string;
@@ -97,4 +99,66 @@ interface Country {
     randomDelay?: number
     randomDuration?: number
     animationName?: 'perspective3D' | 'perspective3DR'
+}
+
+/**
+ * テーマ設定 (しるまなカテゴリ用)
+ */
+interface CategoryTheme {
+  bg: string;
+  border?: string;
+  text: string;
+  dot: string;
+  btnBg?: string;
+  textBg?: string;
+}
+
+/**
+ * マップピン (みるまな用)
+ */
+interface MapSpot {
+  id: number;
+  type: 'sightseeing' | 'shelter' | 'wifi' | 'restroom';
+  name: string;
+  address: string;
+  distance: number;
+  x: number;
+  y: number;
+}
+
+/**
+ * ポイント履歴アイテム
+ */
+interface PointHistoryItem {
+  id: string;
+  amount: number;
+  reason: string;
+  createdAt: FirebaseTimestamp;
+}
+
+/**
+ * Firebase Timestamp型 (Firestoreの{ seconds, nanoseconds }構造)
+ */
+interface FirebaseTimestamp {
+  seconds: number;
+  nanoseconds: number;
+  toDate: () => Date;
+}
+
+/**
+ * 天気API レスポンス
+ */
+interface WeatherResponse {
+  main: { temp: number };
+  name: string;
+  weather: Array<{ main: string }>;
+}
+
+/**
+ * Firebase Auth User の最小型 (createThread用)
+ */
+interface FirebaseUserInfo {
+  uid: string;
+  displayName: string | null;
+  photoURL: string | null;
 }

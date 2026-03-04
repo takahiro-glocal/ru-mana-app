@@ -22,9 +22,9 @@ export const useCultureGuides = () => {
       if (data.value) {
         guides.value = data.value;
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error('Failed to load culture guides:', e);
-      error.value = e;
+      error.value = e instanceof Error ? e : new Error(String(e));
     } finally {
       isLoading.value = false;
     }

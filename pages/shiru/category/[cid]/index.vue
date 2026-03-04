@@ -259,7 +259,8 @@
 </template>
 
 <script setup lang="ts">
-import { 
+import type { Component } from 'vue'
+import {
   Lightbulb, Search, Home, UserCircle, ChevronRight, Train, Users, Waves, Utensils, Plus,
   MessageSquare, BookOpen, CheckCircle, XCircle, Shirt, Droplets, VolumeX, Backpack, ArrowUp
 } from 'lucide-vue-next'
@@ -290,22 +291,22 @@ const activeTab = ref<'threads' | 'guides'>('threads')
 let isInitialScroll = true
 let unsubscribe: (() => void) | null = null
 
-const themeMap: Record<string, any> = {
+const themeMap: Record<string, CategoryTheme> = {
   transport: { bg: 'tw-bg-[#E0F2F7]', border: 'tw-border-[#A5D1E1]', text: 'tw-text-[#5FB3D5]', dot: 'tw-bg-[#A5D1E1]', btnBg: 'tw-bg-[#5FB3D5]' },
   public: { bg: 'tw-bg-[#FCE7EB]', border: 'tw-border-[#F4A7B9]', text: 'tw-text-[#E95295]', dot: 'tw-bg-[#F4A7B9]', btnBg: 'tw-bg-[#E95295]' },
   spa: { bg: 'tw-bg-[#E5F1F6]', border: 'tw-border-[#7DB9DE]', text: 'tw-text-[#3E91FF]', dot: 'tw-bg-[#7DB9DE]', btnBg: 'tw-bg-[#3E91FF]' },
   cafe: { bg: 'tw-bg-[#FFF3E0]', border: 'tw-border-[#F5B169]', text: 'tw-text-[#F39800]', dot: 'tw-bg-[#F5B169]', btnBg: 'tw-bg-[#F39800]' },
   new: { bg: 'tw-bg-[#F3E5F5]', border: 'tw-border-[#B28FCE]', text: 'tw-text-[#9C27B0]', dot: 'tw-bg-[#B28FCE]', btnBg: 'tw-bg-[#9C27B0]' }
 }
-const getTheme = (id: string) => themeMap[id] || themeMap.new
+const getTheme = (id: string): CategoryTheme => themeMap[id] || themeMap.new
 
 const getCategoryIcon = (name: string) => {
-  const icons: any = { train: Train, users: Users, waves: Waves, utensils: Utensils, plus: Plus }
+  const icons: Record<string, Component> = { train: Train, users: Users, waves: Waves, utensils: Utensils, plus: Plus }
   return icons[name] || Plus
 }
 
 const mapGuideIcon = (iconName: string) => {
-  const iconMap: Record<string, any> = { droplets: Droplets, shirt: Shirt, waves: Waves, 'volume-x': VolumeX, backpack: Backpack }
+  const iconMap: Record<string, Component> = { droplets: Droplets, shirt: Shirt, waves: Waves, 'volume-x': VolumeX, backpack: Backpack }
   return iconMap[iconName] || BookOpen
 }
 
@@ -315,9 +316,9 @@ const currentThreads = computed(() => firestoreThreads.value)
 const currentGuides = getGuidesByCategory(cid.value)
 const getGuides = (categoryId: string) => getGuidesByCategory(categoryId).value
 
-const formatDate = (date: any) => {
+const formatDate = (date: FirebaseTimestamp | Date | string | null) => {
   if (!date) return ''
-  const d = (date.seconds) ? new Date(date.seconds * 1000) : new Date(date)
+  const d = (typeof date === 'object' && 'seconds' in date) ? new Date(date.seconds * 1000) : new Date(date)
   return d.toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 

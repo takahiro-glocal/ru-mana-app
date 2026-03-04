@@ -277,17 +277,22 @@ const localePath = useLocalePath();
 const isLoginModalOpen = ref(false);
 
 // --- PWA Install Prompt ---
-let deferredPrompt: any = null;
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
+let deferredPrompt: BeforeInstallPromptEvent | null = null;
 if (process.client) {
   window.addEventListener('beforeinstallprompt', (e: Event) => {
     e.preventDefault();
-    deferredPrompt = e;
+    deferredPrompt = e as BeforeInstallPromptEvent;
   });
 }
 
 const handleInstall = async () => {
   if (deferredPrompt) {
-    deferredPrompt.prompt();
+    await deferredPrompt.prompt();
     await deferredPrompt.userChoice;
     deferredPrompt = null;
   } else {
@@ -345,7 +350,7 @@ const fetchWeather = async (lat: number, lng: number) => {
       weather.temp = '25';
       return;
     }
-    const data = await $fetch<any>(
+    const data = await $fetch<WeatherResponse>(
       `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=metric&lang=ja&appid=${apiKey}`
     );
     weather.temp = Math.round(data.main.temp).toString();
@@ -418,39 +423,47 @@ let unsubLatest: (() => void) | null = null;
 // --- Google Maps Logic ---
 const MAP_ID = '880da9152ccc05531e5c5014'; 
 const { load } = useMapsLoader();
-const mapContainerPC = ref<HTMLElement | null>(null);
-let mapInstance: any = null;
-let userOverlay: any = null;
-let watchId: number | null = null;
-let googleMaps: any = null;
+// Google Maps types
+interface PulseOverlayInstance {
+  setPosition(latlng: google.maps.LatLng): void;
+  setMap(map: google.maps.Map | null): void;
+}
 
-const createPulseOverlayClass = (gMaps: any) => {
+const mapContainerPC = ref<HTMLElement | null>(null);
+let mapInstance: google.maps.Map | null = null;
+let userOverlay: PulseOverlayInstance | null = null;
+let watchId: number | null = null;
+let googleMaps: typeof google.maps | null = null;
+
+const createPulseOverlayClass = (gMaps: typeof google.maps) => {
   return class PulseOverlay extends gMaps.OverlayView {
     div: HTMLElement | null = null;
-    position: any = null;
-    constructor(map: any) { super(); this.setMap(map); }
+    position: google.maps.LatLng | null = null;
+    constructor(map: google.maps.Map) { super(); this.setMap(map); }
     onAdd() {
       const div = document.createElement('div');
       div.className = 'user-location-pulse';
       div.innerHTML = `<div class="pulse-ring"></div><div class="pulse-core"></div>`;
       this.div = div;
       const panes = this.getPanes();
-      panes.overlayMouseTarget.appendChild(div);
+      if (panes) panes.overlayMouseTarget.appendChild(div);
     }
     draw() {
       if (!this.div || !this.position) return;
-      const point = this.getProjection().fromLatLngToDivPixel(this.position);
+      const projection = this.getProjection();
+      if (!projection) return;
+      const point = projection.fromLatLngToDivPixel(this.position);
       if (point) { this.div.style.left = point.x + 'px'; this.div.style.top = point.y + 'px'; }
     }
     onRemove() { if (this.div) { this.div.parentNode?.removeChild(this.div); this.div = null; } }
-    setPosition(latlng: any) { this.position = latlng; this.draw(); }
+    setPosition(latlng: google.maps.LatLng) { this.position = latlng; this.draw(); }
   };
 };
 
 const initGoogleMap = async () => {
   try {
     await load();
-    googleMaps = (window as any).google.maps;
+    googleMaps = google.maps;
     if (mapContainerPC.value && googleMaps) {
       mapInstance = new googleMaps.Map(mapContainerPC.value, {
         center: { lat: 35.6895, lng: 139.6917 },

@@ -99,7 +99,7 @@ const { t } = useI18n();
 const localePath = useLocalePath();
 
 const activeFilter = ref('sightseeing');
-const selectedSpot = ref<any>(null);
+const selectedSpot = ref<MapSpot | null>(null);
 
 const filters = [
   { id: 'sightseeing', icon: Landmark },
@@ -109,7 +109,7 @@ const filters = [
 ];
 
 // Mock Map Pins
-const allPins = ref([
+const allPins = ref<MapSpot[]>([
   { id: 1, type: 'sightseeing', name: 'Kawagoe Toki no Kane', address: 'Kura-no-machi, Kawagoe', distance: 150, x: 45, y: 40 },
   { id: 2, type: 'shelter', name: 'Kawagoe Elementary School', address: 'Emergency Shelter A-1', distance: 450, x: 60, y: 30 },
   { id: 3, type: 'wifi', name: 'Town Free Wi-Fi 01', address: 'Main Street Crossing', distance: 50, x: 30, y: 55 },
@@ -130,7 +130,7 @@ const toggleFilter = (id: string) => {
   selectedSpot.value = null; // フィルタ切り替え時に選択を解除
 };
 
-const selectPin = (pin: any) => {
+const selectPin = (pin: MapSpot) => {
   selectedSpot.value = pin;
 };
 
