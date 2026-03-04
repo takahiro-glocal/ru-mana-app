@@ -99,16 +99,22 @@
                       </button>
                     </div>
 
-                    <div v-if="threadsLoading" class="tw-py-10 tw-text-center tw-text-gray-400 tw-text-xs">
-                      {{ $t('common.loading') }}
+                    <div v-if="threadsLoading || (needsTranslation && isAutoTranslating)" class="tw-py-10 tw-text-center tw-text-gray-400 tw-text-xs">
+                      <div v-if="needsTranslation && isAutoTranslating && !threadsLoading" class="tw-space-y-3 tw-px-2">
+                        <div v-for="i in 3" :key="i" class="tw-flex tw-items-center tw-gap-3 tw-py-3">
+                          <div class="tw-w-2.5 tw-h-2.5 tw-rounded-full tw-bg-gray-200 tw-flex-shrink-0"></div>
+                          <div class="tw-h-4 tw-bg-gray-200 tw-rounded tw-animate-pulse" :style="{ width: (55 + i * 12) + '%' }"></div>
+                        </div>
+                      </div>
+                      <span v-else>{{ $t('common.loading') }}</span>
                     </div>
                     <div v-else-if="currentThreads.length === 0" class="tw-py-10 tw-text-center tw-text-gray-400 tw-text-xs">
                       {{ $t('shiru.no_threads') }}
                     </div>
-                    
+
                     <div v-else class="tw-divide-y tw-divide-gray-50">
-                      <div 
-                        v-for="thread in currentThreads" 
+                      <div
+                        v-for="thread in currentThreads"
                         :key="thread.id"
                         class="tw-group tw-flex tw-items-start tw-justify-between tw-py-4 active:tw-bg-gray-50 transition-colors"
                         @click="() => $router.push(localePath(`/shiru/category/${cat.id}/thread/${thread.id}`))"
@@ -116,7 +122,7 @@
                         <div class="tw-flex tw-items-start tw-gap-3">
                           <div :class="['tw-w-2.5 tw-h-2.5 tw-rounded-full tw-mt-1 tw-flex-shrink-0', getTheme(cat.id).dot]"></div>
                           <div>
-                            <h4 class="tw-text-[15px] tw-font-bold tw-text-gray-700 tw-leading-tight group-active:tw-text-[#85C441]">{{ thread.title }}</h4>
+                            <h4 class="tw-text-[15px] tw-font-bold tw-text-gray-700 tw-leading-tight group-active:tw-text-[#85C441]">{{ getTranslatedTitle(thread.id, thread.title) }}</h4>
                             <div class="tw-flex tw-gap-2 tw-mt-1">
                                <span class="tw-text-[10px] tw-text-gray-300">{{ formatDate(thread.updatedAt || thread.createdAt) }}</span>
                             </div>
@@ -181,8 +187,14 @@
           </div>
           
           <div v-if="activeTab === 'threads'" class="tw-animate-fade-in">
-             <div v-if="threadsLoading" class="tw-py-20 tw-text-center tw-text-gray-400">
-                {{ $t('common.loading') }}
+             <div v-if="threadsLoading || (needsTranslation && isAutoTranslating)" class="tw-py-20 tw-text-center tw-text-gray-400">
+                <div v-if="needsTranslation && isAutoTranslating && !threadsLoading" class="tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 tw-gap-x-12 tw-text-left">
+                  <div v-for="i in 4" :key="i" class="tw-flex tw-items-center tw-gap-3 tw-py-4 tw-border-b tw-border-gray-100 tw-px-2">
+                    <div class="tw-w-2 tw-h-2 tw-rounded-full tw-bg-gray-200 tw-flex-shrink-0"></div>
+                    <div class="tw-h-5 tw-bg-gray-200 tw-rounded tw-animate-pulse" :style="{ width: (50 + i * 10) + '%' }"></div>
+                  </div>
+                </div>
+                <span v-else>{{ $t('common.loading') }}</span>
              </div>
              <div v-else-if="currentThreads.length === 0" class="tw-py-20 tw-text-center tw-text-gray-400">
                 {{ $t('shiru.no_threads_create') }}
@@ -190,8 +202,8 @@
              <div v-else class="tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 tw-gap-x-12">
                 <div v-for="thread in currentThreads" :key="thread.id" class="tw-flex tw-items-center tw-justify-between tw-py-4 tw-border-b tw-border-gray-100 tw-cursor-pointer hover:tw-bg-gray-50 tw-px-2" @click="() => $router.push(localePath(`/shiru/category/${cid}/thread/${thread.id}`))">
                     <div class="tw-flex tw-items-center tw-gap-3">
-                      <div :class="['tw-w-2 tw-h-2 tw-rounded-full', getTheme(cid).dot]"></div>
-                      <h3 class="tw-text-base tw-font-bold tw-text-gray-700">{{ thread.title }}</h3>
+                      <div :class="['tw-w-2 tw-h-2 tw-rounded-full tw-flex-shrink-0', getTheme(cid).dot]"></div>
+                      <h3 class="tw-text-base tw-font-bold tw-text-gray-700">{{ getTranslatedTitle(thread.id, thread.title) }}</h3>
                     </div>
                     <div class="tw-flex tw-items-center tw-gap-4 tw-flex-shrink-0">
                       <span class="tw-text-[10px] tw-text-gray-300">{{ formatDate(thread.updatedAt || thread.createdAt) }}</span>
@@ -400,6 +412,35 @@ onUnmounted(() => {
 })
 
 const { t, locale } = useI18n()
+const { translateText, getTranslation } = useTranslation()
+
+// === 自動翻訳（スレッドタイトル） ===
+const needsTranslation = computed(() => locale.value !== 'ja')
+const isAutoTranslating = ref(locale.value !== 'ja')
+
+const getTranslatedTitle = (threadId: string, originalTitle: string): string => {
+  if (!needsTranslation.value) return originalTitle
+  return getTranslation(`title:${threadId}`) || originalTitle
+}
+
+// スレッドタイトルを自動翻訳（日本語以外のロケール時）
+watch(
+  [() => firestoreThreads.value, () => locale.value],
+  async ([threads]) => {
+    if (!needsTranslation.value) {
+      isAutoTranslating.value = false
+      return
+    }
+    if (threads.length === 0) return
+    const promises: Promise<string | null>[] = []
+    for (const thread of threads) {
+      promises.push(translateText(`title:${thread.id}`, thread.title))
+    }
+    await Promise.all(promises)
+    isAutoTranslating.value = false
+  },
+  { immediate: true }
+)
 
 useHead(() => ({
   title: currentCategory.value ? `${getCategoryName(cid.value)} | ${t('shiru.title')}` : t('shiru.title')
