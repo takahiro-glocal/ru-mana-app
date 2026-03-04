@@ -218,13 +218,6 @@ import {
   Search, Bomb, Copy, Home, UserCircle
 } from 'lucide-vue-next';
 
-interface HelpCategory {
-  id: string;
-  icon: Component;
-  colorClass: string;
-  steps: string[];
-}
-
 const { t } = useI18n();
 const localePath = useLocalePath();
 const { user, userPhotoURL } = useAuth();

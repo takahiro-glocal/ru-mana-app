@@ -112,6 +112,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Component } from 'vue'
 import {
   Lightbulb, Search, FileText, Home, UserCircle,
   Train, Users, Waves, Utensils, Plus,
@@ -161,7 +162,7 @@ const handleScroll = (event: Event) => {
 }
 
 // カテゴリごとのテーマ設定
-const categoryOptions: Record<string, any> = {
+const categoryOptions: Record<string, CategoryTheme> = {
   transport: {
     bg: 'tw-bg-[#E0F2F7]',
     border: 'tw-border-[#A5D1E1]',
@@ -215,7 +216,7 @@ const getTheme = (id: string) => {
 }
 
 const getIcon = (name: string) => {
-  const icons: Record<string, any> = {
+  const icons: Record<string, Component> = {
     train: Train,
     users: Users,
     waves: Waves,

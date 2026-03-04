@@ -139,7 +139,7 @@ const selectedCategory = ref('all');
 const categories = ['all', 'workshop', 'festival', 'food', 'culture'];
 
 // Mock Events Data
-const events = ref([
+const events = ref<IkuEvent[]>([
   {
     id: 1,
     title: 'Traditional Kimono Fitting in Old Town',

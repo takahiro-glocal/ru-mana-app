@@ -108,7 +108,7 @@ interface CategoryTheme {
   bg: string;
   border?: string;
   text: string;
-  dot: string;
+  dot?: string;
   btnBg?: string;
   textBg?: string;
 }
@@ -163,21 +163,138 @@ interface FirebaseUserInfo {
   photoURL: string | null;
 }
 
-interface Country {
-    id: string
-    name: string
-    nameEng: string
-    code: string
-    flag: string
-    initialX?: number
-    initialY?: number
-    initialZ?: number
-    initialAngle?: number
-    rotationDuration?: number
-    layerRadius?: number
-    rotationDirection?: string
-    randomDelay?: number
-    randomDuration?: number
-    initialZ?: number
-    animationName?: 'perspective3D' | 'perspective3DR'
+/**
+ * スレッド詳細データ (Firestoreドキュメント)
+ */
+interface ThreadData {
+  id: string;
+  title: string;
+  createdAt: FirebaseTimestamp | null;
+  updatedAt: FirebaseTimestamp | null;
+  categoryId: string;
+  postCount: number;
+}
+
+/**
+ * スレッドページ カラーテーマ
+ */
+interface ThreadTheme {
+  dot: string;
+  textBg: string;
+}
+
+/**
+ * 防災マップ 施設位置データ
+ */
+interface LocationData {
+  lat: number;
+  lng: number;
+  type: string;
+  title: string;
+  range?: number;
+}
+
+/**
+ * 防災マップ カテゴリ
+ */
+interface DisasterCategory {
+  id: string;
+  label: string;
+  color: string;
+  iconColor: string;
+  active: boolean;
+}
+
+/**
+ * トラブルページ ヘルプカテゴリ
+ */
+interface HelpCategory {
+  id: string;
+  icon: Component;
+  colorClass: string;
+  steps: string[];
+}
+
+/**
+ * PWA インストールプロンプトイベント
+ */
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
+/**
+ * Google Maps パルスオーバーレイ
+ */
+interface PulseOverlayInstance {
+  setPosition(latlng: google.maps.LatLng): void;
+  setMap(map: google.maps.Map | null): void;
+}
+
+/**
+ * きくまな 投稿データ
+ */
+interface KikuPost {
+  id: number;
+  userName: string;
+  userAvatar: string;
+  timeAgo: string;
+  content: string;
+  tags: string[];
+  category: string;
+  lang: string;
+  likes: number;
+  isLiked: boolean;
+}
+
+/**
+ * いくまな イベントデータ
+ */
+interface IkuEvent {
+  id: number;
+  title: string;
+  category: string;
+  date: string;
+  location: string;
+  price: number;
+  rating: number;
+  spotsLeft: number;
+  icon: Component;
+  isReserved: boolean;
+  featured?: boolean;
+}
+
+/**
+ * マップフィルターアイテム
+ */
+interface MapFilter {
+  id: string;
+  icon: Component;
+}
+
+/**
+ * ドロワーメニューアイテム
+ */
+interface DrawerMenuItem {
+  id: string;
+  label: string;
+  icon: Component;
+}
+
+/**
+ * SNSリンクアイテム
+ */
+interface SnsLink {
+  icon: Component;
+  label: string;
+  url: string;
+}
+
+/**
+ * モバイルフッターアイテム
+ */
+interface MobileFooterItem {
+  icon: Component;
+  label: string;
+  action: () => void;
 }

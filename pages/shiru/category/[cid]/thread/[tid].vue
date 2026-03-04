@@ -317,15 +317,6 @@ const isSending = ref(false)
 const activeMenuId = ref<string | null>(null)
 const editingPostId = ref<string | null>(null)
 const replyTarget = ref<Post | null>(null)
-interface ThreadData {
-  id: string;
-  title: string;
-  createdAt: FirebaseTimestamp | null;
-  updatedAt: FirebaseTimestamp | null;
-  categoryId: string;
-  postCount: number;
-}
-
 const currentThreadData = ref<ThreadData | null>(null)
 
 const likedPostIds = ref<string[]>([])
@@ -334,11 +325,6 @@ let unsubscribeThread: (() => void) | null = null
 let unsubscribeCategory: (() => void) | null = null
 
 // カラーパレット
-interface ThreadTheme {
-  dot: string;
-  textBg: string;
-}
-
 const themeMap: Record<string, ThreadTheme> = {
   transport: { dot: 'tw-bg-[#A5D1E1]', textBg: 'tw-bg-[#5FB3D5]' },
   public:    { dot: 'tw-bg-[#F4A7B9]', textBg: 'tw-bg-[#E95295]' },

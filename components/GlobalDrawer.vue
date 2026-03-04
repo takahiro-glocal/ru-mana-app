@@ -56,7 +56,7 @@ const { t } = useI18n()
 const { user, userDisplayName, userPhotoURL, logout } = useAuth()
 const { isDrawerOpen, currentStep, closeDrawer } = useDrawer()
 
-const menuItems = computed(() => [
+const menuItems = computed<DrawerMenuItem[]>(() => [
   { id: 'profile', label: t('drawer.profile_info'), icon: User },
   { id: 'general', label: t('drawer.settings_language'), icon: Settings },
   { id: 'points', label: t('drawer.points'), icon: Award },

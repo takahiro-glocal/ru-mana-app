@@ -101,7 +101,7 @@ const localePath = useLocalePath();
 const activeFilter = ref('sightseeing');
 const selectedSpot = ref<MapSpot | null>(null);
 
-const filters = [
+const filters: MapFilter[] = [
   { id: 'sightseeing', icon: Landmark },
   { id: 'shelter', icon: ShieldAlert },
   { id: 'wifi', icon: Wifi },

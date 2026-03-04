@@ -148,14 +148,14 @@ export const useFirestore = () => {
   /**
    * ポイント履歴取得
    */
-  const getPointHistory = async (userId: string) => {
+  const getPointHistory = async (userId: string): Promise<PointHistoryItem[]> => {
     const q = query(
       collection($firestore, `users/${userId}/point_history`),
       orderBy('createdAt', 'desc'),
       firestoreLimit(20)
     );
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    return snapshot.docs.map(d => ({ id: d.id, ...d.data() } as PointHistoryItem));
   };
 
   /**
