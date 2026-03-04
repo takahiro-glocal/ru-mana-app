@@ -43,7 +43,7 @@
 
     <Transition name="slide-up">
       <div v-if="selectedSpot" 
-           class="tw-absolute tw-bottom-0 tw-inset-x-0 lg:tw-bottom-auto lg:tw-top-32 lg:tw-left-4 lg:tw-w-80 tw-z-20">
+           class="tw-absolute tw-bottom-16 md:tw-bottom-0 tw-inset-x-0 lg:tw-bottom-auto lg:tw-top-32 lg:tw-left-4 lg:tw-w-80 tw-z-20">
         <div :class="[
           'tw-bg-white tw-rounded-t-3xl lg:tw-rounded-3xl tw-shadow-2xl tw-overflow-hidden tw-transition-colors tw-duration-500',
           selectedSpot.type === 'shelter' ? 'tw-border-t-8 tw-border-ru-trouble' : ''

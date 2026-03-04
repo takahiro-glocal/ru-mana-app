@@ -1,5 +1,5 @@
 <template>
-  <div class="tw-min-h-screen tw-bg-[#F9F5E7] tw-p-4 md:tw-p-8">
+  <div class="tw-min-h-screen tw-bg-[#F9F5E7] tw-p-4 md:tw-p-8 tw-pb-24 md:tw-pb-8">
     <div class="tw-max-w-6xl tw-mx-auto">
       
       <header class="tw-hidden md:tw-flex tw-justify-between tw-items-center tw-mb-8">
@@ -226,14 +226,6 @@
         </div>
       </div>
 
-      <footer class="md:tw-hidden tw-mt-8 tw-grid tw-grid-cols-4 tw-gap-4 tw-pb-10">
-        <div v-for="item in mobileFooterItems" :key="item.label" class="tw-flex tw-flex-col tw-items-center tw-cursor-pointer" @click="item.action">
-          <div class="tw-bg-[#BCAF92] tw-rounded-2xl tw-p-3.5 tw-text-white tw-shadow-sm active:tw-scale-95 tw-transition-transform">
-            <component :is="item.icon" class="tw-w-6 tw-h-6" />
-          </div>
-          <span class="tw-text-[10px] tw-mt-2 tw-text-gray-500 tw-font-bold">{{ item.label }}</span>
-        </div>
-      </footer>
     </div>
 
     <AuthModal :is-open="isLoginModalOpen" @close="isLoginModalOpen = false" />
@@ -249,7 +241,7 @@
 <script setup lang="ts">
 import {
   Search, X, Home, UserCircle, MapPin, CloudSun, Cloud, Sun, CloudRain, CloudSnow, Lightbulb,
-  Binoculars, Ear, Footprints, Download, Settings, LayoutGrid,
+  Binoculars, Ear, Footprints,
   ArrowUp, ChevronLeft,
   Map as MapIcon, Facebook, Youtube, Instagram, Twitter
 } from 'lucide-vue-next'
@@ -282,13 +274,6 @@ const handleInstall = async () => {
   }
 };
 
-// --- Mobile Footer Actions ---
-const mobileFooterItems = computed<MobileFooterItem[]>(() => [
-  { icon: Download, label: t('dashboard.download'), action: () => handleInstall() },
-  { icon: Settings, label: t('dashboard.settings'), action: () => openDrawer('general') },
-  { icon: UserCircle, label: t('dashboard.profile'), action: () => user.value ? openDrawer('profile') : (isLoginModalOpen.value = true) },
-  { icon: LayoutGrid, label: t('dashboard.menu'), action: () => user.value ? openDrawer('menu') : (isLoginModalOpen.value = true) }
-])
 
 // --- SNS Links ---
 const snsLinks: SnsLink[] = [
