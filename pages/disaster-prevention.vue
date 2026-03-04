@@ -7,8 +7,8 @@
           <div class="tw-w-full tw-h-full tw-bg-white tw-bg-opacity-20 tw-rounded-full"></div>
         </div>
         <div class="tw-flex tw-items-baseline tw-gap-3">
-          <h1 class="tw-text-2xl tw-font-bold tw-text-gray-800 tw-tracking-wide">防災マップ</h1>
-          <span class="tw-text-xs tw-text-gray-500 tw-font-medium">ソナエアレバ...</span>
+          <h1 class="tw-text-2xl tw-font-bold tw-text-gray-800 tw-tracking-wide">{{ $t('disaster.title') }}</h1>
+          <span class="tw-text-xs tw-text-gray-500 tw-font-medium">{{ $t('disaster.subtitle') }}</span>
         </div>
       </div>
 
@@ -37,7 +37,7 @@
         <div class="tw-relative">
           <input 
             type="text" 
-            placeholder="施設を検索..." 
+            :placeholder="$t('disaster.search_facilities')" 
             class="tw-w-full tw-bg-white tw-rounded-xl tw-py-2 tw-pl-10 tw-pr-8 tw-text-sm tw-outline-none focus:tw-ring-2 focus:tw-ring-[#85C441]/50 tw-text-gray-700"
           />
           <Search class="tw-absolute tw-left-3 tw-top-1/2 -tw-translate-y-1/2 tw-w-4 tw-h-4 tw-text-gray-400" />
@@ -64,7 +64,7 @@
         <div class="tw-pt-4 tw-mt-4 tw-border-t tw-border-gray-200/50">
            <button class="tw-flex tw-items-center tw-gap-2 tw-text-gray-500 hover:tw-text-gray-800 tw-text-sm tw-font-bold tw-px-2">
              <MessageSquare class="tw-w-4 tw-h-4" />
-             フィードバック
+             {{ $t('disaster.give_feedback') }}
            </button>
         </div>
       </div>
@@ -72,9 +72,9 @@
       <div class="tw-relative tw-mt-2">
          <div class="tw-absolute -tw-top-2 tw-left-6 tw-w-4 tw-h-4 tw-bg-white tw-rotate-45"></div>
          <div class="tw-bg-white tw-rounded-2xl tw-p-4 tw-shadow-sm tw-text-[10px] tw-text-gray-500 tw-leading-relaxed">
-            <p>● 地図はスクロールで移動</p>
-            <p>● メニューセレクトは表示切替</p>
-            <p>● メニューは「＋」「－」で出し入れ</p>
+            <p>{{ $t('disaster.tip_scroll') }}</p>
+            <p>{{ $t('disaster.tip_menu') }}</p>
+            <p>{{ $t('disaster.tip_toggle') }}</p>
          </div>
       </div>
     </aside>
@@ -145,6 +145,7 @@ import {
 // --- Auth & Utils ---
 const { userDisplayName, userPhotoURL } = useAuth()
 const localePath = useLocalePath()
+const { t } = useI18n()
 const { load } = useMapsLoader()
 
 // --- State ---
@@ -165,11 +166,11 @@ interface Category {
 }
 
 const categories = ref<Category[]>([
-  { id: 'medical', label: '医療サービス', color: '#F87171', iconColor: '#F87171', active: true },
-  { id: 'evac',    label: '避難エリア',   color: '#4ADE80', iconColor: '#4ADE80', active: true },
-  { id: 'store',   label: '食料品・ドラッグストア', color: '#2DD4BF', iconColor: '#2DD4BF', active: false },
-  { id: 'police',  label: '警察・消防',   color: '#FB923C', iconColor: '#FB923C', active: false },
-  { id: 'public',  label: '公共施設',     color: '#A78BFA', iconColor: '#A78BFA', active: true },
+  { id: 'medical', label: t('disaster.cat_medical'), color: '#F87171', iconColor: '#F87171', active: true },
+  { id: 'evac',    label: t('disaster.cat_evacuation'), color: '#4ADE80', iconColor: '#4ADE80', active: true },
+  { id: 'store',   label: t('disaster.cat_grocery'), color: '#2DD4BF', iconColor: '#2DD4BF', active: false },
+  { id: 'police',  label: t('disaster.cat_police'), color: '#FB923C', iconColor: '#FB923C', active: false },
+  { id: 'public',  label: t('disaster.cat_public'), color: '#A78BFA', iconColor: '#A78BFA', active: true },
 ])
 
 // --- Mock Data Handling ---
@@ -322,7 +323,7 @@ const drawUserMarker = (pos: google.maps.LatLngLiteral) => {
     map: map,
     icon: svgIcon,
     zIndex: 999, // 最前面に表示
-    title: "現在地",
+    title: t('disaster.current_location'),
   })
 
   // 簡易的なパルス表現（固定の半透明円）

@@ -5,7 +5,7 @@
       
       <div class="tw-relative tw-bg-white tw-rounded-3xl tw-shadow-2xl tw-w-full tw-max-w-lg tw-overflow-hidden tw-animate-scale-in">
         <div :class="['tw-p-6 tw-flex tw-items-center tw-justify-between', theme.bg]">
-          <h3 :class="['tw-text-lg tw-font-black', theme.text]">新しいスレッドを作成</h3>
+          <h3 :class="['tw-text-lg tw-font-black', theme.text]">{{ $t('thread.new_thread_title') }}</h3>
           <button @click="$emit('close')" class="tw-p-2 tw-rounded-full tw-bg-white/50 hover:tw-bg-white tw-transition-colors">
             <X class="tw-w-5 tw-h-5 tw-text-gray-500" />
           </button>
@@ -13,21 +13,21 @@
 
         <div class="tw-p-6 tw-space-y-6">
           <div class="tw-space-y-2">
-            <label class="tw-text-xs tw-font-bold tw-text-gray-400 tw-uppercase">スレッドタイトル</label>
-            <input 
-              v-model="title" 
-              type="text" 
-              placeholder="例: 電車内でのベビーカーについて" 
+            <label class="tw-text-xs tw-font-bold tw-text-gray-400 tw-uppercase">{{ $t('thread.thread_title_label') }}</label>
+            <input
+              v-model="title"
+              type="text"
+              :placeholder="$t('thread.thread_title_placeholder')" 
               class="tw-w-full tw-bg-gray-50 tw-border tw-border-gray-100 tw-rounded-xl tw-p-4 tw-font-bold tw-text-gray-700 focus:tw-outline-none focus:tw-border-[#85C441] focus:tw-ring-2 focus:tw-ring-[#85C441]/20 tw-transition-all"
             />
           </div>
 
           <div class="tw-space-y-2">
-            <label class="tw-text-xs tw-font-bold tw-text-gray-400 tw-uppercase">最初のコメント</label>
-            <textarea 
-              v-model="body" 
+            <label class="tw-text-xs tw-font-bold tw-text-gray-400 tw-uppercase">{{ $t('thread.first_comment_label') }}</label>
+            <textarea
+              v-model="body"
               rows="5"
-              placeholder="詳細やあなたの考えを書いてください..." 
+              :placeholder="$t('thread.first_comment_placeholder')" 
               class="tw-w-full tw-bg-gray-50 tw-border tw-border-gray-100 tw-rounded-xl tw-p-4 tw-text-sm tw-text-gray-700 tw-resize-none focus:tw-outline-none focus:tw-border-[#85C441] focus:tw-ring-2 focus:tw-ring-[#85C441]/20 tw-transition-all"
             ></textarea>
           </div>
@@ -38,7 +38,7 @@
             :class="['tw-w-full tw-py-4 tw-rounded-full tw-text-white tw-font-bold tw-shadow-lg tw-transition-all active:tw-scale-95 flex tw-items-center tw-justify-center tw-gap-2', isValid && !isSubmitting ? 'tw-bg-[#85C441] hover:tw-bg-[#74b036]' : 'tw-bg-gray-300 tw-cursor-not-allowed']"
           >
             <span v-if="isSubmitting" class="tw-animate-spin tw-border-2 tw-border-white tw-border-t-transparent tw-rounded-full tw-w-5 tw-h-5"></span>
-            <span v-else>スレッドを作成する</span>
+            <span v-else>{{ $t('thread.submit_thread') }}</span>
           </button>
         </div>
       </div>
