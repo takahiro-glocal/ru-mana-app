@@ -55,9 +55,12 @@
           </div>
 
           <div class="tw-grid tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-4">
-            <NuxtLink :to="localePath('/shiru')" class="tw-bg-[#85C441] tw-aspect-square tw-rounded-2xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-sm hover:tw-opacity-90 tw-transition-all">
-              <Lightbulb class="tw-w-14 tw-h-14 tw-mb-2" />
-              <span class="tw-font-bold tw-text-lg">しるまな</span>
+            <NuxtLink :to="localePath('/shiru')" class="tw-relative tw-aspect-square tw-rounded-2xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-sm hover:tw-opacity-90 tw-transition-all tw-overflow-hidden">
+              <div class="tw-absolute tw-inset-0">
+                <SkyAnimation :show-logo="false" compact />
+              </div>
+              <Lightbulb class="tw-relative tw-z-10 tw-w-14 tw-h-14 tw-mb-2" />
+              <span class="tw-relative tw-z-10 tw-font-bold tw-text-lg">しるまな</span>
             </NuxtLink>
             <div class="tw-relative tw-aspect-square tw-rounded-2xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-sm tw-cursor-pointer tw-overflow-hidden" @click="showComingSoon('みるまな')">
               <div class="tw-absolute tw-inset-0 tw-bg-cover tw-bg-center" :style="miruBgStyle"></div>
