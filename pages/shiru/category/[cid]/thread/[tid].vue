@@ -55,7 +55,7 @@
                 ]"
               >
                 <div class="tw-flex tw-items-center tw-gap-2">
-                  <div :class="['tw-w-2 tw-h-2 tw-rounded-full', getTheme(cid).dot]"></div>
+                  <div :class="['tw-w-2 tw-h-2 tw-rounded-full tw-flex-shrink-0', getTheme(cid).dot]"></div>
                   <p class="tw-text-sm tw-font-bold tw-line-clamp-2">{{ getTranslatedTitle(s.id, s.title) }}</p>
                 </div>
               </div>
