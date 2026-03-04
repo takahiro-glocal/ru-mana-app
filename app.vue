@@ -1,10 +1,8 @@
 <template>
-  <div>
-    <NuxtPwaManifest />
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
-    <GlobalDrawer />
-    <GlobalChat />
-  </div>
+  <NuxtPwaManifest />
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
+  <GlobalDrawer />
+  <GlobalChat />
 </template>
