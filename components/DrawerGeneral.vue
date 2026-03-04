@@ -4,7 +4,7 @@
     <!-- <div class="tw-p-4 tw-max-w-md tw-mx-auto tw-space-y-6"> -->
       
       <section class="tw-bg-transparent tw-rounded-3xl tw-p-6">
-        <h3 class="tw-font-bold tw-text-gray-700 tw-mb-4">言語設定 / Language</h3>
+        <h3 class="tw-font-bold tw-text-gray-700 tw-mb-4">{{ $t('settings.language') }}</h3>
         <div class="tw-space-y-2">
           <button 
             v-for="localeItem in availableLocales" 
@@ -22,9 +22,9 @@
       </section>
 
       <section class="tw-bg-white tw-rounded-3xl tw-p-6 tw-shadow-sm">
-        <h3 class="tw-font-bold tw-text-gray-700 tw-mb-4">通知設定</h3>
+        <h3 class="tw-font-bold tw-text-gray-700 tw-mb-4">{{ $t('settings.notifications') }}</h3>
         <div class="tw-flex tw-items-center tw-justify-between tw-p-2">
-          <span class="tw-text-sm tw-text-gray-600">プッシュ通知を受け取る</span>
+          <span class="tw-text-sm tw-text-gray-600">{{ $t('settings.push_notifications') }}</span>
           <div
             @click="toggleNotification"
             :class="[

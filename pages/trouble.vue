@@ -120,18 +120,19 @@
 </template>
 
 <script setup lang="ts">
-import { 
-  AlertTriangle, ShieldAlert, Flame, MapPin, 
-  ChevronRight, Globe, X, Stethoscope, 
+import type { Component } from 'vue';
+import {
+  AlertTriangle, ShieldAlert, Flame, MapPin,
+  ChevronRight, Globe, X, Stethoscope,
   Search, Bomb, Copy
 } from 'lucide-vue-next';
 
 // ---------------------------------------------------------
-// Types (In actual project, these should be in types/app.d.ts)
+// Types
 // ---------------------------------------------------------
 interface HelpCategory {
   id: string;
-  icon: any;
+  icon: Component;
   colorClass: string;
   steps: string[];
 }

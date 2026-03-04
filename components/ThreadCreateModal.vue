@@ -51,7 +51,7 @@ import { X } from 'lucide-vue-next'
 
 const props = defineProps<{
   isOpen: boolean
-  theme: any
+  theme: CategoryTheme
 }>()
 
 const emit = defineEmits(['close', 'create'])

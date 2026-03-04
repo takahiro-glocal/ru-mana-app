@@ -531,7 +531,7 @@ const resetCenteredFlags = () => {
 };
 
 // 国旗の重複チェック関数（デバッグ用）
-const checkForDuplicates = (layers: any[]) => {
+const checkForDuplicates = (layers: FlagLayer[]) => {
     const allFlags = new Set<string>();
     const duplicates = new Set<string>();
 
@@ -662,19 +662,20 @@ onUnmounted(() => {
 // 開発環境でのデバッグ機能
 if (process.dev) {
     // グローバルに関数を公開（開発時のデバッグ用）
-    (window as any).regenerateFlags = regenerateFlags;
-    (window as any).checkDuplicates = () => checkForDuplicates(flagLayers.value);
-    (window as any).resetCenteredFlags = resetCenteredFlags;
-    (window as any).returnToOriginal = (flagKey: string) => returnFlagToOriginalPosition(flagKey);
-    (window as any).getCurrentCentered = () => currentCenteredFlag.value;
-    (window as any).testTimeColor = (hour: number, minute: number = 0, second: number = 0) => {
+    const win = window as Window & Record<string, unknown>;
+    win.regenerateFlags = regenerateFlags;
+    win.checkDuplicates = () => checkForDuplicates(flagLayers.value);
+    win.resetCenteredFlags = resetCenteredFlags;
+    win.returnToOriginal = (flagKey: string) => returnFlagToOriginalPosition(flagKey);
+    win.getCurrentCentered = () => currentCenteredFlag.value;
+    win.testTimeColor = (hour: number, minute: number = 0, second: number = 0) => {
         const skyData = getSkyColors(hour, minute, second);
         console.log(`時刻 ${hour}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')} の空:`, skyData);
         console.log('色配列:', skyData.colors);
         return skyData;
     };
     // 特定の時刻の背景をプレビュー
-    (window as any).previewTimeBackground = (hour: number, minute: number = 0, second: number = 0) => {
+    win.previewTimeBackground = (hour: number, minute: number = 0, second: number = 0) => {
         const skyData = getSkyColors(hour, minute, second);
         const { type, colors } = skyData;
 

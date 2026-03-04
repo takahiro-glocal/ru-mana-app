@@ -56,7 +56,7 @@ export const useShiru = () => {
 
   const loadThreadDetails = async () => {
     if (threadDetails.value.length > 0) return
-    threadDetails.value = await $fetch<any[]>('/api-mocks/shiru-thread-detail.json')
+    threadDetails.value = await $fetch<ShiruThreadDetail[]>('/api-mocks/shiru-thread-detail.json')
   }
 
   const getThreadDetail = (tid: string) => {

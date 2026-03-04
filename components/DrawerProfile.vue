@@ -16,7 +16,7 @@
 
         <form @submit.prevent="updateProfile" class="tw-space-y-6 tw-text-left">
           <div>
-            <label class="tw-block tw-text-xs tw-font-bold tw-text-gray-400 tw-mb-2">表示名</label>
+            <label class="tw-block tw-text-xs tw-font-bold tw-text-gray-400 tw-mb-2">{{ $t('profile.display_name') }}</label>
             <input
               v-model="name"
               type="text"
@@ -24,7 +24,7 @@
             />
           </div>
           <div>
-            <label class="tw-block tw-text-xs tw-font-bold tw-text-gray-400 tw-mb-2">メールアドレス</label>
+            <label class="tw-block tw-text-xs tw-font-bold tw-text-gray-400 tw-mb-2">{{ $t('profile.email') }}</label>
             <div class="tw-w-full tw-bg-gray-100 tw-rounded-xl tw-py-3 tw-px-4 tw-text-gray-400 tw-text-sm">
               {{ user?.email }}
             </div>
@@ -37,7 +37,7 @@
               isSaving ? 'tw-bg-gray-300 tw-text-gray-500' : 'tw-bg-[#E4007F] tw-text-white'
             ]"
           >
-            {{ isSaving ? '保存中...' : '保存する' }}
+            {{ isSaving ? $t('profile.saving') : $t('profile.save') }}
           </button>
           <p v-if="saveMessage" class="tw-text-center tw-text-sm tw-font-bold tw-text-[#85C441]">{{ saveMessage }}</p>
         </form>
@@ -49,6 +49,7 @@ import { Camera } from 'lucide-vue-next'
 import { updateProfile as firebaseUpdateProfile } from 'firebase/auth'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 
+const { t } = useI18n()
 const { user, userPhotoURL } = useAuth()
 const { $storage } = useNuxtApp()
 
@@ -67,16 +68,16 @@ const handleFileSelect = async (event: Event) => {
   if (!file || !user.value) return
 
   if (file.size > MAX_FILE_SIZE) {
-    uploadStatus.value = 'ファイルサイズは2MB以下にしてください'
+    uploadStatus.value = t('profile.file_size_error')
     return
   }
 
   if (!file.type.startsWith('image/')) {
-    uploadStatus.value = '画像ファイルを選択してください'
+    uploadStatus.value = t('profile.image_type_error')
     return
   }
 
-  uploadStatus.value = 'アップロード中...'
+  uploadStatus.value = t('profile.uploading')
   try {
     const fileRef = storageRef($storage, `avatars/${user.value.uid}`)
     await uploadBytes(fileRef, file)
@@ -84,10 +85,10 @@ const handleFileSelect = async (event: Event) => {
 
     await firebaseUpdateProfile(user.value, { photoURL: url })
     currentPhotoURL.value = url
-    uploadStatus.value = '写真を更新しました'
+    uploadStatus.value = t('profile.upload_success')
   } catch (e) {
     console.error('Upload failed:', e)
-    uploadStatus.value = 'アップロードに失敗しました'
+    uploadStatus.value = t('profile.upload_error')
   }
 }
 
@@ -99,9 +100,9 @@ const updateProfile = async () => {
     await firebaseUpdateProfile(user.value, {
       displayName: name.value
     })
-    saveMessage.value = 'プロフィールを更新しました'
+    saveMessage.value = t('profile.save_success')
   } catch (e) {
-    saveMessage.value = '更新に失敗しました'
+    saveMessage.value = t('profile.save_error')
   } finally {
     isSaving.value = false
   }

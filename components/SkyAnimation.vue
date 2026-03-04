@@ -172,8 +172,8 @@ onUnmounted(() => {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: clamp(12px, 2.5vw, 26px);
-    height: clamp(12px, 2.5vw, 26px);
+    width: 20px;
+    height: 20px;
     transform-origin: 50% 50%;
     transform: translate(-50%, -50%) rotate(var(--initial-angle)) translate(var(--layer-radius), 0) rotate(calc(-1 * var(--initial-angle)));
     animation: rotateOrbit var(--rotation-duration, 20s) linear infinite;
@@ -187,8 +187,8 @@ onUnmounted(() => {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
 .center-logo {

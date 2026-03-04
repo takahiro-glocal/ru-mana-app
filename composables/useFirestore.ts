@@ -23,7 +23,7 @@ export interface Post {
   userId: string;
   userName: string;
   userIcon: string;
-  createdAt: any;
+  createdAt: FirebaseTimestamp | null;
   likes: number;
   replyToId?: string;
   replyToName?: string;
@@ -35,8 +35,8 @@ export interface Thread {
   id: string;
   categoryId: string;
   title: string;
-  createdAt: any;
-  updatedAt: any;
+  createdAt: FirebaseTimestamp | null;
+  updatedAt: FirebaseTimestamp | null;
   postCount: number;
 }
 
@@ -218,7 +218,7 @@ export const useFirestore = () => {
    * 新規スレッド作成
    * スレッドドキュメントを作成し、直後に最初の投稿を追加します
    */
-  const createThread = async (categoryId: string, title: string, body: string, user: any) => {
+  const createThread = async (categoryId: string, title: string, body: string, user: FirebaseUserInfo) => {
     // 1. Create Thread Document
     const threadRef = await addDoc(collection($firestore, 'threads'), {
       categoryId,
