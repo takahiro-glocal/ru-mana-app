@@ -63,10 +63,14 @@
     "tab_qa": "社区问答",
     "tab_guides": "RUUMANA 指南",
     "tab_rules": "规则与礼仪",
-    "category_transport": "交通",
+    "category_transport": "交通礼仪",
     "category_public": "公共设施",
-    "category_spa": "温泉・浴场",
-    "category_cafe": "餐厅・咖啡",
+    "category_spa": "温泉・公共浴场",
+    "category_cafe": "餐饮・咖啡",
+    "category_shopping": "购物・支付",
+    "category_hotel": "住宿・旅馆",
+    "category_culture": "参拜・传统",
+    "category_trash": "垃圾・卫生间",
     "category_new": "最新・其他",
     "no_results": "未找到匹配的礼仪指南。",
     "no_threads": "暂无讨论串",
@@ -188,7 +192,8 @@
     "cat_grocery": "食品・药妆店",
     "cat_police": "警察・消防",
     "cat_public": "公共设施",
-    "current_location": "当前位置"
+    "current_location": "当前位置",
+    "coverage_range": "覆盖范围"
   },
   "miru": {
     "title": "防灾・区域地图",

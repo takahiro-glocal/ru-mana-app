@@ -6,6 +6,15 @@ const allThreads = ref<ShiruThread[]>([])
 const threadDetails = ref<ShiruThreadDetail[]>([])
 
 export const useShiru = () => {
+  const { t } = useI18n()
+
+  /**
+   * カテゴリ名をi18nキーで取得（翻訳済み）
+   */
+  const getCategoryName = (categoryId: string): string => {
+    return t(`shiru.category_${categoryId}`, categoryId)
+  }
+
   /**
    * カテゴリー一覧のロード
    */
@@ -72,6 +81,7 @@ export const useShiru = () => {
     getThreadsByCategory,
     getThreadById,
     getCategoryById,
+    getCategoryName,
     getThreadDetail,
   }
 }

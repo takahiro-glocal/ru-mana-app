@@ -61,7 +61,7 @@
           </div>
           <div class="tw-flex-1 tw-px-8 tw-flex tw-items-center tw-justify-between tw-border-r tw-border-gray-100">
             <div class="tw-flex tw-items-center tw-gap-6">
-              <h2 class="tw-text-3xl tw-font-bold tw-text-gray-800">{{ cat.name }}</h2>
+              <h2 class="tw-text-3xl tw-font-bold tw-text-gray-800">{{ getCategoryName(cat.id) }}</h2>
               <p class="tw-text-xs tw-text-gray-400 tw-mt-1">{{ cat.updateDate }} update</p>
             </div>
             <div class="tw-text-2xl tw-font-bold tw-text-gray-700">
@@ -82,7 +82,7 @@
                   :class="['tw-w-24 tw-h-24 tw-mx-auto tw-rounded-full tw-bg-white tw-border-4 tw-flex tw-items-center tw-justify-center tw-mb-6', getTheme(cat.id).border]">
                   <component :is="getIcon(cat.icon)" :class="['tw-w-12 tw-h-12', getTheme(cat.id).text]" />
                 </div>
-                <h2 class="tw-text-3xl tw-font-black tw-text-gray-800">{{ cat.name }}</h2>
+                <h2 class="tw-text-3xl tw-font-black tw-text-gray-800">{{ getCategoryName(cat.id) }}</h2>
                 <p class="tw-text-[10px] tw-text-gray-400 tw-mt-1">{{ cat.updateDate }} update</p>
               </div>
               <div class="tw-flex-1 tw-p-6 tw-flex tw-flex-col tw-justify-between tw-items-center">
@@ -124,7 +124,7 @@ const { openDrawer } = useDrawer()
 const { $firestore } = useNuxtApp()
 const isLoginModalOpen = ref(false)
 
-const { categories, loadCategories } = useShiru()
+const { categories, loadCategories, getCategoryName } = useShiru()
 const localePath = useLocalePath()
 
 const threadCounts = ref<Record<string, number>>({})
