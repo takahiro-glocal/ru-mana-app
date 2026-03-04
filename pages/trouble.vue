@@ -11,13 +11,19 @@
           <ChevronLeft class="tw-w-6 tw-h-6" />
         </button>
         <div class="tw-flex tw-items-center tw-gap-3">
-          <NuxtLink :to="localePath('/disaster-prevention')" class="tw-flex tw-items-center tw-gap-1.5 tw-bg-white/20 tw-backdrop-blur-sm tw-px-3 tw-py-1.5 tw-rounded-full tw-text-xs tw-font-bold hover:tw-bg-white/30 tw-transition-colors">
+          <button @click="showComingSoon($t('dashboard.disaster_map'))" class="tw-flex tw-items-center tw-gap-1.5 tw-bg-white/20 tw-backdrop-blur-sm tw-px-3 tw-py-1.5 tw-rounded-full tw-text-xs tw-font-bold hover:tw-bg-white/30 tw-transition-colors">
             <MapPin class="tw-w-3.5 tw-h-3.5" />
             {{ $t('dashboard.disaster_map') }}
-          </NuxtLink>
+          </button>
           <NuxtLink :to="localePath('/')" class="tw-hidden md:tw-flex tw-p-2 tw-rounded-full hover:tw-bg-white/20 tw-transition-colors">
             <Home class="tw-w-5 tw-h-5" />
           </NuxtLink>
+          <div v-if="user" @click="openDrawer()" class="tw-cursor-pointer">
+            <img :src="userPhotoURL" class="tw-w-8 tw-h-8 tw-rounded-full tw-border-2 tw-border-white/50" />
+          </div>
+          <button v-else @click="isLoginModalOpen = true" class="tw-p-1.5 tw-rounded-full hover:tw-bg-white/20 tw-transition-colors">
+            <UserCircle class="tw-w-7 tw-h-7" />
+          </button>
         </div>
       </div>
 
@@ -139,7 +145,7 @@
 
           <!-- Quick Links -->
           <section class="tw-mt-6 tw-space-y-3">
-            <NuxtLink :to="localePath('/disaster-prevention')" class="tw-flex tw-items-center tw-gap-3 tw-bg-white tw-p-4 tw-rounded-2xl tw-shadow-sm tw-border tw-border-gray-100 hover:tw-border-[#BCAF92] hover:tw-shadow-md tw-transition-all">
+            <div @click="showComingSoon($t('dashboard.disaster_map'))" class="tw-flex tw-items-center tw-gap-3 tw-bg-white tw-p-4 tw-rounded-2xl tw-shadow-sm tw-border tw-border-gray-100 hover:tw-border-[#BCAF92] hover:tw-shadow-md tw-transition-all tw-cursor-pointer">
               <div class="tw-bg-[#BCAF92] tw-p-2.5 tw-rounded-xl">
                 <MapPin class="tw-w-5 tw-h-5 tw-text-white" />
               </div>
@@ -148,7 +154,7 @@
                 <p class="tw-text-[10px] tw-text-gray-400">{{ $t('disaster.subtitle') }}</p>
               </div>
               <ChevronRight class="tw-w-4 tw-h-4 tw-text-gray-300" />
-            </NuxtLink>
+            </div>
 
             <NuxtLink :to="localePath('/')" class="tw-flex tw-items-center tw-gap-3 tw-bg-white tw-p-4 tw-rounded-2xl tw-shadow-sm tw-border tw-border-gray-100 hover:tw-border-[#85C441] hover:tw-shadow-md tw-transition-all">
               <div class="tw-bg-[#85C441] tw-p-2.5 tw-rounded-xl">
@@ -192,6 +198,15 @@
         </div>
       </div>
     </Transition>
+
+    <!-- Coming Soon Toast -->
+    <Transition name="toast">
+      <div v-if="comingSoonMessage" class="tw-fixed tw-bottom-24 tw-left-1/2 tw-transform -tw-translate-x-1/2 tw-bg-[#2C3E50] tw-text-white tw-px-6 tw-py-3 tw-rounded-full tw-shadow-lg tw-text-sm tw-font-bold tw-z-50 tw-whitespace-nowrap">
+        {{ $t('common.coming_soon', { name: comingSoonMessage }) }}
+      </div>
+    </Transition>
+
+    <AuthModal :is-open="isLoginModalOpen" @close="isLoginModalOpen = false" />
   </div>
 </template>
 
@@ -200,7 +215,7 @@ import type { Component } from 'vue';
 import {
   AlertTriangle, ShieldAlert, Flame, MapPin,
   ChevronRight, ChevronLeft, Globe, X, Stethoscope,
-  Search, Bomb, Copy, Home
+  Search, Bomb, Copy, Home, UserCircle
 } from 'lucide-vue-next';
 
 interface HelpCategory {
@@ -212,8 +227,20 @@ interface HelpCategory {
 
 const { t } = useI18n();
 const localePath = useLocalePath();
+const { user, userPhotoURL } = useAuth();
+const { openDrawer } = useDrawer();
 
 const selectedGuide = ref<HelpCategory | null>(null);
+const isLoginModalOpen = ref(false);
+
+// --- Coming Soon Toast ---
+const comingSoonMessage = ref('');
+let comingSoonTimer: ReturnType<typeof setTimeout> | null = null;
+const showComingSoon = (name: string) => {
+  comingSoonMessage.value = name;
+  if (comingSoonTimer) clearTimeout(comingSoonTimer);
+  comingSoonTimer = setTimeout(() => { comingSoonMessage.value = ''; }, 2000);
+};
 
 const helpCategories = computed<HelpCategory[]>(() => [
   {
@@ -291,4 +318,8 @@ useHead(() => ({
 .tw-animate-slide-up {
   animation: slideUp 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
+
+.toast-enter-active { transition: all 0.3s ease; }
+.toast-leave-active { transition: all 0.3s ease; }
+.toast-enter-from, .toast-leave-to { opacity: 0; transform: translate(-50%, 20px); }
 </style>

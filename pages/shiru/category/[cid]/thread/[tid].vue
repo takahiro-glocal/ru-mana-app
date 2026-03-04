@@ -43,31 +43,22 @@
         <div class="tw-p-6">
           <h3 class="tw-text-[10px] tw-font-bold tw-text-gray-400 tw-uppercase tw-tracking-widest tw-mb-4">{{ $t('thread.related_threads') }}</h3>
           <div class="tw-space-y-1">
-            <template v-if="!needsTranslation || !isAutoTranslating">
-              <div v-if="siblings.length === 0" class="tw-text-xs tw-text-gray-400">{{ $t('thread.no_related') }}</div>
-              <div
-                v-for="s in siblings"
-                :key="s.id"
-                @click="() => switchThread(s.id)"
-                :class="[
-                  'tw-p-4 tw-rounded-2xl tw-cursor-pointer tw-transition-all tw-duration-200',
-                  tid === s.id ? 'tw-bg-[#F9F5E7] tw-text-[#85C441] tw-shadow-sm' : 'tw-text-gray-600 hover:tw-bg-gray-50'
-                ]"
-              >
-                <div class="tw-flex tw-items-center tw-gap-2">
-                  <div :class="['tw-w-2 tw-h-2 tw-rounded-full tw-flex-shrink-0', getTheme(cid).dot]"></div>
-                  <p class="tw-text-sm tw-font-bold tw-line-clamp-2">{{ getTranslatedTitle(s.id, s.title) }}</p>
-                </div>
+            <div v-if="siblings.length === 0" class="tw-text-xs tw-text-gray-400">{{ $t('thread.no_related') }}</div>
+            <div
+              v-for="s in siblings"
+              :key="s.id"
+              @click="() => switchThread(s.id)"
+              :class="[
+                'tw-p-4 tw-rounded-2xl tw-cursor-pointer tw-transition-all tw-duration-200',
+                tid === s.id ? 'tw-bg-[#F9F5E7] tw-text-[#85C441] tw-shadow-sm' : 'tw-text-gray-600 hover:tw-bg-gray-50'
+              ]"
+            >
+              <div class="tw-flex tw-items-center tw-gap-2">
+                <div :class="['tw-w-2 tw-h-2 tw-rounded-full tw-flex-shrink-0', getTheme(cid).dot]"></div>
+                <div v-if="needsTranslation && !isTitleTranslated(s.id)" class="tw-h-4 tw-bg-gray-200 tw-rounded tw-animate-pulse tw-flex-1"></div>
+                <p v-else class="tw-text-sm tw-font-bold tw-line-clamp-2">{{ getTranslatedTitle(s.id, s.title) }}</p>
               </div>
-            </template>
-            <template v-else>
-              <div v-for="i in 4" :key="i" class="tw-p-4 tw-rounded-2xl">
-                <div class="tw-flex tw-items-center tw-gap-2">
-                  <div class="tw-w-2 tw-h-2 tw-rounded-full tw-bg-gray-200"></div>
-                  <div class="tw-h-4 tw-bg-gray-200 tw-rounded tw-animate-pulse" :style="{ width: (50 + i * 10) + '%' }"></div>
-                </div>
-              </div>
-            </template>
+            </div>
           </div>
         </div>
       </aside>
@@ -84,24 +75,17 @@
           <span class="tw-text-gray-600 tw-truncate tw-max-w-xs">{{ currentThreadInfo?.title }}</span>
         </nav>
 
-        <div v-if="currentThreadInfo && (!needsTranslation || !isAutoTranslating)" class="tw-p-6 md:tw-p-10 md:tw-pt-4 tw-border-b tw-border-gray-50 tw-flex-shrink-0">
+        <div v-if="currentThreadInfo" class="tw-p-6 md:tw-p-10 md:tw-pt-4 tw-border-b tw-border-gray-50 tw-flex-shrink-0">
           <div class="tw-flex tw-items-center tw-gap-3 tw-mb-3">
             <span :class="['tw-px-3 tw-py-1 tw-rounded-full tw-text-[10px] tw-font-black tw-text-white uppercase', getTheme(cid).textBg]">
               {{ getCategoryName(cid) }}
             </span>
             <span class="tw-text-[10px] tw-text-gray-300 tw-font-bold">{{ currentThreadInfo.date }}</span>
           </div>
-          <h2 class="tw-text-2xl md:tw-text-4xl tw-font-black tw-text-gray-800 tw-leading-tight">
+          <div v-if="needsTranslation && !isTitleTranslated(currentThreadData!.id)" class="tw-h-8 tw-bg-gray-200 tw-rounded-lg tw-w-3/4 tw-animate-pulse"></div>
+          <h2 v-else class="tw-text-2xl md:tw-text-4xl tw-font-black tw-text-gray-800 tw-leading-tight">
             {{ currentThreadInfo.title }}
           </h2>
-        </div>
-        <div v-else-if="needsTranslation && isAutoTranslating" class="tw-p-6 md:tw-p-10 md:tw-pt-4 tw-border-b tw-border-gray-50 tw-flex-shrink-0">
-          <div class="tw-flex tw-items-center tw-gap-3 tw-mb-3">
-            <div class="tw-h-5 tw-w-20 tw-bg-gray-200 tw-rounded-full tw-animate-pulse"></div>
-            <div class="tw-h-3 tw-w-16 tw-bg-gray-100 tw-rounded tw-animate-pulse"></div>
-          </div>
-          <div class="tw-h-8 tw-bg-gray-200 tw-rounded-lg tw-w-3/4 tw-mb-2 tw-animate-pulse"></div>
-          <div class="tw-h-8 tw-bg-gray-200 tw-rounded-lg tw-w-1/2 tw-animate-pulse"></div>
         </div>
 
         <div 
@@ -311,7 +295,11 @@ const { t, locale } = useI18n()
 
 // === 自動翻訳（スレッドタイトル） ===
 const needsTranslation = computed(() => locale.value !== 'ja')
-const isAutoTranslating = ref(locale.value !== 'ja')
+
+const isTitleTranslated = (threadId: string): boolean => {
+  if (!needsTranslation.value) return true
+  return !!getTranslation(`title:${threadId}`)
+}
 
 const getTranslatedTitle = (threadId: string, originalTitle: string): string => {
   if (!needsTranslation.value) return originalTitle
@@ -441,22 +429,15 @@ watch(currentThreadData, (newVal) => {
   }
 })
 
-// 自動翻訳: スレッドタイトルを自動翻訳（日本語以外のロケール時）
+// 自動翻訳: スレッドタイトルを非同期で個別翻訳（完了したものから順次表示）
 watch(
   [currentThreadData, () => firestoreThreads.value, () => locale.value],
-  async ([threadData, threads]) => {
-    if (!needsTranslation.value) {
-      isAutoTranslating.value = false
-      return
-    }
-    if (!threadData) return
-    const promises: Promise<string | null>[] = []
-    promises.push(translateText(`title:${threadData.id}`, threadData.title))
+  ([threadData, threads]) => {
+    if (!needsTranslation.value || !threadData) return
+    translateText(`title:${threadData.id}`, threadData.title)
     for (const thread of threads) {
-      promises.push(translateText(`title:${thread.id}`, thread.title))
+      translateText(`title:${thread.id}`, thread.title)
     }
-    await Promise.all(promises)
-    isAutoTranslating.value = false
   },
   { immediate: true }
 )
