@@ -298,3 +298,29 @@ interface MobileFooterItem {
   label: string;
   action: () => void;
 }
+
+/**
+ * AIチャットメッセージ
+ */
+interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  createdAt: Date;
+}
+
+/**
+ * AIチャット APIリクエスト
+ */
+interface ChatRequest {
+  message: string;
+  history: Array<{ role: 'user' | 'model'; parts: string }>;
+  locale: string;
+}
+
+/**
+ * AIチャット APIレスポンス
+ */
+interface ChatResponse {
+  reply: string;
+}

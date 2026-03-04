@@ -4,4 +4,5 @@
     <NuxtPage />
   </NuxtLayout>
   <GlobalDrawer />
+  <GlobalChat />
 </template>

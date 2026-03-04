@@ -483,6 +483,18 @@
     "translated": "Show translation",
     "error": "Translation failed"
   },
+  "chat": {
+    "open": "Open chat",
+    "title": "Mana Assistant",
+    "subtitle": "AI Concierge",
+    "welcome_title": "Hi! I'm Mana Assistant",
+    "welcome_desc": "Ask me anything about the RUUMANA app, Japanese culture, or daily life in Japan.",
+    "input_placeholder": "Type a message...",
+    "clear": "Clear chat",
+    "suggestion_1": "How do I use this app?",
+    "suggestion_2": "Train etiquette in Japan?",
+    "suggestion_3": "How to use onsen?"
+  },
   "events": {
     "jan1": "New Year's Day — The beginning of a new year",
     "jan7": "Nanakusa no Sekku — A day to eat seven-herb rice porridge",
