@@ -23,15 +23,8 @@
                 '--rotation-direction': layer.direction === 'counter-clockwise' ? 'reverse' : 'normal'
             }">
                             <div class="flag-circle" @click.stop="handleClickFlag(flag, layerIndex, flagIndex, $event)">
-                                <div class="flag-button">
-                                    <v-tooltip :text="flag.name" location="top">
-                                        <template v-slot:activator="{ props }">
-                                            <v-avatar v-bind="props" :class="`fi fi-${flag.flag} fis`"
-                                                :size="mobile ? '48' : '55'" variant="elevated"
-                                                color="white"></v-avatar>
-                                        </template>
-                                    </v-tooltip>
-                                </div>
+                                <span :title="flag.name" :class="`fi fi-${flag.flag} fis flag-icon`"
+                                    :style="{ width: isMobile ? '48px' : '55px', height: isMobile ? '48px' : '55px' }"></span>
                             </div>
                         </div>
                     </div>
@@ -40,10 +33,7 @@
                 <!-- 中央のサイトロゴ（固定） - 国旗の後に配置 -->
                 <div class="site-logo" ref="siteLogo">
                     <div class="logo-circle">
-                        <div class="logo-placeholder" rounded="circle" color="transparent" elevation="2">
-                            <v-img src="/images/logo.png" alt="Logo" width="140" height="140" cover
-                                rounded="circle"></v-img>
-                        </div>
+                        <img src="/images/logo.png" alt="Logo" class="logo-img" />
                     </div>
                 </div>
             </div>
@@ -54,10 +44,19 @@
 <script setup lang="ts">
 import "flag-icons/css/flag-icons.min.css";
 import { countries } from '~/utils/countries';
-import { useDisplay } from 'vuetify'
 
-// ディスプレイ
-const { mobile, xs, sm } = useDisplay();
+// レスポンシブ判定
+const isMobile = ref(false);
+const isXs = ref(false);
+const isSm = ref(false);
+
+const updateBreakpoints = () => {
+    if (!process.client) return;
+    const w = window.innerWidth;
+    isXs.value = w < 600;
+    isSm.value = w >= 600 && w < 960;
+    isMobile.value = w < 1264;
+};
 
 const emit = defineEmits(['clickFlag'])
 
@@ -351,7 +350,7 @@ const currentCenteredFlag = ref<string | null>(null);
 
 // デバイス別のアニメーション設定
 const getResponsiveConfig = () => {
-    if (xs.value) {
+    if (isXs.value) {
         // 極小画面 (< 600px)
         return {
             animationSize: Math.min(window.innerWidth * 0.8, window.innerHeight * 0.6),
@@ -361,7 +360,7 @@ const getResponsiveConfig = () => {
             flagCounts: [5, 7, 9, 11, 13],
             rotationSpeeds: [100, 140, 160, 180, 200]
         };
-    } else if (sm.value) {
+    } else if (isSm.value) {
         // 小画面 (600px - 960px)
         return {
             animationSize: Math.min(window.innerWidth * 0.9, window.innerHeight * 0.7),
@@ -371,7 +370,7 @@ const getResponsiveConfig = () => {
             flagCounts: [5, 7, 9, 11, 13],
             rotationSpeeds: [90, 140, 160, 180, 200]
         };
-    } else if (mobile.value) {
+    } else if (isMobile.value) {
         // 中画面 (960px - 1264px)
         return {
             animationSize: Math.min(window.innerWidth * 0.85, window.innerHeight * 0.75),
@@ -644,11 +643,13 @@ const flagLayers = ref(generateFlagLayers());
 
 // ウィンドウリサイズ時の再生成
 const handleResize = () => {
+    updateBreakpoints();
     regenerateFlags();
 };
 
 // コンポーネントがマウントされたときに初期化
 onMounted(() => {
+    updateBreakpoints();
     regenerateFlags();
     window.addEventListener('resize', handleResize);
 });
@@ -899,11 +900,11 @@ useHead({
     animation: logoGlow 3s ease-in-out infinite;
 }
 
-.logo-placeholder {
-    color: white;
-    font-weight: bold;
-    font-size: clamp(10px, 2vw, 14px);
-    text-align: center;
+.logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 @keyframes logoGlow {
@@ -1057,19 +1058,15 @@ useHead({
     box-shadow: 0 8px 25px rgba(252, 182, 159, 0.6);
 }
 
-.flag-button {
+.flag-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.8);
     pointer-events: auto;
     cursor: pointer;
-}
-
-.flag-button .v-btn__content {
-    pointer-events: none;
-}
-
-.flag-placeholder {
-    font-size: clamp(18px, 3vw, 24px);
-    animation: flagFloat 2s ease-in-out infinite;
-    pointer-events: none;
 }
 
 @keyframes flagFloat {
