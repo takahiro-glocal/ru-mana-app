@@ -1,5 +1,5 @@
 <template>
-  <div class="tw-min-h-screen tw-bg-gray-50">
+  <div class="tw-min-h-screen tw-bg-gray-50 tw-pb-20 md:tw-pb-0">
     <!-- ===== Safe-area top bar ===== -->
     <div class="tw-bg-ru-trouble tw-h-2 md:tw-h-3"></div>
 

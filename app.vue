@@ -3,6 +3,7 @@
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
+  <MobileBottomNav />
   <GlobalDrawer />
   <GlobalChat />
 </template>

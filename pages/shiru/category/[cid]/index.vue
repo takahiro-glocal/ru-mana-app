@@ -1,5 +1,5 @@
 <template>
-  <div class="tw-min-h-screen tw-bg-white md:tw-bg-[#F9F5E7] tw-flex tw-flex-col tw-overflow-hidden">
+  <div class="tw-min-h-screen tw-bg-white md:tw-bg-[#F9F5E7] tw-flex tw-flex-col tw-overflow-hidden tw-pb-20 md:tw-pb-0">
     <header class="tw-bg-white tw-border-b tw-border-gray-100 tw-p-4 md:tw-px-8 md:tw-py-6 tw-z-30 tw-flex-shrink-0">
       <div class="tw-max-w-7xl tw-mx-auto tw-flex tw-justify-between tw-items-center">
         <div class="tw-flex tw-items-center tw-gap-4">
