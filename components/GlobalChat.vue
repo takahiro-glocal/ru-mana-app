@@ -4,7 +4,8 @@
     <button
       v-show="!isChatOpen"
       @click="openChat"
-      class="tw-fixed tw-bottom-24 md:tw-bottom-8 tw-right-4 md:tw-right-8 tw-z-[55] tw-w-14 tw-h-14 tw-bg-[#4B3E8E] tw-rounded-full tw-shadow-lg tw-flex tw-items-center tw-justify-center tw-text-white hover:tw-bg-[#3d3275] active:tw-scale-90 tw-transition-all"
+      class="tw-fixed tw-bottom-24 md:tw-bottom-8 tw-right-4 md:tw-right-8 tw-z-[9999] tw-w-14 tw-h-14 tw-bg-[#4B3E8E] tw-rounded-full tw-shadow-lg tw-flex tw-items-center tw-justify-center tw-text-white hover:tw-bg-[#3d3275] active:tw-scale-90 tw-transition-all"
+      style="z-index: 9999"
       :aria-label="$t('chat.open')"
     >
       <MessageCircle class="tw-w-6 tw-h-6" />
