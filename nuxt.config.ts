@@ -149,5 +149,14 @@ export default defineNuxtConfig({
     }
   },
   ssr: false,
+  nitro: {
+    preset: 'firebase',
+    firebase: {
+      gen: 2,
+      httpsOptions: {
+        region: 'asia-northeast1',
+      },
+    },
+  },
   devtools: { enabled: false },
 })
