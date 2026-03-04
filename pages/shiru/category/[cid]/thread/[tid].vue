@@ -41,7 +41,7 @@
     <div class="tw-max-w-7xl tw-mx-auto tw-w-full tw-flex-1 tw-flex tw-overflow-hidden">
       <aside class="tw-hidden md:tw-block tw-w-80 tw-bg-white tw-border-r tw-border-gray-100 tw-overflow-y-auto">
         <div class="tw-p-6">
-          <h3 class="tw-text-[10px] tw-font-bold tw-text-gray-400 tw-uppercase tw-tracking-widest tw-mb-4">Related Threads</h3>
+          <h3 class="tw-text-[10px] tw-font-bold tw-text-gray-400 tw-uppercase tw-tracking-widest tw-mb-4">{{ $t('thread.related_threads') }}</h3>
           <div class="tw-space-y-1">
             <div v-if="siblings.length === 0" class="tw-text-xs tw-text-gray-400">{{ $t('thread.no_related') }}</div>
             <div 
@@ -68,7 +68,7 @@
           <span class="tw-cursor-pointer hover:tw-text-gray-600" @click="() => $router.push(localePath('/shiru'))">{{ $t('shiru.title') }}</span>
           <ChevronRight class="tw-w-3 tw-h-3" />
           <span class="tw-cursor-pointer hover:tw-text-gray-600" @click="() => $router.push(localePath(`/shiru/category/${cid}`))">
-            {{ currentCategory?.name }}
+            {{ getCategoryName(cid) }}
           </span>
           <ChevronRight class="tw-w-3 tw-h-3" />
           <span class="tw-text-gray-600 tw-truncate tw-max-w-xs">{{ currentThreadInfo?.title }}</span>
@@ -77,7 +77,7 @@
         <div v-if="currentThreadInfo" class="tw-p-6 md:tw-p-10 md:tw-pt-4 tw-border-b tw-border-gray-50 tw-flex-shrink-0">
           <div class="tw-flex tw-items-center tw-gap-3 tw-mb-3">
             <span :class="['tw-px-3 tw-py-1 tw-rounded-full tw-text-[10px] tw-font-black tw-text-white uppercase', getTheme(cid).textBg]">
-              {{ currentCategory?.name }}
+              {{ getCategoryName(cid) }}
             </span>
             <span class="tw-text-[10px] tw-text-gray-300 tw-font-bold">{{ currentThreadInfo.date }}</span>
           </div>
@@ -267,9 +267,10 @@ const tid = computed(() => route.params.tid as string)
 const cid = computed(() => route.params.cid as string)
 
 // Composables
-const { 
-  loadCategories, 
+const {
+  loadCategories,
   getCategoryById,
+  getCategoryName,
 } = useShiru()
 
 const { 
@@ -561,7 +562,7 @@ const autoResize = () => {
 }
 
 useHead(() => ({
-  title: currentThreadInfo.value ? `${currentThreadInfo.value.title} | しるまな` : 'スレッド'
+  title: currentThreadInfo.value ? `${currentThreadInfo.value.title} | ${t('shiru.title')}` : t('shiru.title')
 }))
 </script>
 

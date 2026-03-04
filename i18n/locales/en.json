@@ -63,10 +63,14 @@
     "tab_qa": "Community Q&A",
     "tab_guides": "RUUMANA Guide",
     "tab_rules": "Rules & Manners",
-    "category_transport": "Transport",
+    "category_transport": "Transport Etiquette",
     "category_public": "Public Facilities",
-    "category_spa": "Onsen & Bath",
-    "category_cafe": "Restaurants & Cafes",
+    "category_spa": "Onsen & Public Baths",
+    "category_cafe": "Dining & Cafes",
+    "category_shopping": "Shopping & Payment",
+    "category_hotel": "Lodging & Ryokan",
+    "category_culture": "Shrines & Traditions",
+    "category_trash": "Waste & Restrooms",
     "category_new": "New & Other",
     "no_results": "No manners found matching your search.",
     "no_threads": "No threads yet",
@@ -188,7 +192,8 @@
     "cat_grocery": "Grocery & Drug Stores",
     "cat_police": "Police & Fire",
     "cat_public": "Public Facilities",
-    "current_location": "Current Location"
+    "current_location": "Current Location",
+    "coverage_range": "Coverage"
   },
   "miru": {
     "title": "Area & Disaster Map",

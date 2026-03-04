@@ -41,7 +41,7 @@
             ]"
           >
             <div :class="['tw-w-3 tw-h-3 tw-rounded-full', getTheme(cat.id).dot]"></div>
-            {{ cat.name }}
+            {{ getCategoryName(cat.id) }}
           </button>
         </nav>
       </aside>
@@ -50,7 +50,7 @@
         <nav class="tw-hidden md:tw-flex tw-items-center tw-gap-2 tw-text-[10px] tw-text-gray-400 tw-mb-6">
           <span class="tw-cursor-pointer hover:tw-text-gray-600" @click="() => $router.push(localePath('/shiru'))">{{ $t('shiru.title') }}</span>
           <ChevronRight class="tw-w-3 tw-h-3" />
-          <span class="tw-text-gray-600">{{ currentCategory?.name }}</span>
+          <span class="tw-text-gray-600">{{ getCategoryName(cid) }}</span>
         </nav>
 
         <div class="md:tw-hidden tw-flex-1 tw-flex tw-flex-col tw-overflow-hidden">
@@ -69,7 +69,7 @@
                   <div :class="['tw-w-20 tw-h-20 tw-mx-auto tw-rounded-full tw-bg-white tw-border-4 tw-flex tw-items-center tw-justify-center tw-mb-3 tw-shadow-sm', getTheme(cat.id).border]">
                     <component :is="getCategoryIcon(cat.icon)" :class="['tw-w-10 tw-h-10', getTheme(cat.id).text]" />
                   </div>
-                  <h3 class="tw-text-xl tw-font-black tw-text-gray-800">{{ cat.name }}</h3>
+                  <h3 class="tw-text-xl tw-font-black tw-text-gray-800">{{ getCategoryName(cat.id) }}</h3>
                   
                   <div class="tw-mt-4 tw-bg-white/60 tw-backdrop-blur-sm tw-p-1 tw-rounded-full tw-flex tw-text-[10px] tw-font-bold tw-shadow-sm">
                     <button
@@ -163,7 +163,7 @@
         <div class="tw-hidden md:tw-block">
            <div class="tw-flex tw-items-end tw-justify-between tw-mb-8">
             <div class="tw-flex tw-items-center tw-gap-4">
-              <h2 class="tw-text-3xl tw-font-black tw-text-gray-800 uppercase">{{ currentCategory?.name }}</h2>
+              <h2 class="tw-text-3xl tw-font-black tw-text-gray-800 uppercase">{{ getCategoryName(cid) }}</h2>
               
               <button 
                 v-if="activeTab === 'threads'"
@@ -275,7 +275,7 @@ const { openDrawer } = useDrawer()
 const isLoginModalOpen = ref(false)
 const isCreateModalOpen = ref(false)
 
-const { categories, loadCategories, getCategoryById } = useShiru() // Removed allThreads, loadAllThreads
+const { categories, loadCategories, getCategoryById, getCategoryName } = useShiru()
 const { 
   threads: firestoreThreads, 
   isLoading: threadsLoading, 
@@ -402,7 +402,7 @@ onUnmounted(() => {
 const { t, locale } = useI18n()
 
 useHead(() => ({
-  title: currentCategory.value ? `${currentCategory.value.name} | ${t('shiru.title')}` : t('shiru.title')
+  title: currentCategory.value ? `${getCategoryName(cid.value)} | ${t('shiru.title')}` : t('shiru.title')
 }))
 </script>
 

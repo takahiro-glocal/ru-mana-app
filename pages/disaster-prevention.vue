@@ -1,154 +1,169 @@
 <template>
   <div class="tw-relative tw-w-full tw-h-screen tw-overflow-hidden tw-font-sans">
-    
-    <header class="tw-absolute tw-top-0 tw-left-0 tw-right-0 tw-h-16 tw-bg-white/90 tw-backdrop-blur-md tw-shadow-sm tw-z-50 tw-flex tw-items-center tw-justify-between tw-px-6">
-      <div class="tw-flex tw-items-center tw-gap-4">
-        <div class="tw-w-8 tw-h-8 tw-rounded-full tw-bg-gradient-to-br tw-from-[#FFD700] tw-via-[#FF6B6B] tw-to-[#4ECDC4] tw-flex tw-items-center tw-justify-center tw-shadow-inner">
-          <div class="tw-w-full tw-h-full tw-bg-white tw-bg-opacity-20 tw-rounded-full"></div>
-        </div>
-        <div class="tw-flex tw-items-baseline tw-gap-3">
-          <h1 class="tw-text-2xl tw-font-bold tw-text-gray-800 tw-tracking-wide">{{ $t('disaster.title') }}</h1>
-          <span class="tw-text-xs tw-text-gray-500 tw-font-medium">{{ $t('disaster.subtitle') }}</span>
+
+    <!-- ===== Header ===== -->
+    <header class="tw-absolute tw-top-0 tw-left-0 tw-right-0 tw-h-14 md:tw-h-16 tw-bg-white/90 tw-backdrop-blur-md tw-shadow-sm tw-z-50 tw-flex tw-items-center tw-justify-between tw-px-4 md:tw-px-6">
+      <div class="tw-flex tw-items-center tw-gap-3">
+        <button @click="$router.push(localePath('/'))" class="tw-p-1.5 tw-rounded-full hover:tw-bg-gray-100 tw-transition-colors md:tw-hidden">
+          <ChevronLeft class="tw-w-6 tw-h-6 tw-text-gray-500" />
+        </button>
+        <NuxtLink :to="localePath('/')" class="tw-hidden md:tw-flex tw-items-center tw-gap-3">
+          <img src="/images/logo.png" alt="るうまな" class="tw-w-8 tw-h-8 tw-rounded-full" />
+        </NuxtLink>
+        <div>
+          <h1 class="tw-text-lg md:tw-text-2xl tw-font-bold tw-text-gray-800">{{ $t('disaster.title') }}</h1>
+          <span class="tw-hidden md:tw-inline tw-text-xs tw-text-gray-500">{{ $t('disaster.subtitle') }}</span>
         </div>
       </div>
 
-      <div class="tw-flex tw-items-center tw-gap-6">
-        <button class="tw-group tw-flex tw-items-center tw-justify-center hover:tw-opacity-70 tw-transition-opacity">
-          <FileText class="tw-w-6 tw-h-6 tw-text-gray-400 group-hover:tw-text-[#85C441]" />
+      <div class="tw-flex tw-items-center tw-gap-3 md:tw-gap-5">
+        <NuxtLink :to="localePath('/trouble')" class="tw-flex tw-items-center tw-gap-1 tw-bg-[#E4007F] tw-text-white tw-px-3 tw-py-1.5 tw-rounded-full tw-text-xs tw-font-bold tw-shadow-sm hover:tw-bg-[#c0006b] tw-transition-colors">
+          <AlertTriangle class="tw-w-3.5 tw-h-3.5" />
+          <span class="tw-hidden md:tw-inline">{{ $t('common.trouble') }}</span>
+          <span class="md:tw-hidden">SOS</span>
+        </NuxtLink>
+        <button class="tw-hidden md:tw-flex tw-items-center tw-justify-center hover:tw-opacity-70" @click="$router.push(localePath('/'))">
+          <Home class="tw-w-6 tw-h-6 tw-text-gray-400 hover:tw-text-[#85C441]" />
         </button>
-        <button class="tw-group tw-flex tw-items-center tw-justify-center hover:tw-opacity-70 tw-transition-opacity" @click="$router.push(localePath('/'))">
-          <Home class="tw-w-6 tw-h-6 tw-text-gray-400 group-hover:tw-text-[#85C441]" />
-        </button>
-        <div class="tw-flex tw-items-center tw-gap-2 tw-cursor-pointer hover:tw-opacity-80">
-          <div v-if="userPhotoURL">
-             <img :src="userPhotoURL" class="tw-w-9 tw-h-9 tw-rounded-full tw-border tw-border-gray-200" />
-          </div>
-          <UserCircle v-else class="tw-w-9 tw-h-9 tw-text-gray-400" />
-          <span class="tw-text-sm tw-font-bold tw-text-gray-600">{{ userDisplayName || 'Guest' }}</span>
+        <div v-if="user" @click="openDrawer()" class="tw-cursor-pointer">
+          <img :src="userPhotoURL" class="tw-w-8 tw-h-8 md:tw-w-9 md:tw-h-9 tw-rounded-full tw-border tw-border-gray-200" />
         </div>
+        <UserCircle v-else class="tw-w-8 tw-h-8 tw-text-gray-400 tw-cursor-pointer" @click="isLoginModalOpen = true" />
       </div>
     </header>
 
-    <aside 
-      class="tw-absolute tw-top-24 tw-left-6 tw-w-72 tw-flex tw-flex-col tw-gap-4 tw-z-40 tw-transition-transform tw-duration-300"
+    <!-- ===== PC: Sidebar ===== -->
+    <aside
+      class="tw-hidden md:tw-flex tw-absolute tw-top-24 tw-left-6 tw-w-72 tw-flex-col tw-gap-4 tw-z-40 tw-transition-transform tw-duration-300"
       :class="isSidebarOpen ? 'tw-translate-x-0' : '-tw-translate-x-[110%]'"
     >
       <div class="tw-bg-white/80 tw-backdrop-blur-md tw-rounded-2xl tw-p-2 tw-shadow-lg tw-border tw-border-white/50">
         <div class="tw-relative">
-          <input 
-            type="text" 
-            :placeholder="$t('disaster.search_facilities')" 
-            class="tw-w-full tw-bg-white tw-rounded-xl tw-py-2 tw-pl-10 tw-pr-8 tw-text-sm tw-outline-none focus:tw-ring-2 focus:tw-ring-[#85C441]/50 tw-text-gray-700"
-          />
+          <input type="text" :placeholder="$t('disaster.search_facilities')" class="tw-w-full tw-bg-white tw-rounded-xl tw-py-2 tw-pl-10 tw-pr-8 tw-text-sm tw-outline-none focus:tw-ring-2 focus:tw-ring-[#85C441]/50 tw-text-gray-700" />
           <Search class="tw-absolute tw-left-3 tw-top-1/2 -tw-translate-y-1/2 tw-w-4 tw-h-4 tw-text-gray-400" />
-          <X class="tw-absolute tw-right-3 tw-top-1/2 -tw-translate-y-1/2 tw-w-4 tw-h-4 tw-text-gray-300 tw-cursor-pointer hover:tw-text-gray-500" />
         </div>
       </div>
 
       <div class="tw-bg-white/80 tw-backdrop-blur-md tw-rounded-3xl tw-p-4 tw-shadow-lg tw-border tw-border-white/50 tw-space-y-2">
-        <button 
-          v-for="cat in categories" 
-          :key="cat.id"
+        <button
+          v-for="cat in categories" :key="cat.id"
           @click="toggleCategory(cat.id)"
           class="tw-w-full tw-flex tw-items-center tw-gap-3 tw-p-3 tw-rounded-xl tw-transition-all hover:tw-bg-white/60"
           :class="{'tw-bg-white tw-shadow-sm': cat.active, 'tw-opacity-60': !cat.active}"
         >
-          <div 
-            class="tw-w-4 tw-h-4 tw-rounded-full tw-shadow-sm" 
-            :style="{ backgroundColor: cat.color }"
-          ></div>
+          <div class="tw-w-4 tw-h-4 tw-rounded-full tw-shadow-sm" :style="{ backgroundColor: cat.color }"></div>
           <span class="tw-text-sm tw-font-bold tw-text-gray-600">{{ cat.label }}</span>
           <div v-if="cat.active" class="tw-ml-auto tw-w-2 tw-h-2 tw-rounded-full tw-bg-gray-400"></div>
         </button>
 
         <div class="tw-pt-4 tw-mt-4 tw-border-t tw-border-gray-200/50">
-           <button class="tw-flex tw-items-center tw-gap-2 tw-text-gray-500 hover:tw-text-gray-800 tw-text-sm tw-font-bold tw-px-2">
-             <MessageSquare class="tw-w-4 tw-h-4" />
-             {{ $t('disaster.give_feedback') }}
-           </button>
+          <button @click="openDrawer('feedback')" class="tw-flex tw-items-center tw-gap-2 tw-text-gray-500 hover:tw-text-gray-800 tw-text-sm tw-font-bold tw-px-2">
+            <MessageSquare class="tw-w-4 tw-h-4" />
+            {{ $t('disaster.give_feedback') }}
+          </button>
         </div>
       </div>
-      
+
       <div class="tw-relative tw-mt-2">
-         <div class="tw-absolute -tw-top-2 tw-left-6 tw-w-4 tw-h-4 tw-bg-white tw-rotate-45"></div>
-         <div class="tw-bg-white tw-rounded-2xl tw-p-4 tw-shadow-sm tw-text-[10px] tw-text-gray-500 tw-leading-relaxed">
-            <p>{{ $t('disaster.tip_scroll') }}</p>
-            <p>{{ $t('disaster.tip_menu') }}</p>
-            <p>{{ $t('disaster.tip_toggle') }}</p>
-         </div>
+        <div class="tw-absolute -tw-top-2 tw-left-6 tw-w-4 tw-h-4 tw-bg-white tw-rotate-45"></div>
+        <div class="tw-bg-white tw-rounded-2xl tw-p-4 tw-shadow-sm tw-text-[10px] tw-text-gray-500 tw-leading-relaxed">
+          <p>{{ $t('disaster.tip_scroll') }}</p>
+          <p>{{ $t('disaster.tip_menu') }}</p>
+          <p>{{ $t('disaster.tip_toggle') }}</p>
+        </div>
       </div>
     </aside>
 
-    <div class="tw-absolute tw-top-24 tw-left-6 tw-z-40" v-if="!isSidebarOpen">
-       <button 
-         @click="isSidebarOpen = true"
-         class="tw-bg-white/90 tw-backdrop-blur-md tw-p-2 tw-rounded-r-xl tw-shadow-md hover:tw-bg-white tw-text-gray-500"
-       >
-         <Plus class="tw-w-5 tw-h-5" />
-       </button>
-    </div>
-    <div class="tw-absolute tw-top-24 tw-left-[310px] tw-z-40" v-if="isSidebarOpen">
-       <button 
-         @click="isSidebarOpen = false"
-         class="tw-bg-white/80 tw-backdrop-blur-md tw-w-6 tw-h-8 tw-rounded-r-md tw-shadow-sm hover:tw-bg-white tw-text-gray-400 tw-flex tw-items-center tw-justify-center"
-       >
-         <Minus class="tw-w-4 tw-h-4" />
-       </button>
+    <!-- PC: Sidebar Toggle -->
+    <div class="tw-hidden md:tw-block tw-absolute tw-top-24 tw-z-40" :class="isSidebarOpen ? 'tw-left-[310px]' : 'tw-left-6'">
+      <button
+        @click="isSidebarOpen = !isSidebarOpen"
+        class="tw-bg-white/90 tw-backdrop-blur-md tw-p-2 tw-rounded-r-xl tw-shadow-md hover:tw-bg-white tw-text-gray-500"
+      >
+        <component :is="isSidebarOpen ? Minus : Plus" class="tw-w-5 tw-h-5" />
+      </button>
     </div>
 
-
+    <!-- ===== Map ===== -->
     <div ref="mapDiv" class="tw-w-full tw-h-full tw-bg-gray-100"></div>
 
+    <!-- ===== Mobile: Bottom Category Sheet ===== -->
+    <div class="md:tw-hidden tw-absolute tw-bottom-0 tw-left-0 tw-right-0 tw-z-40">
+      <div class="tw-px-4 tw-pb-3">
+        <div class="tw-flex tw-gap-2 tw-overflow-x-auto tw-scrollbar-hide tw-pb-1">
+          <button
+            v-for="cat in categories" :key="cat.id"
+            @click="toggleCategory(cat.id)"
+            :class="[
+              'tw-flex tw-items-center tw-gap-2 tw-px-4 tw-py-2.5 tw-rounded-full tw-text-xs tw-font-bold tw-whitespace-nowrap tw-shadow-md tw-transition-all tw-flex-shrink-0',
+              cat.active ? 'tw-bg-white tw-text-gray-800' : 'tw-bg-white/60 tw-backdrop-blur-sm tw-text-gray-400'
+            ]"
+          >
+            <div class="tw-w-3 tw-h-3 tw-rounded-full" :style="{ backgroundColor: cat.color }" :class="{ 'tw-opacity-40': !cat.active }"></div>
+            {{ cat.label }}
+          </button>
+        </div>
+      </div>
+      <div class="tw-h-6 tw-bg-gradient-to-t tw-from-white/80 tw-to-transparent"></div>
+    </div>
 
-    <div class="tw-absolute tw-bottom-8 tw-right-8 tw-flex tw-flex-col tw-gap-3 tw-z-40">
-      
-      <button 
-        @click="panToCurrentLocation"
-        class="tw-bg-gray-700/80 tw-backdrop-blur-sm tw-text-white tw-w-12 tw-h-12 tw-rounded-full tw-shadow-lg tw-flex tw-items-center tw-justify-center hover:tw-bg-gray-600 tw-transition-colors"
-      >
+    <!-- ===== Facility Detail Popup ===== -->
+    <Transition name="popup">
+      <div v-if="selectedFacility" class="tw-absolute tw-z-50 tw-left-4 tw-right-4 md:tw-left-auto md:tw-right-8 md:tw-w-80 tw-bottom-28 md:tw-bottom-auto md:tw-top-24 tw-bg-white tw-rounded-2xl tw-shadow-xl tw-border tw-border-gray-100 tw-overflow-hidden">
+        <div class="tw-flex tw-items-center tw-gap-3 tw-p-4">
+          <div class="tw-w-10 tw-h-10 tw-rounded-xl tw-flex tw-items-center tw-justify-center" :style="{ backgroundColor: getCategoryColor(selectedFacility.type) + '20' }">
+            <MapPin class="tw-w-5 tw-h-5" :style="{ color: getCategoryColor(selectedFacility.type) }" />
+          </div>
+          <div class="tw-flex-1 tw-min-w-0">
+            <h4 class="tw-font-bold tw-text-gray-800 tw-text-sm tw-truncate">{{ selectedFacility.title }}</h4>
+            <p class="tw-text-[10px] tw-text-gray-400">{{ getCategoryLabel(selectedFacility.type) }}</p>
+          </div>
+          <button @click="selectedFacility = null" class="tw-p-1 tw-rounded-full hover:tw-bg-gray-100">
+            <X class="tw-w-5 tw-h-5 tw-text-gray-400" />
+          </button>
+        </div>
+        <div v-if="selectedFacility.range" class="tw-px-4 tw-pb-4">
+          <div class="tw-bg-gray-50 tw-rounded-lg tw-p-2 tw-text-[10px] tw-text-gray-500">
+            {{ $t('disaster.coverage_range') }}: {{ selectedFacility.range }}m
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- ===== Map Controls ===== -->
+    <div class="tw-absolute tw-bottom-28 md:tw-bottom-8 tw-right-4 md:tw-right-8 tw-flex tw-flex-col tw-gap-3 tw-z-40">
+      <button @click="panToCurrentLocation" class="tw-bg-white tw-text-gray-600 tw-w-11 tw-h-11 md:tw-w-12 md:tw-h-12 tw-rounded-full tw-shadow-lg tw-flex tw-items-center tw-justify-center hover:tw-bg-gray-50 tw-transition-colors tw-border tw-border-gray-100">
         <Navigation class="tw-w-5 tw-h-5" />
       </button>
-
-      <div class="tw-bg-gray-700/80 tw-backdrop-blur-sm tw-text-white tw-rounded-full tw-shadow-lg tw-flex tw-flex-col tw-overflow-hidden">
-        <button 
-          @click="zoomIn"
-          class="tw-w-12 tw-h-12 tw-flex tw-items-center tw-justify-center hover:tw-bg-gray-600 tw-border-b tw-border-gray-500"
-        >
-          <Plus class="tw-w-6 tw-h-6" />
+      <div class="tw-bg-white tw-text-gray-600 tw-rounded-full tw-shadow-lg tw-flex tw-flex-col tw-overflow-hidden tw-border tw-border-gray-100">
+        <button @click="zoomIn" class="tw-w-11 tw-h-11 md:tw-w-12 md:tw-h-12 tw-flex tw-items-center tw-justify-center hover:tw-bg-gray-50 tw-border-b tw-border-gray-100">
+          <Plus class="tw-w-5 tw-h-5" />
         </button>
-        <button 
-          @click="zoomOut"
-          class="tw-w-12 tw-h-12 tw-flex tw-items-center tw-justify-center hover:tw-bg-gray-600"
-        >
-          <Minus class="tw-w-6 tw-h-6" />
+        <button @click="zoomOut" class="tw-w-11 tw-h-11 md:tw-w-12 md:tw-h-12 tw-flex tw-items-center tw-justify-center hover:tw-bg-gray-50">
+          <Minus class="tw-w-5 tw-h-5" />
         </button>
-      </div>
-
-      <div class="tw-absolute tw-right-16 tw-bottom-2 tw-pointer-events-none">
-         <div class="tw-flex tw-flex-col tw-items-end">
-            <div class="tw-border-b-2 tw-border-l-2 tw-border-r-2 tw-border-gray-600 tw-h-2 tw-w-16"></div>
-            <span class="tw-text-[10px] tw-font-bold tw-text-gray-600">200m</span>
-         </div>
       </div>
     </div>
 
+    <AuthModal :is-open="isLoginModalOpen" @close="isLoginModalOpen = false" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { 
-  Home, FileText, UserCircle, Search, X, MessageSquare, 
-  Plus, Minus, Navigation 
+import {
+  Home, UserCircle, Search, X, MessageSquare,
+  Plus, Minus, Navigation, MapPin, ChevronLeft, AlertTriangle
 } from 'lucide-vue-next'
 
-// --- Auth & Utils ---
-const { userDisplayName, userPhotoURL } = useAuth()
+const { user, userPhotoURL } = useAuth()
+const { openDrawer } = useDrawer()
 const localePath = useLocalePath()
 const { t, tm } = useI18n()
 const { load } = useMapsLoader()
 
-// --- State ---
+const isLoginModalOpen = ref(false)
+
 const mapDiv = ref<HTMLElement | null>(null)
 const isSidebarOpen = ref(true)
 let map: google.maps.Map | null = null
@@ -156,12 +171,21 @@ let userMarker: google.maps.Marker | null = null
 const markers: google.maps.Marker[] = []
 const circles: google.maps.Circle[] = []
 
-// --- Categories Config ---
+interface LocationData {
+  lat: number
+  lng: number
+  type: string
+  title: string
+  range?: number
+}
+
+const selectedFacility = ref<LocationData | null>(null)
+
 interface Category {
   id: string
   label: string
-  color: string // Hex for UI
-  iconColor: string // Google Maps Marker Color
+  color: string
+  iconColor: string
   active: boolean
 }
 
@@ -173,23 +197,13 @@ const categories = ref<Category[]>([
   { id: 'public',  label: t('disaster.cat_public'), color: '#A78BFA', iconColor: '#A78BFA', active: true },
 ])
 
-// --- Mock Data Handling ---
-interface LocationData {
-  lat: number
-  lng: number
-  type: string
-  title: string
-  range?: number
-}
+const getCategoryColor = (type: string) => categories.value.find(c => c.id === type)?.color || '#888'
+const getCategoryLabel = (type: string) => categories.value.find(c => c.id === type)?.label || type
 
 const mockLocations = ref<LocationData[]>([])
 
-// 現在地周辺にランダムデータを生成する関数
 const generateMockData = (center: google.maps.LatLngLiteral) => {
   const newLocations: LocationData[] = []
-  const count = 15 // 生成する数
-  const range = 0.015 // 散らばり具合（約1.5km程度）
-
   const typeList = categories.value.map(c => c.id)
 
   const prefixes: Record<string, string[]> = {
@@ -207,86 +221,57 @@ const generateMockData = (center: google.maps.LatLngLiteral) => {
     public: t('disaster_mock.public_suffix')
   }
 
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < 15; i++) {
     const type = typeList[Math.floor(Math.random() * typeList.length)]
     const prefix = prefixes[type][Math.floor(Math.random() * prefixes[type].length)]
-    const suffix = suffixes[type]
-    
-    // 現在地からのランダムなオフセット
-    const latOffset = (Math.random() - 0.5) * range
-    const lngOffset = (Math.random() - 0.5) * range
 
-    // 一部のデータには範囲円用のrangeを持たせる
     const hasRange = Math.random() > 0.7
-    const rangeVal = hasRange ? Math.floor(Math.random() * 300) + 200 : undefined
-
     newLocations.push({
-      lat: center.lat + latOffset,
-      lng: center.lng + lngOffset,
-      type: type,
-      title: `${prefix}${suffix}`,
-      range: rangeVal
+      lat: center.lat + (Math.random() - 0.5) * 0.015,
+      lng: center.lng + (Math.random() - 0.5) * 0.015,
+      type,
+      title: `${prefix}${suffixes[type]}`,
+      range: hasRange ? Math.floor(Math.random() * 300) + 200 : undefined
     })
   }
   mockLocations.value = newLocations
 }
 
-// --- Map Logic ---
-
 const initMap = async () => {
   await load()
-  
   if (!mapDiv.value) return
 
-  // マップスタイル
   const mapStyle: google.maps.MapTypeStyle[] = [
     { featureType: "all", elementType: "labels.text.fill", stylers: [{ saturation: 36 }, { color: "#333333" }, { lightness: 40 }] },
     { featureType: "all", elementType: "labels.text.stroke", stylers: [{ visibility: "on" }, { color: "#ffffff" }, { lightness: 16 }] },
     { featureType: "all", elementType: "labels.icon", stylers: [{ visibility: "off" }] },
-    { featureType: "administrative", elementType: "geometry.fill", stylers: [{ color: "#fefefe" }, { lightness: 20 }] },
-    { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#fefefe" }, { lightness: 17 }, { weight: 1.2 }] },
     { featureType: "landscape", elementType: "geometry", stylers: [{ color: "#f5f5f5" }, { lightness: 20 }] },
-    { featureType: "poi", elementType: "geometry", stylers: [{ color: "#f5f5f5" }, { lightness: 21 }] },
     { featureType: "road.highway", elementType: "geometry.fill", stylers: [{ color: "#ffffff" }, { lightness: 17 }] },
-    { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#ffffff" }, { lightness: 29 }, { weight: 0.2 }] },
     { featureType: "road.arterial", elementType: "geometry", stylers: [{ color: "#ffffff" }, { lightness: 18 }] },
     { featureType: "road.local", elementType: "geometry", stylers: [{ color: "#ffffff" }, { lightness: 16 }] },
-    { featureType: "transit", elementType: "geometry", stylers: [{ color: "#f2f2f2" }, { lightness: 19 }] },
     { featureType: "water", elementType: "geometry", stylers: [{ color: "#e9e9e9" }, { lightness: 17 }] }
   ]
 
-  // 初期位置（仮）
   const defaultPos = { lat: 35.6895, lng: 139.6917 }
 
   map = new google.maps.Map(mapDiv.value, {
     center: defaultPos,
     zoom: 15,
-    disableDefaultUI: true, // デフォルトUIを隠す
+    disableDefaultUI: true,
     styles: mapStyle,
   })
 
-  // 現在地取得とデータ生成
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const currentPos = { lat: pos.coords.latitude, lng: pos.coords.longitude }
-        
-        // 1. マップ中心移動
         map?.setCenter(currentPos)
-        
-        // 2. ユーザーマーカー表示
         drawUserMarker(currentPos)
-        
-        // 3. 現在地周辺にダミーデータを生成
         generateMockData(currentPos)
-        
-        // 4. 生成したデータを描画し、全マーカーが収まるように調整
         renderMarkers()
         fitMapBounds(currentPos)
       },
       () => {
-        console.warn('Geolocation failed. Using default location.')
-        // 取得失敗時はデフォルト位置で生成
         generateMockData(defaultPos)
         renderMarkers()
         fitMapBounds(defaultPos)
@@ -294,53 +279,31 @@ const initMap = async () => {
       { enableHighAccuracy: true }
     )
   } else {
-    // Geolocation非対応時
     generateMockData(defaultPos)
     renderMarkers()
   }
 }
 
-// ★修正: ユーザーの現在地マーカー（人型アイコン）
 const drawUserMarker = (pos: google.maps.LatLngLiteral) => {
   if (userMarker) userMarker.setMap(null)
-  
-  // 人型アイコンのSVGパス (Material Design Person Icon Shape)
-  const personPath = "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z";
-
-  const svgIcon = {
-    path: personPath,
-    fillColor: '#2563EB', // 視認性の高い青
-    fillOpacity: 1,
-    scale: 1.5,
-    strokeColor: 'white',
-    strokeWeight: 2,
-    anchor: new google.maps.Point(12, 12),
-  }
+  const personPath = "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"
 
   userMarker = new google.maps.Marker({
     position: pos,
-    map: map,
-    icon: svgIcon,
-    zIndex: 999, // 最前面に表示
+    map,
+    icon: { path: personPath, fillColor: '#2563EB', fillOpacity: 1, scale: 1.5, strokeColor: 'white', strokeWeight: 2, anchor: new google.maps.Point(12, 12) },
+    zIndex: 999,
     title: t('disaster.current_location'),
   })
 
-  // 簡易的なパルス表現（固定の半透明円）
   new google.maps.Circle({
-    strokeColor: "#2563EB",
-    strokeOpacity: 0.2,
-    strokeWeight: 1,
-    fillColor: "#2563EB",
-    fillOpacity: 0.2,
-    map: map,
-    center: pos,
-    radius: 100, 
+    strokeColor: "#2563EB", strokeOpacity: 0.2, strokeWeight: 1,
+    fillColor: "#2563EB", fillOpacity: 0.15,
+    map, center: pos, radius: 100,
   })
 }
 
-// 施設マーカーの描画
 const renderMarkers = () => {
-  // 既存マーカー削除
   markers.forEach(m => m.setMap(null))
   circles.forEach(c => c.setMap(null))
   markers.length = 0
@@ -350,85 +313,57 @@ const renderMarkers = () => {
     const cat = categories.value.find(c => c.id === loc.type)
     if (!cat || !cat.active) return
 
-    // マーカー
     const marker = new google.maps.Marker({
       position: { lat: loc.lat, lng: loc.lng },
-      map: map,
+      map,
       title: loc.title,
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        fillColor: cat.iconColor,
-        fillOpacity: 1,
-        scale: 6,
-        strokeColor: 'white',
-        strokeWeight: 2,
-      },
+      icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: cat.iconColor, fillOpacity: 1, scale: 7, strokeColor: 'white', strokeWeight: 2.5 },
     })
+    marker.addListener('click', () => { selectedFacility.value = loc })
     markers.push(marker)
 
-    // 範囲円（特定の条件で描画）
     if (loc.range) {
-       const circle = new google.maps.Circle({
-        strokeColor: cat.iconColor,
-        strokeOpacity: 0.0,
-        strokeWeight: 0,
-        fillColor: cat.iconColor,
-        fillOpacity: 0.15,
-        map: map,
-        center: { lat: loc.lat, lng: loc.lng },
-        radius: loc.range,
-      })
-      circles.push(circle)
+      circles.push(new google.maps.Circle({
+        strokeColor: cat.iconColor, strokeOpacity: 0, fillColor: cat.iconColor, fillOpacity: 0.12,
+        map, center: { lat: loc.lat, lng: loc.lng }, radius: loc.range,
+      }))
     }
   })
 }
 
-// 全てのマーカーが収まるように表示範囲を調整
 const fitMapBounds = (center: google.maps.LatLngLiteral) => {
   if (!map || mockLocations.value.length === 0) return
-
   const bounds = new google.maps.LatLngBounds()
-  bounds.extend(center) // 現在地を含める
-
-  mockLocations.value.forEach(loc => {
-    bounds.extend({ lat: loc.lat, lng: loc.lng })
-  })
-
+  bounds.extend(center)
+  mockLocations.value.forEach(loc => bounds.extend({ lat: loc.lat, lng: loc.lng }))
   map.fitBounds(bounds)
-  map.panToBounds(bounds, 50) // マージン調整
+  map.panToBounds(bounds, 50)
 }
 
-// カテゴリ切り替え
 const toggleCategory = (id: string) => {
   const target = categories.value.find(c => c.id === id)
-  if (target) {
-    target.active = !target.active
-    renderMarkers() 
-  }
+  if (target) { target.active = !target.active; renderMarkers() }
 }
 
-// マップ操作
-const zoomIn = () => {
-  if (map) map.setZoom((map.getZoom() || 15) + 1)
-}
-const zoomOut = () => {
-  if (map) map.setZoom((map.getZoom() || 15) - 1)
-}
+const zoomIn = () => { if (map) map.setZoom((map.getZoom() || 15) + 1) }
+const zoomOut = () => { if (map) map.setZoom((map.getZoom() || 15) - 1) }
 const panToCurrentLocation = () => {
   if (navigator.geolocation && map) {
     navigator.geolocation.getCurrentPosition((pos) => {
-      const p = { lat: pos.coords.latitude, lng: pos.coords.longitude }
-      map?.panTo(p)
+      map?.panTo({ lat: pos.coords.latitude, lng: pos.coords.longitude })
       map?.setZoom(16)
     })
   }
 }
 
-onMounted(() => {
-  initMap()
-})
+onMounted(() => { initMap() })
+
+useHead(() => ({ title: t('disaster.title') }))
 </script>
 
 <style scoped>
-/* スクロールバー非表示など必要であれば */
+.tw-scrollbar-hide::-webkit-scrollbar { display: none; }
+.tw-scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.popup-enter-active, .popup-leave-active { transition: all 0.25s ease; }
+.popup-enter-from, .popup-leave-to { opacity: 0; transform: translateY(12px); }
 </style>
