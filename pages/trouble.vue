@@ -1,10 +1,13 @@
 <template>
-  <div class="tw-min-h-screen tw-bg-gray-50 tw-pb-24">
+  <div class="tw-min-h-screen tw-bg-gray-50">
+    <!-- ===== Safe-area top bar ===== -->
+    <div class="tw-bg-ru-trouble tw-h-2 md:tw-h-3"></div>
+
     <!-- ===== Header ===== -->
-    <header class="tw-bg-ru-trouble tw-text-white tw-pt-6 md:tw-pt-8 tw-pb-12 tw-px-4 md:tw-px-8 tw-rounded-b-[2.5rem] md:tw-rounded-b-[3rem] tw-shadow-lg tw-relative">
-      <!-- Back + Home Navigation -->
-      <div class="tw-max-w-4xl tw-mx-auto tw-flex tw-items-center tw-justify-between tw-mb-4 md:tw-mb-6">
-        <button @click="$router.push(localePath('/'))" class="tw-p-1.5 tw-rounded-full hover:tw-bg-white/20 tw-transition-colors">
+    <header class="tw-bg-ru-trouble tw-text-white tw-px-4 md:tw-px-8 tw-pb-16 md:tw-pb-20 tw-relative">
+      <!-- Navigation -->
+      <div class="tw-max-w-4xl tw-mx-auto tw-flex tw-items-center tw-justify-between tw-py-4 md:tw-py-5">
+        <button @click="$router.push(localePath('/'))" class="tw-p-2 tw-rounded-full hover:tw-bg-white/20 tw-transition-colors">
           <ChevronLeft class="tw-w-6 tw-h-6" />
         </button>
         <div class="tw-flex tw-items-center tw-gap-3">
@@ -18,16 +21,25 @@
         </div>
       </div>
 
-      <div class="tw-max-w-4xl tw-mx-auto">
-        <div class="tw-flex tw-items-center tw-mb-3">
-          <AlertTriangle class="tw-w-7 tw-h-7 md:tw-w-8 md:tw-h-8 tw-mr-3 tw-animate-pulse" />
-          <h1 class="tw-text-2xl md:tw-text-3xl tw-font-bold">{{ $t('trouble.title') }}</h1>
+      <!-- Title -->
+      <div class="tw-max-w-4xl tw-mx-auto tw-pb-4">
+        <div class="tw-flex tw-items-center tw-mb-2">
+          <div class="tw-bg-white/20 tw-p-2 tw-rounded-xl tw-mr-3">
+            <AlertTriangle class="tw-w-6 tw-h-6 md:tw-w-7 md:tw-h-7" />
+          </div>
+          <div>
+            <h1 class="tw-text-2xl md:tw-text-3xl tw-font-bold">{{ $t('trouble.title') }}</h1>
+            <p class="tw-text-white/80 tw-text-xs md:tw-text-sm">{{ $t('trouble.emergency_subtitle') }}</p>
+          </div>
         </div>
-        <p class="tw-text-white/90 tw-text-sm">{{ $t('trouble.emergency_subtitle') }}</p>
       </div>
+
+      <!-- Curved bottom -->
+      <div class="tw-absolute tw-bottom-0 tw-left-0 tw-right-0 tw-h-8 tw-bg-gray-50 tw-rounded-t-[2rem]"></div>
     </header>
 
-    <main class="tw-max-w-4xl tw-mx-auto tw-px-4 tw-mt-[-3rem]">
+    <!-- ===== Main Content ===== -->
+    <main class="tw-max-w-4xl tw-mx-auto tw-px-4 tw-mt-[-2.5rem] tw-relative tw-z-10 tw-pb-24">
       <!-- ===== PC: Two Column Layout ===== -->
       <div class="md:tw-grid md:tw-grid-cols-12 md:tw-gap-8">
 
@@ -37,9 +49,9 @@
           <section class="tw-grid tw-grid-cols-2 tw-gap-4 tw-mb-8">
             <button
               @click="() => makeCall('110')"
-              class="tw-bg-white tw-p-5 md:tw-p-6 tw-rounded-3xl tw-shadow-xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-border-2 tw-border-ru-trouble active:tw-scale-95 tw-transition-transform"
+              class="tw-bg-white tw-p-5 md:tw-p-6 tw-rounded-3xl tw-shadow-lg tw-flex tw-flex-col tw-items-center tw-justify-center tw-border-2 tw-border-transparent hover:tw-border-blue-200 active:tw-scale-95 tw-transition-all"
             >
-              <div class="tw-bg-blue-600 tw-p-3 md:tw-p-4 tw-rounded-full tw-mb-3">
+              <div class="tw-bg-blue-600 tw-p-3 md:tw-p-4 tw-rounded-full tw-mb-3 tw-shadow-md">
                 <ShieldAlert class="tw-w-7 tw-h-7 md:tw-w-8 md:tw-h-8 tw-text-white" />
               </div>
               <span class="tw-text-xs tw-text-gray-500 tw-font-bold tw-uppercase">{{ $t('trouble.police') }}</span>
@@ -48,9 +60,9 @@
 
             <button
               @click="() => makeCall('119')"
-              class="tw-bg-white tw-p-5 md:tw-p-6 tw-rounded-3xl tw-shadow-xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-border-2 tw-border-ru-trouble active:tw-scale-95 tw-transition-transform"
+              class="tw-bg-white tw-p-5 md:tw-p-6 tw-rounded-3xl tw-shadow-lg tw-flex tw-flex-col tw-items-center tw-justify-center tw-border-2 tw-border-transparent hover:tw-border-red-200 active:tw-scale-95 tw-transition-all"
             >
-              <div class="tw-bg-red-600 tw-p-3 md:tw-p-4 tw-rounded-full tw-mb-3">
+              <div class="tw-bg-red-600 tw-p-3 md:tw-p-4 tw-rounded-full tw-mb-3 tw-shadow-md">
                 <Flame class="tw-w-7 tw-h-7 md:tw-w-8 md:tw-h-8 tw-text-white" />
               </div>
               <span class="tw-text-xs tw-text-gray-500 tw-font-bold tw-uppercase">{{ $t('trouble.ambulance') }}</span>
@@ -83,7 +95,7 @@
               v-for="item in helpCategories"
               :key="item.id"
               @click="() => openGuide(item)"
-              class="tw-bg-white tw-p-5 tw-rounded-2xl tw-shadow-sm tw-flex tw-items-center tw-border tw-border-gray-100 hover:tw-border-ru-trouble tw-transition-colors active:tw-scale-[0.98]"
+              class="tw-bg-white tw-p-5 tw-rounded-2xl tw-shadow-sm tw-flex tw-items-center tw-border tw-border-gray-100 hover:tw-border-ru-trouble hover:tw-shadow-md tw-transition-all active:tw-scale-[0.98]"
             >
               <div :class="['tw-p-3 tw-rounded-xl tw-mr-4', item.colorClass]">
                 <component :is="item.icon" class="tw-w-6 tw-h-6 tw-text-white" />
@@ -97,23 +109,25 @@
           </section>
         </div>
 
-        <!-- Right Column: Hotlines + Quick Links (PC only shows as sidebar, mobile stacks below) -->
+        <!-- Right Column: Hotlines + Quick Links -->
         <div class="md:tw-col-span-5 tw-mt-10 md:tw-mt-0">
           <!-- Support Hotlines -->
-          <section class="tw-p-6 tw-bg-white tw-rounded-3xl tw-border tw-border-dashed tw-border-gray-300">
-            <div class="tw-flex tw-items-center tw-mb-4">
-              <Globe class="tw-w-5 tw-h-5 tw-text-gray-400 tw-mr-2" />
-              <h3 class="tw-text-sm tw-font-bold tw-text-gray-600">{{ $t('trouble.support_hotline') }}</h3>
+          <section class="tw-p-6 tw-bg-white tw-rounded-3xl tw-shadow-sm tw-border tw-border-gray-100">
+            <div class="tw-flex tw-items-center tw-mb-5">
+              <div class="tw-bg-gray-100 tw-p-2 tw-rounded-lg tw-mr-3">
+                <Globe class="tw-w-5 tw-h-5 tw-text-gray-500" />
+              </div>
+              <h3 class="tw-text-sm tw-font-bold tw-text-gray-700">{{ $t('trouble.support_hotline') }}</h3>
             </div>
             <div class="tw-space-y-3">
-              <div @click="() => makeCall('03-5320-7744')" class="tw-flex tw-justify-between tw-items-center tw-cursor-pointer hover:tw-bg-gray-50 tw-p-3 tw-rounded-xl tw-transition-colors tw-border tw-border-gray-100">
+              <div @click="() => makeCall('03-5320-7744')" class="tw-flex tw-justify-between tw-items-center tw-cursor-pointer hover:tw-bg-gray-50 tw-p-4 tw-rounded-xl tw-transition-colors tw-border tw-border-gray-100">
                 <div>
                   <span class="tw-text-sm tw-font-bold tw-text-gray-700 tw-block">{{ $t('trouble.himawari') }}</span>
                   <span class="tw-text-[10px] tw-text-gray-400">24h / Multilingual</span>
                 </div>
                 <span class="tw-text-sm tw-font-black tw-text-blue-600">03-5320-7744</span>
               </div>
-              <div @click="() => makeCall('0570-000-911')" class="tw-flex tw-justify-between tw-items-center tw-cursor-pointer hover:tw-bg-gray-50 tw-p-3 tw-rounded-xl tw-transition-colors tw-border tw-border-gray-100">
+              <div @click="() => makeCall('0570-000-911')" class="tw-flex tw-justify-between tw-items-center tw-cursor-pointer hover:tw-bg-gray-50 tw-p-4 tw-rounded-xl tw-transition-colors tw-border tw-border-gray-100">
                 <div>
                   <span class="tw-text-sm tw-font-bold tw-text-gray-700 tw-block">{{ $t('trouble.visitor_hotline') }}</span>
                   <span class="tw-text-[10px] tw-text-gray-400">24h / EN, ZH, KO, JA</span>
@@ -125,8 +139,8 @@
 
           <!-- Quick Links -->
           <section class="tw-mt-6 tw-space-y-3">
-            <NuxtLink :to="localePath('/disaster-prevention')" class="tw-flex tw-items-center tw-gap-3 tw-bg-white tw-p-4 tw-rounded-2xl tw-shadow-sm tw-border tw-border-gray-100 hover:tw-border-[#BCAF92] tw-transition-colors">
-              <div class="tw-bg-[#BCAF92] tw-p-2 tw-rounded-xl">
+            <NuxtLink :to="localePath('/disaster-prevention')" class="tw-flex tw-items-center tw-gap-3 tw-bg-white tw-p-4 tw-rounded-2xl tw-shadow-sm tw-border tw-border-gray-100 hover:tw-border-[#BCAF92] hover:tw-shadow-md tw-transition-all">
+              <div class="tw-bg-[#BCAF92] tw-p-2.5 tw-rounded-xl">
                 <MapPin class="tw-w-5 tw-h-5 tw-text-white" />
               </div>
               <div class="tw-flex-1">
@@ -136,8 +150,8 @@
               <ChevronRight class="tw-w-4 tw-h-4 tw-text-gray-300" />
             </NuxtLink>
 
-            <NuxtLink :to="localePath('/')" class="tw-flex tw-items-center tw-gap-3 tw-bg-white tw-p-4 tw-rounded-2xl tw-shadow-sm tw-border tw-border-gray-100 hover:tw-border-[#85C441] tw-transition-colors">
-              <div class="tw-bg-[#85C441] tw-p-2 tw-rounded-xl">
+            <NuxtLink :to="localePath('/')" class="tw-flex tw-items-center tw-gap-3 tw-bg-white tw-p-4 tw-rounded-2xl tw-shadow-sm tw-border tw-border-gray-100 hover:tw-border-[#85C441] hover:tw-shadow-md tw-transition-all">
+              <div class="tw-bg-[#85C441] tw-p-2.5 tw-rounded-xl">
                 <Home class="tw-w-5 tw-h-5 tw-text-white" />
               </div>
               <div class="tw-flex-1">

@@ -75,14 +75,16 @@
     </aside>
 
     <!-- PC: Sidebar Toggle -->
-    <div class="tw-hidden md:tw-block tw-absolute tw-top-24 tw-z-40" :class="isSidebarOpen ? 'tw-left-[310px]' : 'tw-left-6'">
-      <button
-        @click="isSidebarOpen = !isSidebarOpen"
-        class="tw-bg-white/90 tw-backdrop-blur-md tw-p-2 tw-rounded-r-xl tw-shadow-md hover:tw-bg-white tw-text-gray-500"
-      >
-        <component :is="isSidebarOpen ? Minus : Plus" class="tw-w-5 tw-h-5" />
-      </button>
-    </div>
+    <button
+      @click="isSidebarOpen = !isSidebarOpen"
+      class="tw-hidden md:tw-flex tw-items-center tw-justify-center tw-absolute tw-z-40 tw-transition-all tw-duration-300"
+      :class="isSidebarOpen ? 'tw-top-24 tw-left-[296px]' : 'tw-top-24 tw-left-6'"
+    >
+      <div class="tw-bg-white/95 tw-backdrop-blur-md tw-shadow-lg tw-border tw-border-gray-200/50 tw-rounded-full tw-w-9 tw-h-9 tw-flex tw-items-center tw-justify-center hover:tw-bg-white hover:tw-shadow-xl tw-transition-all tw-group">
+        <ChevronLeft v-if="isSidebarOpen" class="tw-w-4 tw-h-4 tw-text-gray-500 group-hover:tw-text-gray-800 tw-transition-colors" />
+        <ChevronRight v-else class="tw-w-4 tw-h-4 tw-text-gray-500 group-hover:tw-text-gray-800 tw-transition-colors" />
+      </div>
+    </button>
 
     <!-- ===== Map ===== -->
     <div ref="mapDiv" class="tw-w-full tw-h-full tw-bg-gray-100"></div>
@@ -153,7 +155,7 @@
 import { ref, onMounted } from 'vue'
 import {
   Home, UserCircle, Search, X, MessageSquare,
-  Plus, Minus, Navigation, MapPin, ChevronLeft, AlertTriangle
+  Plus, Minus, Navigation, MapPin, ChevronLeft, ChevronRight, AlertTriangle
 } from 'lucide-vue-next'
 
 const { user, userPhotoURL } = useAuth()
