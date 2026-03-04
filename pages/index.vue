@@ -460,9 +460,20 @@ const formattedDate = computed(() => {
   return now.toLocaleDateString(loc, { month: 'numeric', day: 'numeric', weekday: 'short' }).toLowerCase();
 });
 
+const route = useRoute();
+const router = useRouter();
+
 onMounted(() => {
   initAuth();
   initGoogleMap();
+
+  // Coming Soon リダイレクトからのトースト表示
+  const comingSoonPage = route.query.coming_soon as string | undefined;
+  if (comingSoonPage) {
+    const nameKey = `common.${comingSoonPage}` as const;
+    showComingSoon(t(nameKey));
+    router.replace({ query: {} });
+  }
 
   // Firestore: 最新スレッド購読 (更新フィード + 検索用)
   unsubLatest = subscribeToLatestThreads(5);
