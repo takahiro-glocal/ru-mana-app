@@ -172,8 +172,8 @@ onUnmounted(() => {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: clamp(24px, 5vw, 55px);
-    height: clamp(24px, 5vw, 55px);
+    width: clamp(12px, 2.5vw, 26px);
+    height: clamp(12px, 2.5vw, 26px);
     transform-origin: 50% 50%;
     transform: translate(-50%, -50%) rotate(var(--initial-angle)) translate(var(--layer-radius), 0) rotate(calc(-1 * var(--initial-angle)));
     animation: rotateOrbit var(--rotation-duration, 20s) linear infinite;
