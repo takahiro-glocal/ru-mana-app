@@ -96,6 +96,5 @@ interface Country {
     rotationDirection?: string
     randomDelay?: number
     randomDuration?: number
-    initialZ?: number
     animationName?: 'perspective3D' | 'perspective3DR'
 }
