@@ -181,10 +181,10 @@
               <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800" class="tw-w-full tw-h-full tw-object-cover" />
             </div>
             <div class="tw-w-full md:tw-w-24 tw-flex tw-flex-row md:tw-flex-col tw-gap-3">
-              <NuxtLink :to="localePath('/disaster-prevention')" class="tw-flex-1 tw-bg-[#BCAF92] tw-rounded-2xl tw-p-3 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md hover:tw-opacity-90 tw-transition-opacity">
+              <div class="tw-flex-1 tw-bg-[#BCAF92] tw-rounded-2xl tw-p-3 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md tw-cursor-pointer hover:tw-opacity-90 tw-transition-opacity" @click="showComingSoon($t('dashboard.disaster_map'))">
                 <MapIcon class="tw-w-10 tw-h-10" />
                 <span class="tw-text-[9px] tw-font-bold tw-mt-1">{{ $t('dashboard.disaster_map') }}</span>
-              </NuxtLink>
+              </div>
               <div class="tw-flex-1 tw-bg-[#D9A65D] tw-rounded-2xl tw-p-3 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md">
                 <div class="tw-grid tw-grid-cols-2 tw-gap-3">
                   <a v-for="sns in snsLinks" :key="sns.label" :href="sns.url" target="_blank" rel="noopener noreferrer" class="tw-p-1.5 tw-rounded-lg hover:tw-bg-white/20 tw-transition-all">
