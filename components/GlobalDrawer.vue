@@ -26,7 +26,7 @@
                 <p v-if="user" class="tw-text-sm tw-text-gray-400">{{ user.email }}</p>
               </div>
               <nav class="tw-space-y-4">
-                <button v-for="item in menuItems" :key="item.id" @click="currentStep = item.id" class="tw-w-full tw-flex tw-items-center tw-justify-between tw-py-4 tw-border-b tw-border-gray-50 tw-text-gray-600 tw-font-bold hover:tw-text-[#4B3E8E] group">
+                <button v-for="item in menuItems" :key="item.id" @click="item.id === 'chat' ? handleOpenChat() : (currentStep = item.id)" class="tw-w-full tw-flex tw-items-center tw-justify-between tw-py-4 tw-border-b tw-border-gray-50 tw-text-gray-600 tw-font-bold hover:tw-text-[#4B3E8E] group">
                   <div class="tw-flex tw-items-center tw-gap-4">
                     <component :is="item.icon" class="tw-w-5 tw-h-5 tw-text-[#BCAF92] group-hover:tw-text-[#4B3E8E]" />
                     <span>{{ item.label }}</span>
@@ -51,16 +51,23 @@
 </template>
 
 <script setup lang="ts">
-import { ChevronLeft, ChevronRight, X, User, History, Settings, Award, MessageCircle } from 'lucide-vue-next'
+import { ChevronLeft, ChevronRight, X, User, History, Settings, Award, MessageCircle, MessageSquareText } from 'lucide-vue-next'
 const { t } = useI18n()
 const { user, userDisplayName, userPhotoURL, logout } = useAuth()
 const { isDrawerOpen, currentStep, closeDrawer } = useDrawer()
+const { openChat } = useChat()
+
+const handleOpenChat = () => {
+  closeDrawer()
+  nextTick(() => openChat())
+}
 
 const menuItems = computed<DrawerMenuItem[]>(() => [
   { id: 'profile', label: t('drawer.profile_info'), icon: User },
   { id: 'general', label: t('drawer.settings_language'), icon: Settings },
   { id: 'points', label: t('drawer.points'), icon: Award },
   { id: 'history', label: t('drawer.history'), icon: History },
+  { id: 'chat', label: t('drawer.chat'), icon: MessageSquareText },
   { id: 'feedback', label: t('drawer.feedback'), icon: MessageCircle },
 ])
 

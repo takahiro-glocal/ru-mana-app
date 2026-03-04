@@ -1,14 +1,18 @@
 <template>
   <div class="tw-h-screen tw-bg-white md:tw-bg-[#F9F5E7] tw-flex tw-flex-col tw-overflow-hidden">
-    <header class="tw-bg-white tw-border-b tw-border-gray-100 tw-p-4 md:tw-px-8 md:tw-py-6 tw-z-30 tw-flex-shrink-0">
+    <header class="tw-bg-white tw-border-b tw-border-gray-100 tw-px-3 tw-py-2 md:tw-px-8 md:tw-py-6 tw-z-30 tw-flex-shrink-0">
       <div class="tw-max-w-7xl tw-mx-auto tw-flex tw-justify-between tw-items-center">
-        <div class="tw-flex tw-items-center tw-gap-4">
-          <div class="tw-bg-[#85C441] tw-p-2 tw-rounded-xl md:tw-p-3 md:tw-rounded-2xl tw-cursor-pointer" @click="() => $router.push(localePath('/shiru'))">
-            <Lightbulb class="tw-w-6 md:tw-w-10 tw-h-6 md:tw-h-10 tw-text-white" />
+        <!-- Mobile: compact toolbar -->
+        <div class="tw-flex tw-items-center tw-gap-3 md:tw-gap-4">
+          <button class="md:tw-hidden tw-p-1 tw-text-gray-400" @click="() => $router.push(localePath(`/shiru/category/${cid}`))">
+            <ChevronLeft class="tw-w-6 tw-h-6" />
+          </button>
+          <div class="tw-hidden md:tw-block tw-bg-[#85C441] tw-p-3 tw-rounded-2xl tw-cursor-pointer" @click="() => $router.push(localePath('/shiru'))">
+            <Lightbulb class="tw-w-10 tw-h-10 tw-text-white" />
           </div>
           <div>
-            <h1 class="tw-text-xl md:tw-text-4xl tw-font-bold tw-text-gray-800">{{ $t('shiru.title') }}</h1>
-            <p class="tw-text-[9px] md:tw-text-sm tw-text-gray-500 tw-font-medium">{{ $t('shiru.tagline') }}</p>
+            <h1 class="tw-text-sm md:tw-text-4xl tw-font-bold tw-text-gray-800">{{ getCategoryName(cid) }}</h1>
+            <p class="tw-hidden md:tw-block tw-text-sm tw-text-gray-500 tw-font-medium">{{ $t('shiru.tagline') }}</p>
           </div>
         </div>
 
@@ -20,7 +24,7 @@
           <div class="tw-flex tw-items-center tw-gap-4 tw-text-gray-300">
             <FileText class="tw-w-7 tw-h-7" />
             <Home class="tw-w-7 tw-h-7 tw-cursor-pointer" @click="() => $router.push(localePath('/'))" />
-            
+
             <div v-if="user" @click="openDrawer()" class="tw-cursor-pointer">
               <img :src="userPhotoURL" class="tw-w-10 tw-h-10 tw-rounded-full tw-border-2 tw-border-gray-100 shadow-sm" />
             </div>
@@ -75,23 +79,24 @@
           <span class="tw-text-gray-600 tw-truncate tw-max-w-xs">{{ currentThreadInfo?.title }}</span>
         </nav>
 
-        <div v-if="currentThreadInfo" class="tw-p-6 md:tw-p-10 md:tw-pt-4 tw-border-b tw-border-gray-50 tw-flex-shrink-0">
-          <div class="tw-flex tw-items-center tw-gap-3 tw-mb-3">
-            <span :class="['tw-px-3 tw-py-1 tw-rounded-full tw-text-[10px] tw-font-black tw-text-white uppercase', getTheme(cid).textBg]">
-              {{ getCategoryName(cid) }}
-            </span>
-            <span class="tw-text-[10px] tw-text-gray-300 tw-font-bold">{{ currentThreadInfo.date }}</span>
-          </div>
-          <div v-if="needsTranslation && !isTitleTranslated(currentThreadData!.id)" class="tw-h-8 tw-bg-gray-200 tw-rounded-lg tw-w-3/4 tw-animate-pulse"></div>
-          <h2 v-else class="tw-text-2xl md:tw-text-4xl tw-font-black tw-text-gray-800 tw-leading-tight">
-            {{ currentThreadInfo.title }}
-          </h2>
-        </div>
-
-        <div 
-          ref="postsContainer" 
-          class="tw-flex-1 tw-overflow-y-auto tw-p-6 md:tw-p-10 tw-bg-[#FDFCF9] tw-pb-32 md:tw-pb-40"
+        <div
+          ref="postsContainer"
+          class="tw-flex-1 tw-overflow-y-auto tw-p-4 md:tw-p-10 tw-bg-[#FDFCF9] tw-pb-24 md:tw-pb-40"
         >
+          <!-- Thread Info (scrollable) -->
+          <div v-if="currentThreadInfo" class="tw-mb-4 md:tw-mb-8 tw-pb-4 md:tw-pb-6 tw-border-b tw-border-gray-100">
+            <div class="tw-flex tw-items-center tw-gap-3 tw-mb-2 md:tw-mb-3">
+              <span :class="['tw-px-3 tw-py-1 tw-rounded-full tw-text-[10px] tw-font-black tw-text-white uppercase', getTheme(cid).textBg]">
+                {{ getCategoryName(cid) }}
+              </span>
+              <span class="tw-text-[10px] tw-text-gray-300 tw-font-bold">{{ currentThreadInfo.date }}</span>
+            </div>
+            <div v-if="needsTranslation && !isTitleTranslated(currentThreadData!.id)" class="tw-h-8 tw-bg-gray-200 tw-rounded-lg tw-w-3/4 tw-animate-pulse"></div>
+            <h2 v-else class="tw-text-lg md:tw-text-4xl tw-font-black tw-text-gray-800 tw-leading-tight">
+              {{ currentThreadInfo.title }}
+            </h2>
+          </div>
+
           <div v-if="posts.length > 0" class="tw-space-y-10">
             <div 
               v-for="(post, index) in posts" 
@@ -256,7 +261,7 @@
 import {
   Lightbulb, UserCircle, ArrowUp, ArrowDown,
   MessageSquare, Send, Search, FileText, Home,
-  MoreVertical, Trash2, Edit2, ChevronRight, X, Languages
+  MoreVertical, Trash2, Edit2, ChevronLeft, ChevronRight, X, Languages
 } from 'lucide-vue-next'
 import { type Post } from '@/composables/useFirestore'
 import { doc, onSnapshot } from 'firebase/firestore'
