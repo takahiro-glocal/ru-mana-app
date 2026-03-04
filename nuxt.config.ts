@@ -156,6 +156,7 @@ export default defineNuxtConfig({
       httpsOptions: {
         region: 'asia-northeast1',
       },
+      nodeVersion: '22',
     },
   },
   devtools: { enabled: false },
