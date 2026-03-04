@@ -483,6 +483,18 @@
     "translated": "显示翻译",
     "error": "翻译失败"
   },
+  "chat": {
+    "open": "打开聊天",
+    "title": "玛娜助手",
+    "subtitle": "AI礼宾",
+    "welcome_title": "你好！我是玛娜助手",
+    "welcome_desc": "欢迎向我咨询RUUMANA应用、日本文化或日常生活相关的问题。",
+    "input_placeholder": "输入消息...",
+    "clear": "清除聊天",
+    "suggestion_1": "这个应用怎么用？",
+    "suggestion_2": "日本电车礼仪？",
+    "suggestion_3": "温泉怎么泡？"
+  },
   "events": {
     "jan1": "元旦 — 新年的开始",
     "jan7": "七草节 — 吃七草粥的日子",
