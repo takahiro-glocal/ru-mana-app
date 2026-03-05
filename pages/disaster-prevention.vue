@@ -56,7 +56,8 @@
         >
           <div class="tw-w-4 tw-h-4 tw-rounded-full tw-shadow-sm" :style="{ backgroundColor: cat.color }"></div>
           <span class="tw-text-sm tw-font-bold tw-text-gray-600">{{ cat.label }}</span>
-          <div v-if="cat.active" class="tw-ml-auto tw-w-2 tw-h-2 tw-rounded-full tw-bg-gray-400"></div>
+          <span v-if="cat.active && facilityCounts[cat.id]" class="tw-ml-auto tw-text-[10px] tw-text-gray-400 tw-tabular-nums">{{ facilityCounts[cat.id] }}</span>
+          <div v-else-if="cat.active" class="tw-ml-auto tw-w-2 tw-h-2 tw-rounded-full tw-bg-gray-400"></div>
         </button>
 
         <div class="tw-pt-4 tw-mt-4 tw-border-t tw-border-gray-200/50">
@@ -92,19 +93,26 @@
     <!-- ===== Map ===== -->
     <div ref="mapDiv" class="tw-w-full tw-h-full tw-bg-gray-100"></div>
 
-    <!-- ===== Loading Indicator ===== -->
-    <Transition name="popup">
-      <div v-if="facilityLoading" class="tw-absolute tw-top-20 tw-left-1/2 -tw-translate-x-1/2 tw-z-50 tw-bg-white/90 tw-backdrop-blur-md tw-rounded-full tw-px-4 tw-py-2 tw-shadow-lg tw-text-xs tw-text-gray-500 tw-font-bold">
-        {{ $t('disaster.loading_facilities') }}
-      </div>
-    </Transition>
-
-    <!-- ===== Zoom In Message ===== -->
-    <Transition name="popup">
-      <div v-if="facilityTooFarOut" class="tw-absolute tw-top-20 tw-left-1/2 -tw-translate-x-1/2 tw-z-50 tw-bg-white/90 tw-backdrop-blur-md tw-rounded-full tw-px-4 tw-py-2 tw-shadow-lg tw-text-xs tw-text-gray-500 tw-font-bold">
-        {{ $t('disaster.zoom_in_message') }}
-      </div>
-    </Transition>
+    <!-- ===== Status Bar ===== -->
+    <div class="tw-absolute tw-top-[60px] md:tw-top-[68px] tw-left-1/2 -tw-translate-x-1/2 tw-z-50">
+      <Transition name="popup" mode="out-in">
+        <div v-if="facilityLoading" key="loading" class="tw-bg-white/90 tw-backdrop-blur-md tw-rounded-full tw-px-4 tw-py-1.5 tw-shadow-lg tw-text-xs tw-text-gray-500 tw-font-bold tw-flex tw-items-center tw-gap-2">
+          <div class="tw-w-3 tw-h-3 tw-border-2 tw-border-gray-300 tw-border-t-gray-600 tw-rounded-full tw-animate-spin"></div>
+          {{ $t('disaster.loading_facilities') }}
+        </div>
+        <div v-else-if="facilityTooFarOut" key="zoom" class="tw-bg-white/90 tw-backdrop-blur-md tw-rounded-full tw-px-4 tw-py-1.5 tw-shadow-lg tw-text-xs tw-text-gray-500 tw-font-bold">
+          {{ $t('disaster.zoom_in_message') }}
+        </div>
+        <div v-else-if="facilities.length > 0" key="count" class="tw-bg-white/90 tw-backdrop-blur-md tw-rounded-full tw-px-4 tw-py-1.5 tw-shadow-lg tw-text-[11px] tw-text-gray-500 tw-font-bold tw-tabular-nums">
+          <template v-if="totalInBounds > facilities.length">
+            {{ $t('disaster.facility_count_max', { n: facilities.length, max: totalInBounds }) }}
+          </template>
+          <template v-else>
+            {{ $t('disaster.facility_count', { n: facilities.length }) }}
+          </template>
+        </div>
+      </Transition>
+    </div>
 
     <!-- ===== Mobile: Bottom Category Sheet ===== -->
     <div class="md:tw-hidden tw-absolute tw-bottom-0 tw-left-0 tw-right-0 tw-z-40">
@@ -120,6 +128,7 @@
           >
             <div class="tw-w-3 tw-h-3 tw-rounded-full" :style="{ backgroundColor: cat.color }" :class="{ 'tw-opacity-40': !cat.active }"></div>
             {{ cat.label }}
+            <span v-if="cat.active && facilityCounts[cat.id]" class="tw-text-[10px] tw-text-gray-400 tw-tabular-nums">{{ facilityCounts[cat.id] }}</span>
           </button>
         </div>
       </div>
@@ -185,6 +194,8 @@ const {
   updateViewport,
   searchFacilities,
   facilities,
+  facilityCounts,
+  totalInBounds,
   isLoading: facilityLoading,
   tooFarOut: facilityTooFarOut,
 } = useFacilityData()

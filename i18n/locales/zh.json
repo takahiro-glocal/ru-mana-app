@@ -196,7 +196,9 @@
     "current_location": "当前位置",
     "coverage_range": "覆盖范围",
     "loading_facilities": "正在加载设施...",
-    "zoom_in_message": "放大查看设施"
+    "zoom_in_message": "放大查看设施",
+    "facility_count": "显示{n}个设施",
+    "facility_count_max": "显示{n}/{max}个设施"
   },
   "miru": {
     "title": "防灾・区域地图",

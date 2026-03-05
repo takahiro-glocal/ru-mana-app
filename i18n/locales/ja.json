@@ -196,7 +196,9 @@
     "current_location": "現在地",
     "coverage_range": "対応範囲",
     "loading_facilities": "施設を読み込み中...",
-    "zoom_in_message": "ズームインして施設を表示"
+    "zoom_in_message": "ズームインして施設を表示",
+    "facility_count": "{n}件表示中",
+    "facility_count_max": "{n} / {max} 件表示中"
   },
   "miru": {
     "title": "防災・エリアマップ",
