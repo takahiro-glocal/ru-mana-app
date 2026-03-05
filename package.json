@@ -6,6 +6,7 @@
     "build": "nuxt build",
     "dev": "nuxt dev",
     "build:tiles": "node scripts/build-tiles.mjs",
+    "translate:tiles": "node scripts/translate-tiles.mjs",
     "generate": "npm run build:tiles && nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",

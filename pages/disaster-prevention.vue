@@ -190,7 +190,7 @@ import {
 const { user, userPhotoURL } = useAuth()
 const { openDrawer } = useDrawer()
 const localePath = useLocalePath()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { load } = useMapsLoader()
 const {
   init: initFacilityData,
@@ -243,6 +243,8 @@ const refreshFacilities = async () => {
     await updateViewport(bounds, zoom, centerLiteral, active)
   }
 }
+
+watch(locale, () => { refreshFacilities() })
 
 const clearSearch = () => {
   searchQuery.value = ''
