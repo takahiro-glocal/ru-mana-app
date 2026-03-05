@@ -194,7 +194,9 @@
     "cat_police": "警察・消防",
     "cat_public": "公共设施",
     "current_location": "当前位置",
-    "coverage_range": "覆盖范围"
+    "coverage_range": "覆盖范围",
+    "loading_facilities": "正在加载设施...",
+    "zoom_in_message": "放大查看设施"
   },
   "miru": {
     "title": "防灾・区域地图",

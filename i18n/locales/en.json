@@ -194,7 +194,9 @@
     "cat_police": "Police & Fire",
     "cat_public": "Public Facilities",
     "current_location": "Current Location",
-    "coverage_range": "Coverage"
+    "coverage_range": "Coverage",
+    "loading_facilities": "Loading facilities...",
+    "zoom_in_message": "Zoom in to see facilities"
   },
   "miru": {
     "title": "Area & Disaster Map",
