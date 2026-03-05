@@ -196,7 +196,9 @@
     "current_location": "Current Location",
     "coverage_range": "Coverage",
     "loading_facilities": "Loading facilities...",
-    "zoom_in_message": "Zoom in to see facilities"
+    "zoom_in_message": "Zoom in to see facilities",
+    "facility_count": "Showing {n} facilities",
+    "facility_count_max": "Showing {n} of {max}"
   },
   "miru": {
     "title": "Area & Disaster Map",

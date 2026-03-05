@@ -18,6 +18,8 @@ export const useFacilityData = () => {
   const tileLRU = useState<string[]>('facility_tile_lru', () => [])
   const loadingTiles = useState<Record<string, boolean>>('facility_loading_tiles', () => ({}))
   const facilities = useState<LocationData[]>('facility_visible', () => [])
+  const facilityCounts = useState<Record<string, number>>('facility_counts', () => ({}))
+  const totalInBounds = ref(0)
   const isLoading = ref(false)
   const tooFarOut = ref(false)
 
@@ -119,6 +121,7 @@ export const useFacilityData = () => {
     const east = ne.lng()
 
     const all: LocationData[] = []
+    const counts: Record<string, number> = {}
     for (const key of tileKeys) {
       const records = tileCache.value[key]
       if (!records) continue
@@ -126,6 +129,7 @@ export const useFacilityData = () => {
         if (r.la < south || r.la > north || r.lo < west || r.lo > east) continue
         const appCategory = CODE_TO_CATEGORY[r.c]
         if (!appCategory || !activeCategories.includes(appCategory)) continue
+        counts[appCategory] = (counts[appCategory] || 0) + 1
         all.push({
           lat: r.la,
           lng: r.lo,
@@ -135,6 +139,8 @@ export const useFacilityData = () => {
         })
       }
     }
+
+    totalInBounds.value = all.length
 
     // Cap at MAX_MARKERS nearest to center
     if (all.length > MAX_MARKERS) {
@@ -148,6 +154,7 @@ export const useFacilityData = () => {
       all.length = MAX_MARKERS
     }
 
+    facilityCounts.value = counts
     facilities.value = all
   }
 
@@ -190,6 +197,8 @@ export const useFacilityData = () => {
     updateViewport,
     searchFacilities,
     facilities,
+    facilityCounts,
+    totalInBounds,
     isLoading,
     tooFarOut,
   }

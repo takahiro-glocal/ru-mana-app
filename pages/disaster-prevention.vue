@@ -41,7 +41,7 @@
         <div class="tw-relative">
           <input v-model="searchQuery" type="text" :placeholder="$t('disaster.search_facilities')" class="tw-w-full tw-bg-white tw-rounded-xl tw-py-2 tw-pl-10 tw-pr-8 tw-text-sm tw-outline-none focus:tw-ring-2 focus:tw-ring-[#85C441]/50 tw-text-gray-700" />
           <Search class="tw-absolute tw-left-3 tw-top-1/2 -tw-translate-y-1/2 tw-w-4 tw-h-4 tw-text-gray-400" />
-          <button v-if="searchQuery" @click="searchQuery = ''" class="tw-absolute tw-right-2 tw-top-1/2 -tw-translate-y-1/2 tw-p-0.5 tw-rounded-full hover:tw-bg-gray-100">
+          <button v-if="searchQuery" @click="clearSearch" class="tw-absolute tw-right-2 tw-top-1/2 -tw-translate-y-1/2 tw-p-0.5 tw-rounded-full hover:tw-bg-gray-100">
             <X class="tw-w-3.5 tw-h-3.5 tw-text-gray-400" />
           </button>
         </div>
@@ -56,13 +56,17 @@
         >
           <div class="tw-w-4 tw-h-4 tw-rounded-full tw-shadow-sm" :style="{ backgroundColor: cat.color }"></div>
           <span class="tw-text-sm tw-font-bold tw-text-gray-600">{{ cat.label }}</span>
-          <div v-if="cat.active" class="tw-ml-auto tw-w-2 tw-h-2 tw-rounded-full tw-bg-gray-400"></div>
+          <span v-if="cat.active && facilityCounts[cat.id]" class="tw-ml-auto tw-text-[10px] tw-text-gray-400 tw-tabular-nums">{{ facilityCounts[cat.id] }}</span>
+          <div v-else-if="cat.active" class="tw-ml-auto tw-w-2 tw-h-2 tw-rounded-full tw-bg-gray-400"></div>
         </button>
 
-        <div class="tw-pt-4 tw-mt-4 tw-border-t tw-border-gray-200/50">
+        <div class="tw-pt-4 tw-mt-4 tw-border-t tw-border-gray-200/50 tw-flex tw-items-center tw-justify-between">
           <button @click="openDrawer('feedback')" class="tw-flex tw-items-center tw-gap-2 tw-text-gray-500 hover:tw-text-gray-800 tw-text-sm tw-font-bold tw-px-2">
             <MessageSquare class="tw-w-4 tw-h-4" />
             {{ $t('disaster.give_feedback') }}
+          </button>
+          <button @click="isSidebarOpen = false" class="tw-p-1.5 tw-rounded-full hover:tw-bg-gray-100 tw-transition-colors">
+            <PanelLeftClose class="tw-w-4 tw-h-4 tw-text-gray-400" />
           </button>
         </div>
       </div>
@@ -77,38 +81,46 @@
       </div>
     </aside>
 
-    <!-- PC: Sidebar Toggle -->
-    <button
-      @click="isSidebarOpen = !isSidebarOpen"
-      class="tw-hidden md:tw-flex tw-items-center tw-justify-center tw-absolute tw-z-40 tw-transition-all tw-duration-300"
-      :class="isSidebarOpen ? 'tw-top-24 tw-left-[296px]' : 'tw-top-24 tw-left-6'"
-    >
-      <div class="tw-bg-white/95 tw-backdrop-blur-md tw-shadow-lg tw-border tw-border-gray-200/50 tw-rounded-full tw-w-9 tw-h-9 tw-flex tw-items-center tw-justify-center hover:tw-bg-white hover:tw-shadow-xl tw-transition-all tw-group">
-        <ChevronLeft v-if="isSidebarOpen" class="tw-w-4 tw-h-4 tw-text-gray-500 group-hover:tw-text-gray-800 tw-transition-colors" />
-        <ChevronRight v-else class="tw-w-4 tw-h-4 tw-text-gray-500 group-hover:tw-text-gray-800 tw-transition-colors" />
-      </div>
-    </button>
+    <!-- PC: Sidebar Open Button (shown when sidebar is closed) -->
+    <Transition name="popup">
+      <button
+        v-if="!isSidebarOpen"
+        @click="isSidebarOpen = true"
+        class="tw-hidden md:tw-flex tw-items-center tw-justify-center tw-absolute tw-top-24 tw-left-6 tw-z-40"
+      >
+        <div class="tw-bg-white/95 tw-backdrop-blur-md tw-shadow-lg tw-border tw-border-gray-200/50 tw-rounded-full tw-w-9 tw-h-9 tw-flex tw-items-center tw-justify-center hover:tw-bg-white hover:tw-shadow-xl tw-transition-all tw-group">
+          <PanelLeftOpen class="tw-w-4 tw-h-4 tw-text-gray-500 group-hover:tw-text-gray-800 tw-transition-colors" />
+        </div>
+      </button>
+    </Transition>
 
     <!-- ===== Map ===== -->
     <div ref="mapDiv" class="tw-w-full tw-h-full tw-bg-gray-100"></div>
 
-    <!-- ===== Loading Indicator ===== -->
-    <Transition name="popup">
-      <div v-if="facilityLoading" class="tw-absolute tw-top-20 tw-left-1/2 -tw-translate-x-1/2 tw-z-50 tw-bg-white/90 tw-backdrop-blur-md tw-rounded-full tw-px-4 tw-py-2 tw-shadow-lg tw-text-xs tw-text-gray-500 tw-font-bold">
-        {{ $t('disaster.loading_facilities') }}
-      </div>
-    </Transition>
-
-    <!-- ===== Zoom In Message ===== -->
-    <Transition name="popup">
-      <div v-if="facilityTooFarOut" class="tw-absolute tw-top-20 tw-left-1/2 -tw-translate-x-1/2 tw-z-50 tw-bg-white/90 tw-backdrop-blur-md tw-rounded-full tw-px-4 tw-py-2 tw-shadow-lg tw-text-xs tw-text-gray-500 tw-font-bold">
-        {{ $t('disaster.zoom_in_message') }}
-      </div>
-    </Transition>
+    <!-- ===== Status Bar ===== -->
+    <div class="tw-absolute tw-top-[60px] md:tw-top-[68px] tw-left-1/2 -tw-translate-x-1/2 tw-z-50">
+      <Transition name="popup" mode="out-in">
+        <div v-if="facilityLoading" key="loading" class="tw-bg-white/90 tw-backdrop-blur-md tw-rounded-full tw-px-4 tw-py-1.5 tw-shadow-lg tw-text-xs tw-text-gray-500 tw-font-bold tw-flex tw-items-center tw-gap-2">
+          <div class="tw-w-3 tw-h-3 tw-border-2 tw-border-gray-300 tw-border-t-gray-600 tw-rounded-full tw-animate-spin"></div>
+          {{ $t('disaster.loading_facilities') }}
+        </div>
+        <div v-else-if="facilityTooFarOut" key="zoom" class="tw-bg-white/90 tw-backdrop-blur-md tw-rounded-full tw-px-4 tw-py-1.5 tw-shadow-lg tw-text-xs tw-text-gray-500 tw-font-bold">
+          {{ $t('disaster.zoom_in_message') }}
+        </div>
+        <div v-else-if="facilities.length > 0" key="count" class="tw-bg-white/90 tw-backdrop-blur-md tw-rounded-full tw-px-4 tw-py-1.5 tw-shadow-lg tw-text-[11px] tw-text-gray-500 tw-font-bold tw-tabular-nums">
+          <template v-if="totalInBounds > facilities.length">
+            {{ $t('disaster.facility_count_max', { n: facilities.length, max: totalInBounds }) }}
+          </template>
+          <template v-else>
+            {{ $t('disaster.facility_count', { n: facilities.length }) }}
+          </template>
+        </div>
+      </Transition>
+    </div>
 
     <!-- ===== Mobile: Bottom Category Sheet ===== -->
-    <div class="md:tw-hidden tw-absolute tw-bottom-0 tw-left-0 tw-right-0 tw-z-40">
-      <div class="tw-px-4 tw-pb-3">
+    <div class="md:tw-hidden tw-absolute tw-bottom-16 tw-left-0 tw-right-0 tw-z-40">
+      <div class="tw-px-4 tw-pb-2">
         <div class="tw-flex tw-gap-2 tw-overflow-x-auto tw-scrollbar-hide tw-pb-1">
           <button
             v-for="cat in categories" :key="cat.id"
@@ -120,15 +132,15 @@
           >
             <div class="tw-w-3 tw-h-3 tw-rounded-full" :style="{ backgroundColor: cat.color }" :class="{ 'tw-opacity-40': !cat.active }"></div>
             {{ cat.label }}
+            <span v-if="cat.active && facilityCounts[cat.id]" class="tw-text-[10px] tw-text-gray-400 tw-tabular-nums">{{ facilityCounts[cat.id] }}</span>
           </button>
         </div>
       </div>
-      <div class="tw-h-6 tw-bg-gradient-to-t tw-from-white/80 tw-to-transparent"></div>
     </div>
 
     <!-- ===== Facility Detail Popup ===== -->
     <Transition name="popup">
-      <div v-if="selectedFacility" class="tw-absolute tw-z-50 tw-left-4 tw-right-4 md:tw-left-auto md:tw-right-8 md:tw-w-80 tw-bottom-28 md:tw-bottom-auto md:tw-top-24 tw-bg-white tw-rounded-2xl tw-shadow-xl tw-border tw-border-gray-100 tw-overflow-hidden">
+      <div v-if="selectedFacility" class="tw-absolute tw-z-50 tw-left-4 tw-right-4 md:tw-left-auto md:tw-right-8 md:tw-w-80 tw-bottom-32 md:tw-bottom-auto md:tw-top-24 tw-bg-white tw-rounded-2xl tw-shadow-xl tw-border tw-border-gray-100 tw-overflow-hidden">
         <div class="tw-flex tw-items-center tw-gap-3 tw-p-4">
           <div class="tw-w-10 tw-h-10 tw-rounded-xl tw-flex tw-items-center tw-justify-center" :style="{ backgroundColor: getCategoryColor(selectedFacility.type) + '20' }">
             <MapPin class="tw-w-5 tw-h-5" :style="{ color: getCategoryColor(selectedFacility.type) }" />
@@ -150,7 +162,7 @@
     </Transition>
 
     <!-- ===== Map Controls ===== -->
-    <div class="tw-absolute tw-bottom-28 md:tw-bottom-8 tw-right-4 md:tw-right-8 tw-flex tw-flex-col tw-gap-3 tw-z-40">
+    <div class="tw-absolute tw-bottom-32 md:tw-bottom-8 tw-right-4 md:tw-right-8 tw-flex tw-flex-col tw-gap-3 tw-z-40">
       <button @click="panToCurrentLocation" class="tw-bg-white tw-text-gray-600 tw-w-11 tw-h-11 md:tw-w-12 md:tw-h-12 tw-rounded-full tw-shadow-lg tw-flex tw-items-center tw-justify-center hover:tw-bg-gray-50 tw-transition-colors tw-border tw-border-gray-100">
         <Navigation class="tw-w-5 tw-h-5" />
       </button>
@@ -172,7 +184,8 @@
 import { ref, watch, onMounted } from 'vue'
 import {
   Home, UserCircle, Search, X, MessageSquare,
-  Plus, Minus, Navigation, MapPin, ChevronLeft, ChevronRight, AlertTriangle
+  Plus, Minus, Navigation, MapPin, ChevronLeft, AlertTriangle,
+  PanelLeftOpen, PanelLeftClose
 } from 'lucide-vue-next'
 
 const { user, userPhotoURL } = useAuth()
@@ -185,6 +198,8 @@ const {
   updateViewport,
   searchFacilities,
   facilities,
+  facilityCounts,
+  totalInBounds,
   isLoading: facilityLoading,
   tooFarOut: facilityTooFarOut,
 } = useFacilityData()
@@ -212,7 +227,7 @@ const getCategoryColor = (type: string) => categories.value.find(c => c.id === t
 const getCategoryLabel = (type: string) => categories.value.find(c => c.id === type)?.label || type
 const getActiveCategories = () => categories.value.filter(c => c.active).map(c => c.id)
 
-const refreshFacilities = () => {
+const refreshFacilities = async () => {
   if (!map) return
   const bounds = map.getBounds()
   const zoom = map.getZoom() || 15
@@ -220,13 +235,19 @@ const refreshFacilities = () => {
   if (!bounds || !center) return
 
   const centerLiteral = { lat: center.lat(), lng: center.lng() }
+  const active = getActiveCategories()
 
   if (searchQuery.value.trim()) {
-    const results = searchFacilities(searchQuery.value, bounds, getActiveCategories())
+    const results = searchFacilities(searchQuery.value, bounds, active)
     facilities.value = results
   } else {
-    updateViewport(bounds, zoom, centerLiteral, getActiveCategories())
+    await updateViewport(bounds, zoom, centerLiteral, active)
   }
+}
+
+const clearSearch = () => {
+  searchQuery.value = ''
+  refreshFacilities()
 }
 
 const initMap = async () => {
@@ -322,8 +343,13 @@ const toggleCategory = (id: string) => {
   }
 }
 
-watch(searchQuery, () => {
+watch(searchQuery, (newVal) => {
   if (searchDebounceTimer) clearTimeout(searchDebounceTimer)
+  if (!newVal.trim()) {
+    // Immediately refresh when search is cleared
+    refreshFacilities()
+    return
+  }
   searchDebounceTimer = setTimeout(() => {
     refreshFacilities()
   }, 300)
