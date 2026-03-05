@@ -17,11 +17,11 @@
                                 `flag-layer-${layerIndex + 1}`,
                                 { 'flag-moving-to-center': animatingFlags.has(`${layerIndex}-${flagIndex}`) }
                             ]" :style="{
-                '--initial-angle': `${(360 / layer.flags.length) * flagIndex}deg`,
-                '--rotation-duration': `${layer.rotationSpeed}s`,
-                '--layer-radius': `${layer.radius}px`,
-                '--rotation-direction': layer.direction === 'counter-clockwise' ? 'reverse' : 'normal'
-            }">
+                                '--initial-angle': `${(360 / layer.flags.length) * flagIndex}deg`,
+                                '--rotation-duration': `${layer.rotationSpeed}s`,
+                                '--layer-radius': `${layer.radius}px`,
+                                '--rotation-direction': layer.direction === 'counter-clockwise' ? 'reverse' : 'normal'
+                            }">
                             <div class="flag-circle" @click.stop="handleClickFlag(flag, layerIndex, flagIndex, $event)">
                                 <span :title="flag.name" :class="`fi fi-${flag.flag} fis flag-icon`"
                                     :style="{ width: isMobile ? '48px' : '55px', height: isMobile ? '48px' : '55px' }"></span>
@@ -662,7 +662,7 @@ onUnmounted(() => {
 // 開発環境でのデバッグ機能
 if (process.dev) {
     // グローバルに関数を公開（開発時のデバッグ用）
-    const win = window as Window & Record<string, unknown>;
+    const win = window as unknown as Window & Record<string, unknown>;
     win.regenerateFlags = regenerateFlags;
     win.checkDuplicates = () => checkForDuplicates(flagLayers.value);
     win.resetCenteredFlags = resetCenteredFlags;
