@@ -201,11 +201,15 @@ interface LocationData {
  * タイルJSON内の施設レコード（短縮キー）
  */
 interface FacilityTileRecord {
-  c: string;   // category short code (m/e/s/p/f/g)
-  n: string;   // name
-  a: string;   // address
-  la: number;  // latitude
-  lo: number;  // longitude
+  c: string;    // category short code (m/e/s/p/f/g)
+  n: string;    // name (Japanese, always present)
+  a: string;    // address (Japanese, always present)
+  la: number;   // latitude
+  lo: number;   // longitude
+  n_en?: string; // name (English)
+  a_en?: string; // address (English)
+  n_zh?: string; // name (Chinese)
+  a_zh?: string; // address (Chinese)
 }
 
 /**

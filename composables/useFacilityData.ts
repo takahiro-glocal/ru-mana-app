@@ -13,6 +13,20 @@ const CODE_TO_CATEGORY: Record<string, string> = {
 }
 
 export const useFacilityData = () => {
+  const { locale } = useI18n()
+
+  const getLocalizedName = (r: FacilityTileRecord): string => {
+    if (locale.value === 'en' && r.n_en) return r.n_en
+    if (locale.value === 'zh' && r.n_zh) return r.n_zh
+    return r.n
+  }
+
+  const getLocalizedAddress = (r: FacilityTileRecord): string => {
+    if (locale.value === 'en' && r.a_en) return r.a_en
+    if (locale.value === 'zh' && r.a_zh) return r.a_zh
+    return r.a
+  }
+
   const tileIndex = useState<Record<string, number> | null>('facility_tile_index', () => null)
   const tileCache = useState<Record<string, FacilityTileRecord[]>>('facility_tile_cache', () => ({}))
   const tileLRU = useState<string[]>('facility_tile_lru', () => [])
@@ -134,8 +148,8 @@ export const useFacilityData = () => {
           lat: r.la,
           lng: r.lo,
           type: appCategory,
-          title: r.n,
-          address: r.a,
+          title: getLocalizedName(r),
+          address: getLocalizedAddress(r),
         })
       }
     }
@@ -177,13 +191,15 @@ export const useFacilityData = () => {
       for (const r of records) {
         const appCategory = CODE_TO_CATEGORY[r.c]
         if (!appCategory || !activeCategories.includes(appCategory)) continue
-        if (r.n.toLowerCase().includes(lowerQuery) || r.a.toLowerCase().includes(lowerQuery)) {
+        const searchable = [r.n, r.a, r.n_en, r.a_en, r.n_zh, r.a_zh]
+          .filter(Boolean).join(' ').toLowerCase()
+        if (searchable.includes(lowerQuery)) {
           results.push({
             lat: r.la,
             lng: r.lo,
             type: appCategory,
-            title: r.n,
-            address: r.a,
+            title: getLocalizedName(r),
+            address: getLocalizedAddress(r),
           })
         }
       }
