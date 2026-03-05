@@ -193,7 +193,19 @@ interface LocationData {
   lng: number;
   type: string;
   title: string;
+  address?: string;
   range?: number;
+}
+
+/**
+ * タイルJSON内の施設レコード（短縮キー）
+ */
+interface FacilityTileRecord {
+  c: string;   // category short code (m/e/s/p/f/g)
+  n: string;   // name
+  a: string;   // address
+  la: number;  // latitude
+  lo: number;  // longitude
 }
 
 /**

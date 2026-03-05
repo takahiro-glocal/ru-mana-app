@@ -5,7 +5,8 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
-    "generate": "nuxt generate",
+    "build:tiles": "node scripts/build-tiles.mjs",
+    "generate": "npm run build:tiles && nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "deploy": "nuxt build && firebase deploy --only hosting"

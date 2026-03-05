@@ -39,8 +39,11 @@
     >
       <div class="tw-bg-white/80 tw-backdrop-blur-md tw-rounded-2xl tw-p-2 tw-shadow-lg tw-border tw-border-white/50">
         <div class="tw-relative">
-          <input type="text" :placeholder="$t('disaster.search_facilities')" class="tw-w-full tw-bg-white tw-rounded-xl tw-py-2 tw-pl-10 tw-pr-8 tw-text-sm tw-outline-none focus:tw-ring-2 focus:tw-ring-[#85C441]/50 tw-text-gray-700" />
+          <input v-model="searchQuery" type="text" :placeholder="$t('disaster.search_facilities')" class="tw-w-full tw-bg-white tw-rounded-xl tw-py-2 tw-pl-10 tw-pr-8 tw-text-sm tw-outline-none focus:tw-ring-2 focus:tw-ring-[#85C441]/50 tw-text-gray-700" />
           <Search class="tw-absolute tw-left-3 tw-top-1/2 -tw-translate-y-1/2 tw-w-4 tw-h-4 tw-text-gray-400" />
+          <button v-if="searchQuery" @click="searchQuery = ''" class="tw-absolute tw-right-2 tw-top-1/2 -tw-translate-y-1/2 tw-p-0.5 tw-rounded-full hover:tw-bg-gray-100">
+            <X class="tw-w-3.5 tw-h-3.5 tw-text-gray-400" />
+          </button>
         </div>
       </div>
 
@@ -89,6 +92,20 @@
     <!-- ===== Map ===== -->
     <div ref="mapDiv" class="tw-w-full tw-h-full tw-bg-gray-100"></div>
 
+    <!-- ===== Loading Indicator ===== -->
+    <Transition name="popup">
+      <div v-if="facilityLoading" class="tw-absolute tw-top-20 tw-left-1/2 -tw-translate-x-1/2 tw-z-50 tw-bg-white/90 tw-backdrop-blur-md tw-rounded-full tw-px-4 tw-py-2 tw-shadow-lg tw-text-xs tw-text-gray-500 tw-font-bold">
+        {{ $t('disaster.loading_facilities') }}
+      </div>
+    </Transition>
+
+    <!-- ===== Zoom In Message ===== -->
+    <Transition name="popup">
+      <div v-if="facilityTooFarOut" class="tw-absolute tw-top-20 tw-left-1/2 -tw-translate-x-1/2 tw-z-50 tw-bg-white/90 tw-backdrop-blur-md tw-rounded-full tw-px-4 tw-py-2 tw-shadow-lg tw-text-xs tw-text-gray-500 tw-font-bold">
+        {{ $t('disaster.zoom_in_message') }}
+      </div>
+    </Transition>
+
     <!-- ===== Mobile: Bottom Category Sheet ===== -->
     <div class="md:tw-hidden tw-absolute tw-bottom-0 tw-left-0 tw-right-0 tw-z-40">
       <div class="tw-px-4 tw-pb-3">
@@ -124,9 +141,9 @@
             <X class="tw-w-5 tw-h-5 tw-text-gray-400" />
           </button>
         </div>
-        <div v-if="selectedFacility.range" class="tw-px-4 tw-pb-4">
+        <div v-if="selectedFacility.address" class="tw-px-4 tw-pb-4">
           <div class="tw-bg-gray-50 tw-rounded-lg tw-p-2 tw-text-[10px] tw-text-gray-500">
-            {{ $t('disaster.coverage_range') }}: {{ selectedFacility.range }}m
+            {{ selectedFacility.address }}
           </div>
         </div>
       </div>
@@ -152,7 +169,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import {
   Home, UserCircle, Search, X, MessageSquare,
   Plus, Minus, Navigation, MapPin, ChevronLeft, ChevronRight, AlertTriangle
@@ -161,8 +178,16 @@ import {
 const { user, userPhotoURL } = useAuth()
 const { openDrawer } = useDrawer()
 const localePath = useLocalePath()
-const { t, tm } = useI18n()
+const { t } = useI18n()
 const { load } = useMapsLoader()
+const {
+  init: initFacilityData,
+  updateViewport,
+  searchFacilities,
+  facilities,
+  isLoading: facilityLoading,
+  tooFarOut: facilityTooFarOut,
+} = useFacilityData()
 
 const isLoginModalOpen = ref(false)
 
@@ -171,60 +196,41 @@ const isSidebarOpen = ref(true)
 let map: google.maps.Map | null = null
 let userMarker: google.maps.Marker | null = null
 const markers: google.maps.Marker[] = []
-const circles: google.maps.Circle[] = []
 
 const selectedFacility = ref<LocationData | null>(null)
+const searchQuery = ref('')
+let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null
 
 const categories = ref<DisasterCategory[]>([
   { id: 'medical', label: t('disaster.cat_medical'), color: '#F87171', iconColor: '#F87171', active: true },
   { id: 'evac',    label: t('disaster.cat_evacuation'), color: '#4ADE80', iconColor: '#4ADE80', active: true },
   { id: 'store',   label: t('disaster.cat_grocery'), color: '#2DD4BF', iconColor: '#2DD4BF', active: false },
   { id: 'police',  label: t('disaster.cat_police'), color: '#FB923C', iconColor: '#FB923C', active: false },
-  { id: 'public',  label: t('disaster.cat_public'), color: '#A78BFA', iconColor: '#A78BFA', active: true },
 ])
 
 const getCategoryColor = (type: string) => categories.value.find(c => c.id === type)?.color || '#888'
 const getCategoryLabel = (type: string) => categories.value.find(c => c.id === type)?.label || type
+const getActiveCategories = () => categories.value.filter(c => c.active).map(c => c.id)
 
-const mockLocations = ref<LocationData[]>([])
+const refreshFacilities = () => {
+  if (!map) return
+  const bounds = map.getBounds()
+  const zoom = map.getZoom() || 15
+  const center = map.getCenter()
+  if (!bounds || !center) return
 
-const generateMockData = (center: google.maps.LatLngLiteral) => {
-  const newLocations: LocationData[] = []
-  const typeList = categories.value.map(c => c.id)
+  const centerLiteral = { lat: center.lat(), lng: center.lng() }
 
-  const prefixes: Record<string, string[]> = {
-    medical: tm('disaster_mock.medical_prefix') as string[],
-    evac: tm('disaster_mock.evac_prefix') as string[],
-    store: tm('disaster_mock.store_prefix') as string[],
-    police: tm('disaster_mock.police_prefix') as string[],
-    public: tm('disaster_mock.public_prefix') as string[]
+  if (searchQuery.value.trim()) {
+    const results = searchFacilities(searchQuery.value, bounds, getActiveCategories())
+    facilities.value = results
+  } else {
+    updateViewport(bounds, zoom, centerLiteral, getActiveCategories())
   }
-  const suffixes: Record<string, string> = {
-    medical: t('disaster_mock.medical_suffix'),
-    evac: t('disaster_mock.evac_suffix'),
-    store: t('disaster_mock.store_suffix'),
-    police: t('disaster_mock.police_suffix'),
-    public: t('disaster_mock.public_suffix')
-  }
-
-  for (let i = 0; i < 15; i++) {
-    const type = typeList[Math.floor(Math.random() * typeList.length)]
-    const prefix = prefixes[type][Math.floor(Math.random() * prefixes[type].length)]
-
-    const hasRange = Math.random() > 0.7
-    newLocations.push({
-      lat: center.lat + (Math.random() - 0.5) * 0.015,
-      lng: center.lng + (Math.random() - 0.5) * 0.015,
-      type,
-      title: `${prefix}${suffixes[type]}`,
-      range: hasRange ? Math.floor(Math.random() * 300) + 200 : undefined
-    })
-  }
-  mockLocations.value = newLocations
 }
 
 const initMap = async () => {
-  await load()
+  await Promise.all([load(), initFacilityData()])
   if (!mapDiv.value) return
 
   const mapStyle: google.maps.MapTypeStyle[] = [
@@ -247,26 +253,22 @@ const initMap = async () => {
     styles: mapStyle,
   })
 
+  map.addListener('idle', () => {
+    refreshFacilities()
+  })
+
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const currentPos = { lat: pos.coords.latitude, lng: pos.coords.longitude }
         map?.setCenter(currentPos)
         drawUserMarker(currentPos)
-        generateMockData(currentPos)
-        renderMarkers()
-        fitMapBounds(currentPos)
       },
       () => {
-        generateMockData(defaultPos)
-        renderMarkers()
-        fitMapBounds(defaultPos)
+        // Use default position (Tokyo)
       },
       { enableHighAccuracy: true }
     )
-  } else {
-    generateMockData(defaultPos)
-    renderMarkers()
   }
 }
 
@@ -291,13 +293,11 @@ const drawUserMarker = (pos: google.maps.LatLngLiteral) => {
 
 const renderMarkers = () => {
   markers.forEach(m => m.setMap(null))
-  circles.forEach(c => c.setMap(null))
   markers.length = 0
-  circles.length = 0
 
-  mockLocations.value.forEach(loc => {
+  facilities.value.forEach(loc => {
     const cat = categories.value.find(c => c.id === loc.type)
-    if (!cat || !cat.active) return
+    if (!cat) return
 
     const marker = new google.maps.Marker({
       position: { lat: loc.lat, lng: loc.lng },
@@ -307,29 +307,27 @@ const renderMarkers = () => {
     })
     marker.addListener('click', () => { selectedFacility.value = loc })
     markers.push(marker)
-
-    if (loc.range) {
-      circles.push(new google.maps.Circle({
-        strokeColor: cat.iconColor, strokeOpacity: 0, fillColor: cat.iconColor, fillOpacity: 0.12,
-        map, center: { lat: loc.lat, lng: loc.lng }, radius: loc.range,
-      }))
-    }
   })
 }
 
-const fitMapBounds = (center: google.maps.LatLngLiteral) => {
-  if (!map || mockLocations.value.length === 0) return
-  const bounds = new google.maps.LatLngBounds()
-  bounds.extend(center)
-  mockLocations.value.forEach(loc => bounds.extend({ lat: loc.lat, lng: loc.lng }))
-  map.fitBounds(bounds)
-  map.panToBounds(bounds, 50)
-}
+watch(facilities, () => {
+  renderMarkers()
+})
 
 const toggleCategory = (id: string) => {
   const target = categories.value.find(c => c.id === id)
-  if (target) { target.active = !target.active; renderMarkers() }
+  if (target) {
+    target.active = !target.active
+    refreshFacilities()
+  }
 }
+
+watch(searchQuery, () => {
+  if (searchDebounceTimer) clearTimeout(searchDebounceTimer)
+  searchDebounceTimer = setTimeout(() => {
+    refreshFacilities()
+  }, 300)
+})
 
 const zoomIn = () => { if (map) map.setZoom((map.getZoom() || 15) + 1) }
 const zoomOut = () => { if (map) map.setZoom((map.getZoom() || 15) - 1) }
