@@ -2,6 +2,8 @@
 
 import type { Component } from 'vue'
 
+declare global {
+
 interface AppNavigation {
   title: string;
   path: string;
@@ -324,3 +326,5 @@ interface ChatRequest {
 interface ChatResponse {
   reply: string;
 }
+
+} // declare global
