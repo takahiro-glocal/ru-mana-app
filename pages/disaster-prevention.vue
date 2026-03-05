@@ -66,7 +66,7 @@
             {{ $t('disaster.give_feedback') }}
           </button>
           <button @click="isSidebarOpen = false" class="tw-p-1.5 tw-rounded-full hover:tw-bg-gray-100 tw-transition-colors">
-            <PanelLeftClose class="tw-w-4 tw-h-4 tw-text-gray-400" />
+            <ChevronLeft class="tw-w-4 tw-h-4 tw-text-gray-400" />
           </button>
         </div>
       </div>
@@ -89,7 +89,7 @@
         class="tw-hidden md:tw-flex tw-items-center tw-justify-center tw-absolute tw-top-24 tw-left-6 tw-z-40"
       >
         <div class="tw-bg-white/95 tw-backdrop-blur-md tw-shadow-lg tw-border tw-border-gray-200/50 tw-rounded-full tw-w-9 tw-h-9 tw-flex tw-items-center tw-justify-center hover:tw-bg-white hover:tw-shadow-xl tw-transition-all tw-group">
-          <PanelLeftOpen class="tw-w-4 tw-h-4 tw-text-gray-500 group-hover:tw-text-gray-800 tw-transition-colors" />
+          <ChevronRight class="tw-w-4 tw-h-4 tw-text-gray-500 group-hover:tw-text-gray-800 tw-transition-colors" />
         </div>
       </button>
     </Transition>
@@ -184,8 +184,7 @@
 import { ref, watch, onMounted } from 'vue'
 import {
   Home, UserCircle, Search, X, MessageSquare,
-  Plus, Minus, Navigation, MapPin, ChevronLeft, AlertTriangle,
-  PanelLeftOpen, PanelLeftClose
+  Plus, Minus, Navigation, MapPin, ChevronLeft, ChevronRight, AlertTriangle
 } from 'lucide-vue-next'
 
 const { user, userPhotoURL } = useAuth()
