@@ -62,6 +62,9 @@ const handleOpenChat = () => {
   nextTick(() => openChat())
 }
 
+// 'points' is hidden until the feature is fully implemented
+const hiddenMenuIds = ['points']
+
 const menuItems = computed<DrawerMenuItem[]>(() => [
   { id: 'profile', label: t('drawer.profile_info'), icon: User },
   { id: 'general', label: t('drawer.settings_language'), icon: Settings },
@@ -69,7 +72,7 @@ const menuItems = computed<DrawerMenuItem[]>(() => [
   { id: 'history', label: t('drawer.history'), icon: History },
   { id: 'chat', label: t('drawer.chat'), icon: MessageSquareText },
   { id: 'feedback', label: t('drawer.feedback'), icon: MessageCircle },
-])
+].filter(item => !hiddenMenuIds.includes(item.id)))
 
 const currentStepTitle = computed(() => {
   if (currentStep.value === 'menu') return 'My Account'

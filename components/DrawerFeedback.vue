@@ -2,7 +2,7 @@
   <!-- <div class="tw-min-h-screen tw-bg-[#F9F5E7]"> -->
     <!-- <SettingsHeader title="フィードバック" /> -->
     <!-- <div class="tw-p-6 tw-max-w-md tw-mx-auto"> -->
-      <div class="tw-bg-white tw-rounded-3xl tw-p-8 tw-shadow-sm">
+      <div>
         <p class="tw-text-sm tw-text-gray-600 tw-mb-6">
           {{ $t('feedback.help_text') }}<br>
           {{ $t('feedback.help_text_2') }}
