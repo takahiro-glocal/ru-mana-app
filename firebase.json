@@ -8,21 +8,9 @@
     ],
     "rewrites": [
       {
-        "source": "/api/**",
-        "function": "server"
-      },
-      {
         "source": "**",
         "destination": "/index.html"
       }
     ]
-  },
-  "functions": [
-    {
-      "source": ".output/server",
-      "codebase": "default",
-      "runtime": "nodejs22",
-      "predeploy": ["npm --prefix .output/server install"]
-    }
-  ]
+  }
 }
