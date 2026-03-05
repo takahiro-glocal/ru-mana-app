@@ -38,7 +38,6 @@
         
         <div class="tw-col-span-1 md:tw-col-span-7 tw-space-y-6">
           <div class="md:tw-hidden tw-flex tw-items-center tw-justify-between tw-mb-4">
-            <ChevronLeft class="tw-text-[#BCAF92] tw-w-8 tw-h-8" />
             <div class="tw-relative tw-flex-1 tw-mx-4">
               <input v-model="searchQuery" type="text" :placeholder="$t('dashboard.search_short')" class="tw-w-full tw-bg-[#4B3E8E] tw-bg-opacity-80 tw-text-white tw-placeholder-white/50 tw-rounded-md tw-py-1.5 tw-px-10" @input="onSearch" />
               <Search class="tw-absolute tw-left-3 tw-top-1/2 tw-transform -tw-translate-y-1/2 tw-text-white tw-w-4" />
@@ -181,10 +180,10 @@
               <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800" class="tw-w-full tw-h-full tw-object-cover" />
             </div>
             <div class="tw-w-full md:tw-w-24 tw-flex tw-flex-row md:tw-flex-col tw-gap-3">
-              <div class="tw-flex-1 tw-bg-[#BCAF92] tw-rounded-2xl tw-p-3 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md tw-cursor-pointer hover:tw-opacity-90 tw-transition-opacity" @click="showComingSoon($t('dashboard.disaster_map'))">
+              <NuxtLink :to="localePath('/disaster-prevention')" class="tw-flex-1 tw-bg-[#BCAF92] tw-rounded-2xl tw-p-3 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md tw-cursor-pointer hover:tw-opacity-90 tw-transition-opacity">
                 <MapIcon class="tw-w-10 tw-h-10" />
                 <span class="tw-text-[9px] tw-font-bold tw-mt-1">{{ $t('dashboard.disaster_map') }}</span>
-              </div>
+              </NuxtLink>
               <div class="tw-flex-1 tw-bg-[#D9A65D] tw-rounded-2xl tw-p-3 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md">
                 <div class="tw-grid tw-grid-cols-2 tw-gap-3">
                   <a v-for="sns in snsLinks" :key="sns.label" :href="sns.url" target="_blank" rel="noopener noreferrer" class="tw-p-1.5 tw-rounded-lg hover:tw-bg-white/20 tw-transition-all">

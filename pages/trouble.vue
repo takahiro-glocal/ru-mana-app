@@ -11,10 +11,10 @@
           <ChevronLeft class="tw-w-6 tw-h-6" />
         </button>
         <div class="tw-flex tw-items-center tw-gap-3">
-          <button @click="showComingSoon($t('dashboard.disaster_map'))" class="tw-flex tw-items-center tw-gap-1.5 tw-bg-white/20 tw-backdrop-blur-sm tw-px-3 tw-py-1.5 tw-rounded-full tw-text-xs tw-font-bold hover:tw-bg-white/30 tw-transition-colors">
+          <NuxtLink :to="localePath('/disaster-prevention')" class="tw-flex tw-items-center tw-gap-1.5 tw-bg-white/20 tw-backdrop-blur-sm tw-px-3 tw-py-1.5 tw-rounded-full tw-text-xs tw-font-bold hover:tw-bg-white/30 tw-transition-colors">
             <MapPin class="tw-w-3.5 tw-h-3.5" />
             {{ $t('dashboard.disaster_map') }}
-          </button>
+          </NuxtLink>
           <NuxtLink :to="localePath('/')" class="tw-hidden md:tw-flex tw-p-2 tw-rounded-full hover:tw-bg-white/20 tw-transition-colors">
             <Home class="tw-w-5 tw-h-5" />
           </NuxtLink>
@@ -145,7 +145,7 @@
 
           <!-- Quick Links -->
           <section class="tw-mt-6 tw-space-y-3">
-            <div @click="showComingSoon($t('dashboard.disaster_map'))" class="tw-flex tw-items-center tw-gap-3 tw-bg-white tw-p-4 tw-rounded-2xl tw-shadow-sm tw-border tw-border-gray-100 hover:tw-border-[#BCAF92] hover:tw-shadow-md tw-transition-all tw-cursor-pointer">
+            <NuxtLink :to="localePath('/disaster-prevention')" class="tw-flex tw-items-center tw-gap-3 tw-bg-white tw-p-4 tw-rounded-2xl tw-shadow-sm tw-border tw-border-gray-100 hover:tw-border-[#BCAF92] hover:tw-shadow-md tw-transition-all tw-cursor-pointer">
               <div class="tw-bg-[#BCAF92] tw-p-2.5 tw-rounded-xl">
                 <MapPin class="tw-w-5 tw-h-5 tw-text-white" />
               </div>
@@ -154,7 +154,7 @@
                 <p class="tw-text-[10px] tw-text-gray-400">{{ $t('disaster.subtitle') }}</p>
               </div>
               <ChevronRight class="tw-w-4 tw-h-4 tw-text-gray-300" />
-            </div>
+            </NuxtLink>
 
             <NuxtLink :to="localePath('/')" class="tw-flex tw-items-center tw-gap-3 tw-bg-white tw-p-4 tw-rounded-2xl tw-shadow-sm tw-border tw-border-gray-100 hover:tw-border-[#85C441] hover:tw-shadow-md tw-transition-all">
               <div class="tw-bg-[#85C441] tw-p-2.5 tw-rounded-xl">
