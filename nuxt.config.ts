@@ -146,18 +146,12 @@ export default defineNuxtConfig({
       measurementId: process.env.MEASUREMENT_ID,
       googleFcmPublicVapidKey: process.env.GOOGLE_FCM_PUBLICVAPIDKEY,
       openWeatherApiKey: process.env.OPEN_WEATHER_API_KEY,
+      geminiApiKey: process.env.GEMINI_API_KEY,
     }
   },
   ssr: false,
   nitro: {
-    preset: 'firebase',
-    firebase: {
-      gen: 2,
-      httpsOptions: {
-        region: 'asia-northeast1',
-      },
-      nodeVersion: '22',
-    },
+    preset: 'static',
   },
   devtools: { enabled: false },
 })

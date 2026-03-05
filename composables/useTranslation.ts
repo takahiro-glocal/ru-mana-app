@@ -76,20 +76,42 @@ export const useTranslation = () => {
         return cached
       }
 
-      // 3. AI APIで翻訳
-      const result = await $fetch<{ translatedText: string }>('/api/translate', {
-        method: 'POST',
-        body: {
-          text,
-          targetLang: locale.value,
-        },
-      })
+      // 3. クライアントサイドGemini APIで翻訳
+      const { getModel } = useGemini()
+      const model = getModel()
+
+      const langNames: Record<string, string> = {
+        ja: 'Japanese',
+        en: 'English',
+        zh: 'Simplified Chinese',
+      }
+      const targetLangName = langNames[locale.value] || locale.value
+
+      const prompt = `You are a cultural translator for Japan. Your role is not just to translate words, but to convey cultural context and meaning.
+
+When translating content related to Japanese culture, manners, or daily life:
+- Preserve cultural nuances and explain implicit cultural context when needed
+- If the text references a Japanese custom or concept that may be unfamiliar, provide a brief, natural explanation within the translation
+- Maintain the original tone (formal/casual/friendly)
+- Do NOT add translator's notes or brackets — weave any cultural context naturally into the translation
+
+Source language: auto-detect
+Target language: ${targetLangName}
+
+Translate the following text. Return ONLY the translated text, nothing else:
+
+${text}`
+
+      const result = await model.generateContent(prompt)
+      const translatedText = result.response.text()?.trim()
+
+      if (!translatedText) throw new Error('No translation returned')
 
       // メモリとFirestoreの両方にキャッシュ
-      translations.value[memKey] = result.translatedText
-      saveToFirestore(firestoreCacheId, text, locale.value, result.translatedText)
+      translations.value[memKey] = translatedText
+      saveToFirestore(firestoreCacheId, text, locale.value, translatedText)
 
-      return result.translatedText
+      return translatedText
     } catch (e) {
       console.error('Translation failed:', e)
       return null
