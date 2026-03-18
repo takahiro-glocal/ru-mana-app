@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>るうまな — Intro v4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300&family=Fraunces:ital,opsz,wght@0,9..144,200;1,9..144,300&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg:   #F5EFE0;
+  --ink:  #1A1612;
+  --green:#85C441;
+  --pink: #E4007F;
+  --gold: #E8A800;
+}
+html, body { width:100%; height:100%; overflow:hidden; background:var(--bg); }
+canvas { position:absolute; inset:0; width:100%; height:100%; }
+
+#copy {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  pointer-events:none; z-index:20;
+}
+.phrase {
+  font-family:'Noto Serif JP', serif;
+  font-weight:300;
+  color:#18130E;
+  text-align:center;
+  letter-spacing:0.16em;
+  line-height:2.0;
+  opacity:0;
+  position:absolute; width:100%; padding:0 32px;
+  transition: opacity 0.65s ease, transform 0.65s ease;
+  transform: translateY(10px);
+}
+/* 文字の背後に白いぼかしパネルを置いて国旗と被らないようにする */
+.phrase-inner {
+  display:inline-block;
+  background: rgba(253,251,245,0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 18px 36px 16px;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.07);
+}
+.phrase.visible { opacity:1; transform:translateY(0); }
+.phrase.hidden  { opacity:0; transform:translateY(-10px); }
+.phrase .en {
+  display:block;
+  font-family:'Fraunces', serif; font-style:italic; font-weight:300;
+  font-size:clamp(11px,1.7vw,14px);
+  color:#18130E;
+  letter-spacing:0.10em;
+  opacity:0.52;
+  margin-top:5px;
+}
+#phrase1,#phrase2,#phrase3 {
+  font-size:clamp(17px,2.6vw,26px);
+}
+#phrase4 {
+  font-size:clamp(20px,3.0vw,30px);
+  color:var(--pink);
+  font-weight:400;
+}
+#phrase4 .phrase-inner {
+  background: rgba(253,251,245,0.88);
+}
+
+#logo-finale {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:14px;
+  opacity:0; z-index:30; pointer-events:none;
+}
+
+/* ── logo.png が存在するとき ── */
+#logo-img-wrap {
+  opacity:0; transform:translateY(20px) scale(0.92);
+}
+#logo-img-wrap img {
+  max-width: min(280px, 55vw);
+  max-height: min(160px, 22vh);
+  width: auto; height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* ── logo.png が存在しないときのフォールバック ── */
+#logo-fallback {
+  display: none;
+  flex-direction: column; align-items: center; gap: 10px;
+  opacity:0; transform:translateY(20px) scale(0.92);
+}
+#logo-fallback-card {
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  background: rgba(253,251,245,0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid rgba(133,196,65,0.40);
+}
+#logo-fallback-card span {
+  font-family:'Noto Serif JP', serif;
+  font-weight:300; font-size:18px;
+  color:var(--ink); letter-spacing:0.1em;
+}
+
+/* タイトル：るうまな（大） */
+#logo-jp {
+  font-family:'Noto Serif JP', serif; font-weight:300;
+  font-size:clamp(32px,6vw,72px);
+  color:var(--ink); letter-spacing:0.22em; line-height:1;
+  opacity:0; transform:translateY(16px);
+}
+/* サブタイトル：ru-mana（小） */
+#logo-en {
+  font-family:'Fraunces', serif; font-style:italic; font-weight:300;
+  font-size:clamp(14px,2.4vw,24px);
+  color:rgba(26,22,18,0.52); letter-spacing:0.04em; line-height:1;
+  opacity:0; transform:translateY(8px);
+}
+#logo-dot { color:var(--green); display:inline-block; transform:scale(0); }
+#logo-tag {
+  font-family:'Zen Kaku Gothic New', sans-serif; font-weight:400;
+  font-size:clamp(10px,1.4vw,13px);
+  color:rgba(26,22,18,0.50); letter-spacing:0.2em;
+  margin-top:2px; opacity:0;
+}
+#bar {
+  position:absolute; bottom:0; left:0; height:2px;
+  background:linear-gradient(90deg,var(--green),var(--pink),var(--gold));
+  width:0%; z-index:100;
+  animation:barFill 10s linear forwards;
+}
+@keyframes barFill { to { width:100%; } }
+
+#loading {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:13px; letter-spacing:0.2em;
+  color:rgba(26,22,18,0.35);
+  z-index:50;
+  transition: opacity 0.4s ease;
+}
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<div id="loading">読み込み中…</div>
+
+<div id="copy">
+  <div class="phrase" id="phrase1"><span class="phrase-inner">違いを、おもしろがろう。<span class="en">Delight in difference.</span></span></div>
+  <div class="phrase" id="phrase2"><span class="phrase-inner">目の前にいるのは、ただひとりの人間。<span class="en">Before any label — a person.</span></span></div>
+  <div class="phrase" id="phrase3"><span class="phrase-inner">文化は、出会うための扉。<span class="en">Culture is a door, not a wall.</span></span></div>
+  <div class="phrase" id="phrase4"><span class="phrase-inner">世界中に、ともだちができる。<span class="en">Friends across every horizon.</span></span></div>
+</div>
+
+<div id="logo-finale">
+  <!-- logo.png が存在するとき -->
+  <div id="logo-img-wrap">
+    <img id="logo-img" alt="るうまな ロゴ">
+  </div>
+  <!-- logo.png が存在しないときのフォールバック -->
+  <div id="logo-fallback">
+    <div id="logo-fallback-card"><span>ロゴ</span></div>
+  </div>
+  <!-- テキストロゴ（常に表示） -->
+  <div id="logo-jp">るうまな</div>
+  <div id="logo-en">ru-mana<span id="logo-dot">.</span></div>
+  <div id="logo-tag">異文化の摩擦を、理解へ。</div>
+</div>
+
+<div id="bar"></div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   全世界の国コード (flag-icon-css 4.1.3 対応)
+   ═══════════════════════════════════════════════ */
+const ALL_CODES = [
+  'jp','us','fr','br','in','kr','au','de','mx','it',
+  'es','cn','gb','ca','sa','ng','za','th','ar','tr',
+  'eg','se','id','ma','pt','nl','be','ch','at','pl',
+  'ua','ru','pk','bd','vn','ph','my','sg','nz','hk',
+  'tw','il','ir','iq','sy','jo','lb','ae','kw','qa',
+  'bh','om','ye','ke','et','gh','tz','ug','ci','cm',
+  'sn','dz','tn','ly','sd','ao','mz','zm','zw','bw',
+  'na','mg','mu','rw','ml','bf','ne','gn','tg','bj',
+  'ga','cg','cd','so','er','dj','cf','gw','sl','lr',
+  'gm','cv','st','km','sc','mw','ls','sz','mr','ss',
+  'no','dk','fi','is','ie','cz','sk','hu','ro','bg',
+  'rs','hr','si','ba','me','mk','al','lt','lv','ee',
+  'by','md','ge','am','az','kz','uz','tm','tj','kg',
+  'mn','af','np','bt','lk','mv','mm','kh','la','tl',
+  'bn','pg','fj','sb','vu','ws','to','ki','tv','pw',
+  'mh','fm','nr','cl','pe','co','ve','ec','bo','py',
+  'uy','gy','sr','cu','jm','ht','do','tt','bb','lc',
+  'vc','gd','ag','dm','kn','bs','bz','gt','hn','sv',
+  'ni','cr','pa',
+];
+
+/* アニメーション用に使う国数 */
+const TOTAL = 36;
+
+/* ランダムにシャッフルして TOTAL 個選ぶ */
+function sample(arr, n) {
+  const a = [...arr].sort(() => Math.random() - 0.5);
+  return a.slice(0, n);
+}
+const CODES = sample(ALL_CODES, TOTAL);
+
+const CDN_BASE = 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/4.1.3/flags/1x1/';
+
+/* ═══════════════════════════════════════════════
+   画像ロード
+   ═══════════════════════════════════════════════ */
+const FLAG_SIZE = 80; // offscreen canvas size (px)
+
+function loadFlag(code) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      // 円形クリップして offscreen canvas に焼き込む
+      const oc   = document.createElement('canvas');
+      oc.width   = FLAG_SIZE;
+      oc.height  = FLAG_SIZE;
+      const octx = oc.getContext('2d');
+      octx.save();
+      octx.beginPath();
+      octx.arc(FLAG_SIZE/2, FLAG_SIZE/2, FLAG_SIZE/2, 0, Math.PI*2);
+      octx.clip();
+      octx.drawImage(img, 0, 0, FLAG_SIZE, FLAG_SIZE);
+      octx.restore();
+      // 薄いリング
+      octx.beginPath();
+      octx.arc(FLAG_SIZE/2, FLAG_SIZE/2, FLAG_SIZE/2 - 1, 0, Math.PI*2);
+      octx.strokeStyle = 'rgba(0,0,0,0.12)';
+      octx.lineWidth   = 2;
+      octx.stroke();
+      resolve({ code, canvas: oc });
+    };
+    img.onerror = () => {
+      // 読み込み失敗時はグレー円でフォールバック
+      const oc   = document.createElement('canvas');
+      oc.width   = FLAG_SIZE; oc.height = FLAG_SIZE;
+      const octx = oc.getContext('2d');
+      octx.beginPath();
+      octx.arc(FLAG_SIZE/2, FLAG_SIZE/2, FLAG_SIZE/2, 0, Math.PI*2);
+      octx.fillStyle = '#ccc';
+      octx.fill();
+      resolve({ code, canvas: oc });
+    };
+    img.src = `${CDN_BASE}${code}.svg`;
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   Canvas setup
+   ═══════════════════════════════════════════════ */
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+let W, H;
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+/* ═══════════════════════════════════════════════
+   Person node
+   ═══════════════════════════════════════════════ */
+class Person {
+  constructor(id, imgCanvas) {
+    this.id      = id;
+    this.img     = imgCanvas;
+    this.opacity = 0;
+    this.connected = [];
+    this.pulse   = Math.random() * Math.PI * 2;
+    this.pulseSpd= 0.35 + Math.random() * 0.45;
+
+    const angle = (id / TOTAL) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+    const r     = 0.42 + Math.random() * 0.12;
+    this.x      = 0.5 + Math.cos(angle) * r;
+    this.y      = 0.5 + Math.sin(angle) * r;
+    this.tx     = 0.5 + Math.cos(angle) * (0.28 + Math.random() * 0.12);
+    this.ty     = 0.5 + Math.sin(angle) * (0.28 + Math.random() * 0.12);
+
+    // ★ サイズを小さく (0.028〜0.040 → 画面短辺に対する係数)
+    this.size   = 0.028 + Math.random() * 0.012;
+  }
+
+  setGatherTarget() {
+    if (this.id < 28) {
+      const a = (this.id / 28) * Math.PI * 2 - Math.PI / 2;
+      const r = 0.20 + (this.id % 4) * 0.025;
+      this.tx = 0.5 + Math.cos(a) * r;
+      this.ty = 0.5 + Math.sin(a) * r;
+    } else {
+      const a = ((this.id - 28) / 8) * Math.PI * 2;
+      this.tx = 0.5 + Math.cos(a) * 0.07;
+      this.ty = 0.5 + Math.sin(a) * 0.07;
+    }
+  }
+
+  draw(t) {
+    if (this.opacity <= 0.01) return;
+    const px = this.x * W;
+    const py = this.y * H;
+    const baseR = this.size * Math.min(W, H);
+    const pf    = 1 + Math.sin(this.pulse + t * this.pulseSpd) * 0.055;
+    const r     = baseR * pf;
+
+    ctx.save();
+    ctx.globalAlpha = this.opacity;
+
+    // drop shadow
+    ctx.shadowColor   = 'rgba(0,0,0,0.16)';
+    ctx.shadowBlur    = r * 0.8;
+    ctx.shadowOffsetY = r * 0.22;
+
+    // circular clip → flag
+    ctx.beginPath();
+    ctx.arc(px, py, r, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.drawImage(this.img, px - r, py - r, r * 2, r * 2);
+
+    ctx.restore();
+
+    // white ring
+    ctx.save();
+    ctx.globalAlpha = this.opacity * 0.75;
+    ctx.beginPath();
+    ctx.arc(px, py, r, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.lineWidth   = Math.max(1, r * 0.06);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Connection lines
+   ═══════════════════════════════════════════════ */
+let connOpacity = 0;
+
+function buildConnections(people) {
+  people.forEach(p => { p.connected = []; });
+  people.forEach((p, i) => {
+    const others = people
+      .map((q, j) => ({ j, d: Math.hypot(p.tx - q.tx, p.ty - q.ty) }))
+      .filter(o => o.j !== i)
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 2 + (i % 5 === 0 ? 1 : 0));
+    others.forEach(o => {
+      if (!p.connected.includes(o.j)) p.connected.push(o.j);
+      if (!people[o.j].connected.includes(i)) people[o.j].connected.push(i);
+    });
+  });
+}
+
+function drawConnections(people) {
+  if (connOpacity <= 0.01) return;
+  people.forEach((p, i) => {
+    p.connected.forEach(j => {
+      if (j <= i) return;
+      const q   = people[j];
+      const alp = Math.min(p.opacity, q.opacity) * connOpacity * 0.4;
+      if (alp <= 0.01) return;
+      const px = p.x*W, py = p.y*H, qx = q.x*W, qy = q.y*H;
+      ctx.save();
+      ctx.globalAlpha = alp;
+      const grd = ctx.createLinearGradient(px, py, qx, qy);
+      grd.addColorStop(0, '#85C441');
+      grd.addColorStop(1, '#E4007F');
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(qx, qy);
+      ctx.strokeStyle = grd;
+      ctx.lineWidth   = 1.0;
+      ctx.stroke();
+      ctx.restore();
+    });
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   Background
+   ═══════════════════════════════════════════════ */
+let bgGlow = 0;
+function drawBg() {
+  ctx.fillStyle = '#F5EFE0';
+  ctx.fillRect(0, 0, W, H);
+  if (bgGlow > 0) {
+    const grd = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.min(W,H)*0.52);
+    grd.addColorStop(0,   `rgba(255,242,205,${bgGlow * 0.5})`);
+    grd.addColorStop(0.5, `rgba(133,196,65,${bgGlow * 0.06})`);
+    grd.addColorStop(1,   'rgba(245,239,224,0)');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, W, H);
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Main loop
+   ═══════════════════════════════════════════════ */
+let people = [];
+let phase = 0, phaseT = 0, lastTime = 0;
+let finaleStarted = false;
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+function tick(ts) {
+  requestAnimationFrame(tick);
+  if (people.length === 0) return;
+  const dt = Math.min((ts - lastTime) / 1000, 0.05);
+  lastTime = ts;
+  phaseT  += dt;
+
+  // transitions
+  if (phase === 0 && phaseT > 2.0) {
+    phase = 1; phaseT = 0;
+    people.forEach(p => p.setGatherTarget());
+    buildConnections(people);
+  }
+  if (phase === 1 && phaseT > 2.0) { phase = 2; phaseT = 0; }
+  if (phase === 2 && phaseT > 2.5) { phase = 3; phaseT = 0; }
+  if (phase === 3 && phaseT > 2.0) { phase = 4; phaseT = 0; }
+
+  // phase4: 国旗が中央に集束しながらフェードアウト完了したらロゴ起動
+  if (phase === 4) {
+    const allGone = people.every(p => p.opacity < 0.02);
+    if (allGone && !finaleStarted) { finaleStarted = true; startFinale(); }
+  }
+
+  if (phase === 0) {
+    people.forEach((p, i) => {
+      const delay = i * 0.05;
+      p.opacity = clamp(p.opacity + (phaseT > delay ? dt * 1.3 : 0), 0, 1);
+      p.x = lerp(p.x, p.tx, dt * 0.9);
+      p.y = lerp(p.y, p.ty, dt * 0.9);
+    });
+  } else if (phase === 1) {
+    const spd = clamp(phaseT / 2, 0, 1);
+    people.forEach(p => {
+      p.x = lerp(p.x, p.tx, dt * 2.8 * (0.4 + spd));
+      p.y = lerp(p.y, p.ty, dt * 2.8 * (0.4 + spd));
+    });
+    bgGlow = lerp(bgGlow, 0.8, dt * 1.5);
+  } else if (phase === 2) {
+    connOpacity = lerp(connOpacity, 1, dt * 1.8);
+    bgGlow = lerp(bgGlow, 1, dt * 1.0);
+    people.forEach(p => {
+      p.x = lerp(p.x, p.tx, dt * 1.5);
+      p.y = lerp(p.y, p.ty, dt * 1.5);
+    });
+  } else if (phase === 3) {
+    const b = Math.sin(phaseT * 1.8) * 0.009;
+    people.forEach(p => {
+      const a = Math.atan2(p.ty - 0.5, p.tx - 0.5);
+      p.x = lerp(p.x, p.tx + Math.cos(a)*b, dt * 3);
+      p.y = lerp(p.y, p.ty + Math.sin(a)*b, dt * 3);
+    });
+  } else if (phase === 4) {
+    // 全国旗を中央に高速収束させながら素早くフェードアウト
+    people.forEach(p => {
+      p.x = lerp(p.x, 0.5, dt * 5.0);
+      p.y = lerp(p.y, 0.5, dt * 5.0);
+      p.opacity = lerp(p.opacity, 0, dt * 4.0);
+    });
+    connOpacity = lerp(connOpacity, 0, dt * 6);
+    bgGlow      = lerp(bgGlow,      0, dt * 3);
+  }
+
+  drawBg();
+  people.forEach(p => { p.pulse += dt; });
+  drawConnections(people);
+  [...people].sort((a, b) => b.size - a.size).forEach(p => p.draw(phaseT));
+}
+requestAnimationFrame(t => { lastTime = t; tick(t); });
+
+/* ═══════════════════════════════════════════════
+   Load flags → start
+   ═══════════════════════════════════════════════ */
+Promise.all(CODES.map(loadFlag)).then(results => {
+  document.getElementById('loading').style.opacity = '0';
+  setTimeout(() => document.getElementById('loading').remove(), 400);
+
+  people = results.map((r, i) => new Person(i, r.canvas));
+  buildConnections(people);
+  startCopy();
+});
+
+/* ═══════════════════════════════════════════════
+   Copy timing
+   ═══════════════════════════════════════════════ */
+function startCopy() {
+  const phrases = [
+    { el: document.getElementById('phrase1'), in: 0.7,  out: 2.3 },
+    { el: document.getElementById('phrase2'), in: 2.7,  out: 4.3 },
+    { el: document.getElementById('phrase3'), in: 4.7,  out: 6.3 },
+    { el: document.getElementById('phrase4'), in: 6.5,  out: 8.3 },
+  ];
+  const t0 = performance.now();
+  function updateCopy() {
+    const t = (performance.now() - t0) / 1000;
+    phrases.forEach(p => {
+      const show = t >= p.in && t < p.out;
+      const gone = t >= p.out;
+      if (show && !p.el.classList.contains('visible')) {
+        p.el.classList.add('visible'); p.el.classList.remove('hidden');
+      }
+      if (gone && p.el.classList.contains('visible')) {
+        p.el.classList.remove('visible'); p.el.classList.add('hidden');
+      }
+    });
+    if (t < 10.5) requestAnimationFrame(updateCopy);
+  }
+  requestAnimationFrame(updateCopy);
+}
+
+/* ═══════════════════════════════════════════════
+   Finale
+   ═══════════════════════════════════════════════ */
+function startFinale() {
+  const fin      = document.getElementById('logo-finale');
+  const imgWrap  = document.getElementById('logo-img-wrap');
+  const imgEl    = document.getElementById('logo-img');
+  const fallback = document.getElementById('logo-fallback');
+  const jp       = document.getElementById('logo-jp');
+  const en       = document.getElementById('logo-en');
+  const dot      = document.getElementById('logo-dot');
+  const tag      = document.getElementById('logo-tag');
+
+  /* ── logo.png を同階層から試みる ── */
+  const logoSrc = 'logo.png';
+  const testImg = new Image();
+
+  testImg.onload = () => {
+    /* 成功：logo.png を表示 */
+    imgEl.src = logoSrc;
+    imgWrap.style.display = 'block';
+    fallback.style.display = 'none';
+    revealFinale(fin, imgWrap, jp, en, dot, tag);
+  };
+  testImg.onerror = () => {
+    /* 失敗：「ロゴ」丸カードを表示 */
+    imgWrap.style.display = 'none';
+    fallback.style.display = 'flex';
+    revealFinale(fin, fallback, jp, en, dot, tag);
+  };
+  testImg.src = logoSrc;
+}
+
+function revealFinale(fin, logoEl, jp, en, dot, tag) {
+  const ease   = 'cubic-bezier(.22,1,.36,1)';
+  const popEase= 'cubic-bezier(.36,1.56,.64,1)';
+
+  /* コンテナ：すでに inset:0 で中央配置されているので即表示 */
+  fin.style.transition = 'none';
+  fin.style.opacity = '1';
+
+  /* ロゴ画像 or フォールバックカード
+     国旗が消えた中央座標と同じ位置から scale(0.5)→1 でフェードイン */
+  logoEl.style.transform = 'scale(0.5)';
+  logoEl.style.opacity   = '0';
+  setTimeout(() => {
+    logoEl.style.transition = `opacity 0.65s ease, transform 0.65s ${ease}`;
+    logoEl.style.opacity = '1';
+    logoEl.style.transform = 'scale(1)';
+  }, 60);
+
+  /* るうまな（大タイトル）— 中央からわずかに下へスライドイン */
+  jp.style.transform = 'translateY(12px) scale(0.92)';
+  jp.style.opacity   = '0';
+  setTimeout(() => {
+    jp.style.transition = `opacity 0.65s ease, transform 0.65s ${ease}`;
+    jp.style.opacity = '1'; jp.style.transform = 'translateY(0) scale(1)';
+  }, 280);
+
+  /* ru-mana（サブ） */
+  en.style.transform = 'translateY(8px)';
+  en.style.opacity   = '0';
+  setTimeout(() => {
+    en.style.transition = `opacity 0.55s ease, transform 0.55s ${ease}`;
+    en.style.opacity = '1'; en.style.transform = 'translateY(0)';
+  }, 500);
+
+  /* ドット pop */
+  setTimeout(() => {
+    dot.style.transition = `transform 0.45s ${popEase}`;
+    dot.style.transform  = 'scale(1)';
+  }, 760);
+
+  /* タグライン */
+  setTimeout(() => {
+    tag.style.transition = 'opacity 0.6s ease';
+    tag.style.opacity = '1';
+  }, 880);
+}
+
+document.body.addEventListener('click', () => location.reload());
+</script>
+</body>
+</html>

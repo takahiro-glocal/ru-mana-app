@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>るうまな — Intro v5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;400&family=Fraunces:ital,opsz,wght@0,9..144,200;1,9..144,300&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg:    #FBF7EE;
+  --ink:   #1A1612;
+  --green: #85C441;
+  --pink:  #E4007F;
+  --gold:  #E8A800;
+}
+html, body { width:100%; height:100%; overflow:hidden; background:var(--bg); }
+canvas { position:absolute; inset:0; width:100%; height:100%; }
+
+/* ─── ロゴ finale ─── */
+/* ─── ロゴ finale オーバーレイ ─── */
+#logo-finale {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  opacity: 0; z-index: 20; pointer-events: none;
+  /* 人物の上に薄い白幕を敷いて可読性を確保 */
+  background: rgba(251,247,238,0.0);
+}
+
+/* ─── 中央の白いカード（全要素をここに集約） ─── */
+#logo-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  background: rgba(253,251,245,0.30);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 28px;
+  padding: clamp(24px,5vw,48px) clamp(32px,8vw,72px) clamp(20px,4vw,40px);
+  box-shadow:
+    0 8px 40px rgba(0,0,0,0.06),
+    0 1px 0 rgba(255,255,255,0.5) inset;
+  border: 1px solid rgba(255,255,255,0.45);
+  opacity: 0;
+  transform: scale(0.88) translateY(16px);
+}
+
+/* ─── ロゴ画像 ─── */
+#logo-img-wrap {
+  margin-bottom: clamp(10px,2.5vw,20px);
+}
+#logo-img-wrap img {
+  max-width: min(200px, 42vw);
+  max-height: min(110px, 16vh);
+  width: auto; height: auto;
+  object-fit: contain; display: block;
+}
+
+/* ─── フォールバック丸カード ─── */
+#logo-fallback {
+  display: none;
+  flex-direction: column; align-items: center;
+  margin-bottom: clamp(10px,2.5vw,20px);
+}
+#logo-fallback-card {
+  width: clamp(64px,12vw,88px);
+  height: clamp(64px,12vw,88px);
+  border-radius: 50%;
+  background: linear-gradient(135deg,#f0fae0,#e8f7ff);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.09);
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid rgba(133,196,65,0.5);
+}
+#logo-fallback-card span {
+  font-family: 'Noto Serif JP', serif;
+  font-weight: 300;
+  font-size: clamp(15px,3.5vw,20px);
+  color: var(--ink);
+  letter-spacing: 0.1em;
+}
+
+/* ─── るうまな（大） ─── */
+#logo-jp {
+  font-family: 'Noto Serif JP', serif;
+  font-weight: 400;
+  font-size: clamp(30px, 7vw, 68px);
+  color: var(--ink);
+  letter-spacing: 0.20em;
+  line-height: 1;
+  text-shadow: 0 1px 8px rgba(251,247,238,0.7), 0 0 24px rgba(251,247,238,0.5);
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+/* ─── 区切り線 ─── */
+#logo-divider {
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(26,22,18,0.18), transparent);
+  margin: clamp(10px,2vw,16px) 0;
+  opacity: 0;
+}
+
+/* ─── ru-mana ─── */
+#logo-en {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(16px, 3.2vw, 30px);
+  color: rgba(26,22,18,0.70);
+  letter-spacing: 0.06em;
+  text-shadow: 0 1px 8px rgba(251,247,238,0.7);
+  opacity: 0;
+  transform: translateY(8px);
+}
+#logo-dot { color: var(--green); display: inline-block; transform: scale(0); }
+
+/* ─── タグライン ─── */
+#logo-tag {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-weight: 400;
+  font-size: clamp(11px, 2vw, 14px);
+  color: rgba(26,22,18,0.65);
+  letter-spacing: 0.20em;
+  text-shadow: 0 1px 6px rgba(251,247,238,0.8);
+  margin-top: clamp(6px,1.5vw,10px);
+  opacity: 0;
+}
+
+#bar {
+  position:absolute; bottom:0; left:0; height:2px;
+  background:linear-gradient(90deg,var(--green),var(--pink),var(--gold));
+  width:0%; z-index:100;
+}
+
+/* ─── コピーテキスト ─── */
+#copy {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  pointer-events:none; z-index:25;
+}
+.phrase {
+  position:absolute;
+  text-align:center;
+  opacity:0;
+  transition: opacity 0.65s ease, transform 0.65s ease;
+  transform: translateY(10px);
+  padding: 0 20px;
+}
+.phrase-inner {
+  display:inline-block;
+  background: rgba(251,247,238,0.84);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 18px;
+  padding: 16px 32px 14px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.07);
+}
+.phrase .jp {
+  font-family:'Noto Serif JP',serif;
+  font-weight:300;
+  font-size:clamp(17px,2.8vw,28px);
+  color:#18130E;
+  letter-spacing:0.16em;
+  line-height:1.8;
+  display:block;
+}
+.phrase .en {
+  font-family:'Fraunces',serif;
+  font-style:italic; font-weight:200;
+  font-size:clamp(11px,1.6vw,14px);
+  color:#18130E;
+  letter-spacing:0.10em;
+  opacity:0.48;
+  margin-top:4px;
+  display:block;
+}
+#phrase4 .jp { color: #E4007F; font-weight:400; font-size:clamp(19px,3.1vw,32px); }
+.phrase.visible { opacity:1; transform:translateY(0); }
+.phrase.gone    { opacity:0; transform:translateY(-10px); }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="copy">
+  <div class="phrase" id="phrase1">
+    <span class="phrase-inner">
+      <span class="jp">違いを、おもしろがろう。</span>
+      <span class="en">Delight in difference.</span>
+    </span>
+  </div>
+  <div class="phrase" id="phrase2">
+    <span class="phrase-inner">
+      <span class="jp">目の前にいるのは、ただひとりの人間。</span>
+      <span class="en">Before any label — a person.</span>
+    </span>
+  </div>
+  <div class="phrase" id="phrase3">
+    <span class="phrase-inner">
+      <span class="jp">文化は、出会うための扉。</span>
+      <span class="en">Culture is a door, not a wall.</span>
+    </span>
+  </div>
+  <div class="phrase" id="phrase4">
+    <span class="phrase-inner">
+      <span class="jp">世界中に、ともだちができる。</span>
+      <span class="en">Friends across every horizon.</span>
+    </span>
+  </div>
+</div>
+
+
+<div id="logo-finale">
+  <div id="logo-card">
+    <div id="logo-img-wrap"><img id="logo-img" alt="るうまな"></div>
+    <div id="logo-fallback"><div id="logo-fallback-card"><span>ロゴ</span></div></div>
+    <div id="logo-jp">るうまな</div>
+    <div id="logo-divider"></div>
+    <div id="logo-en">ru-mana<span id="logo-dot">.</span></div>
+    <div id="logo-tag">異文化の摩擦を、理解へ。</div>
+  </div>
+</div>
+
+<div id="bar"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   FLAG CDN
+   ═══════════════════════════════════════════════════════ */
+const FLAG_CODES = [
+  'jp','us','fr','br','in','kr','de','mx','gb','cn',
+  'au','ca','ng','za','ar','tr','th','se','id','eg',
+  'it','es','pt','nl',
+];
+const CDN = 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/4.1.3/flags/1x1/';
+const FLAG_SZ = 48; // offscreen px
+
+function loadFlag(code) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const oc = document.createElement('canvas');
+      oc.width = oc.height = FLAG_SZ;
+      const oc2 = oc.getContext('2d');
+      oc2.save();
+      oc2.beginPath(); oc2.arc(FLAG_SZ/2,FLAG_SZ/2,FLAG_SZ/2,0,Math.PI*2); oc2.clip();
+      oc2.drawImage(img,0,0,FLAG_SZ,FLAG_SZ);
+      oc2.restore();
+      oc2.beginPath(); oc2.arc(FLAG_SZ/2,FLAG_SZ/2,FLAG_SZ/2-1,0,Math.PI*2);
+      oc2.strokeStyle='rgba(0,0,0,0.12)'; oc2.lineWidth=2; oc2.stroke();
+      resolve(oc);
+    };
+    img.onerror = () => {
+      const oc = document.createElement('canvas');
+      oc.width=oc.height=FLAG_SZ;
+      const oc2=oc.getContext('2d');
+      oc2.fillStyle='#ddd'; oc2.beginPath(); oc2.arc(FLAG_SZ/2,FLAG_SZ/2,FLAG_SZ/2,0,Math.PI*2); oc2.fill();
+      resolve(oc);
+    };
+    img.src = CDN + code + '.svg';
+  });
+}
+
+/* ═══════════════════════════════════════════════════════
+   CANVAS
+   ═══════════════════════════════════════════════════════ */
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+let W, H, CX, CY;
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  CX = W/2; CY = H/2;
+}
+resize();
+window.addEventListener('resize', resize);
+
+/* ═══════════════════════════════════════════════════════
+   SKIN TONES
+   ═══════════════════════════════════════════════════════ */
+const SKINS = [
+  '#FDBCB4','#F1C27D','#E0AC69','#C68642','#8D5524','#FFCBA4','#FFE0BD',
+];
+const CLOTHES_TOP = [
+  '#E4007F','#85C441','#4A90D9','#F5C842','#E05A2B','#7B4EA0','#00897B',
+  '#D32F2F','#1565C0','#F57F17','#558B2F','#AD1457',
+];
+const CLOTHES_BOT = [
+  '#1A237E','#212121','#4E342E','#1B5E20','#37474F','#880E4F',
+  '#0D47A1','#BF360C','#33691E','#263238','#4A148C',
+];
+
+/* ═══════════════════════════════════════════════════════
+   EASING
+   ═══════════════════════════════════════════════════════ */
+function easeOutCubic(t){ return 1-Math.pow(1-t,3); }
+function easeInOutCubic(t){ return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2; }
+function lerp(a,b,t){ return a+(b-a)*t; }
+function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+
+/* ═══════════════════════════════════════════════════════
+   PERSON
+   ═══════════════════════════════════════════════════════ */
+const N = FLAG_CODES.length; // 24 人
+
+class Person {
+  constructor(id, flagCanvas) {
+    this.id       = id;
+    this.flag     = flagCanvas;
+    this.skin     = SKINS[id % SKINS.length];
+    this.topColor = CLOTHES_TOP[id % CLOTHES_TOP.length];
+    this.botColor = CLOTHES_BOT[id % CLOTHES_BOT.length];
+
+    /* 最終的に並ぶ円の角度 */
+    this.finalAngle = (id / N) * Math.PI * 2 - Math.PI / 2;
+
+    /* スタート位置：画面外（四方からランダムに） */
+    const side = id % 4;
+    const margin = 0.15;
+    if (side === 0) { // 上
+      this.sx = (0.1 + Math.random()*0.8) * W;
+      this.sy = -60;
+      this.dir = 'down';
+    } else if (side === 1) { // 下
+      this.sx = (0.1 + Math.random()*0.8) * W;
+      this.sy = H + 60;
+      this.dir = 'up';
+    } else if (side === 2) { // 左
+      this.sx = -60;
+      this.sy = (0.1 + Math.random()*0.8) * H;
+      this.dir = 'right';
+    } else { // 右
+      this.sx = W + 60;
+      this.sy = (0.1 + Math.random()*0.8) * H;
+      this.dir = 'left';
+    }
+
+    this.x = this.sx;
+    this.y = this.sy;
+
+    /* 走りアニメーション */
+    this.runPhase  = Math.random() * Math.PI * 2;
+    this.runSpeed  = 3.2 + Math.random() * 0.8; // rad/s (歩き)
+
+    /* 状態 */
+    this.state     = 'waiting';   // waiting → running → positioning → joined
+    this.startDelay= id * 0.22;   // 順番に登場（歩き間隔）
+    this.opacity   = 0;
+
+    /* 円上の目標位置（後で計算） */
+    this.tx = 0; this.ty = 0;
+    this.circleR   = 0;           // px、resize後に設定
+
+    /* 手をつなぐ進捗 */
+    this.handJoin  = 0;           // 0→1
+  }
+
+  setCircleTarget(r) {
+    this.circleR = r;
+    this.tx = CX + Math.cos(this.finalAngle) * r;
+    this.ty = CY + Math.sin(this.finalAngle) * r;
+  }
+
+  /* スティックフィギュア描画 */
+  draw(t) {
+    if (this.opacity <= 0.01) return;
+    const x = this.x, y = this.y;
+    const sc = Math.min(W, H) * 0.038; // スケール
+    const run = this.state === 'running' || this.state === 'positioning';
+
+    ctx.save();
+    ctx.globalAlpha = this.opacity;
+    ctx.translate(x, y);
+
+    /* 走り方向によって反転 */
+    const dx = this.tx - this.x;
+    if (this.state === 'running' || this.state === 'positioning') {
+      ctx.scale(dx < 0 ? -1 : 1, 1);
+    } else {
+      /* joined: 円の接線方向（時計回り）に向く */
+      const tangentAngle = this.finalAngle + Math.PI / 2;
+      // 右半分は右向き、左半分は左向き
+      ctx.scale(Math.cos(this.finalAngle) >= 0 ? 1 : -1, 1);
+    }
+
+    const rp  = this.runPhase + t * (run ? this.runSpeed : 1.2);
+    const leg = run ? Math.sin(rp) * 0.50 : Math.sin(rp*0.6) * 0.12;
+    const arm = run ? Math.sin(rp + Math.PI*0.5) * 0.52 : Math.sin(rp*0.6+1) * 0.18;
+    const bob = run ? Math.abs(Math.sin(rp)) * 0.08 : 0.01;
+
+    const lw = sc * 0.10; // line width
+
+    /* 旗の丸（頭の上に浮かぶ） */
+    const flagR = sc * 0.42;
+    ctx.drawImage(this.flag,
+      -flagR, -sc * 2.1 - flagR * 2,
+      flagR*2, flagR*2);
+
+    /* 細い旗ポール */
+    ctx.beginPath();
+    ctx.moveTo(flagR * 0.0, -sc * 2.1);
+    ctx.lineTo(flagR * 0.0, -sc * 1.55);
+    ctx.strokeStyle = 'rgba(80,60,40,0.55)';
+    ctx.lineWidth   = lw * 0.5;
+    ctx.stroke();
+
+    /* 頭 */
+    ctx.beginPath();
+    ctx.arc(0, -sc*(1.35-bob), sc*0.22, 0, Math.PI*2);
+    ctx.fillStyle = this.skin;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+    ctx.lineWidth   = lw*0.4;
+    ctx.stroke();
+
+    /* 胴体（上着） */
+    ctx.beginPath();
+    ctx.moveTo(0, -sc*(1.12-bob));
+    ctx.lineTo(0, -sc*(0.52-bob));
+    ctx.strokeStyle = this.topColor;
+    ctx.lineWidth   = lw * 1.6;
+    ctx.lineCap     = 'round';
+    ctx.stroke();
+
+    /* 左脚 */
+    ctx.beginPath();
+    ctx.moveTo(0, -sc*(0.52-bob));
+    ctx.lineTo(-sc*0.32 + sc*0.32*Math.sin(-leg), sc*0.28 - bob*sc);
+    ctx.strokeStyle = this.botColor;
+    ctx.lineWidth   = lw * 1.1;
+    ctx.stroke();
+
+    /* 右脚 */
+    ctx.beginPath();
+    ctx.moveTo(0, -sc*(0.52-bob));
+    ctx.lineTo( sc*0.32 + sc*0.32*Math.sin(leg), sc*0.28 - bob*sc);
+    ctx.strokeStyle = this.botColor;
+    ctx.lineWidth   = lw * 1.1;
+    ctx.stroke();
+
+    /* 左腕 */
+    ctx.beginPath();
+    ctx.moveTo(0, -sc*(0.98-bob));
+    ctx.lineTo(-sc*0.46 - sc*0.22*Math.sin(arm), -sc*(0.68-bob) + sc*0.18*Math.sin(arm));
+    ctx.strokeStyle = this.topColor;
+    ctx.lineWidth   = lw;
+    ctx.stroke();
+
+    /* 右腕 */
+    ctx.beginPath();
+    ctx.moveTo(0, -sc*(0.98-bob));
+    ctx.lineTo( sc*0.46 + sc*0.22*Math.sin(arm), -sc*(0.68-bob) + sc*0.18*Math.sin(arm));
+    ctx.strokeStyle = this.topColor;
+    ctx.lineWidth   = lw;
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  /* 手の位置を返す（円のとき）: left=隣へ伸ばす左手, right=右手 */
+  handPos(side, sc) {
+    const r = this.circleR;
+    // tangent 方向の単位ベクトル
+    const tx = -Math.sin(this.finalAngle);
+    const ty  =  Math.cos(this.finalAngle);
+    const reach = sc * 0.38;
+    if (side === 'left') {
+      return { x: this.x - tx*reach, y: this.y - ty*reach };
+    } else {
+      return { x: this.x + tx*reach, y: this.y + ty*reach };
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   TIMING CONSTANTS（ここだけ変えれば全体が揃う）
+   ═══════════════════════════════════════════════════════ */
+const T = {
+  // Phase1: 歩き込み
+  WALK_INTERVAL : 0.22,   // 1人ずつ登場する間隔(s)
+  WALK_LERP     : 0.65,   // 移動の lerp 係数
+  // Phase2: 整列
+  ALIGN_DUR     : 2.5,    // 整列フェーズの最大秒数
+  ALIGN_LERP    : 1.6,
+  // Phase3: 手つなぎ
+  HAND_DUR      : 3.2,    // 手つなぎにかかる秒数
+  // ロゴ表示遅延
+  LOGO_DELAY_MS : 500,
+  // コピーテキスト（各フレーズの表示・消去をphaseとオフセットで定義）
+  // { phase開始後の表示秒, 表示継続秒 }
+  COPY: [
+    { showAfter: 0.8,  dur: 4.5 },  // phrase1: Phase1 開始直後
+    { showAfter: 5.5,  dur: 4.5 },  // phrase2: 半分くらい集まった頃
+    { showAfter: 11.0, dur: 4.0 },  // phrase3: Phase2（整列）中
+    { showAfter: 15.5, dur: 3.5 },  // phrase4: Phase3（手つなぎ）中
+  ],
+};
+
+/* ═══════════════════════════════════════════════════════
+   GLOBAL STATE
+   ═══════════════════════════════════════════════════════ */
+let people = [];
+let globalT = 0;       // Phase1開始からの経過時間
+let lastTime = 0;
+let finaleStarted = false;
+let phase     = 0;     // 0=loading 1=walking 2=aligning 3=handjoining 4=logo
+let phaseT    = 0;     // 現在のphase内経過時間
+let phaseStamps = {};  // phase番号 → globalT でのスタンプ
+let handJoinProgress = 0;
+
+const CIRCLE_RATIO = 0.28;
+function getCircleR() { return Math.min(W, H) * CIRCLE_RATIO; }
+
+/* Phase移行 — スタンプを記録する */
+function setPhase(n) {
+  phase  = n;
+  phaseT = 0;
+  phaseStamps[n] = globalT;
+}
+
+/* ═══════════════════════════════════════════════════════
+   BACKGROUND
+   ═══════════════════════════════════════════════════════ */
+function drawBg() {
+  ctx.fillStyle = '#FBF7EE';
+  ctx.fillRect(0, 0, W, H);
+
+  /* 薄い放射グラデ */
+  const grd = ctx.createRadialGradient(CX,CY,0,CX,CY,Math.min(W,H)*0.55);
+  grd.addColorStop(0,  'rgba(255,245,210,0.65)');
+  grd.addColorStop(0.6,'rgba(133,196,65,0.04)');
+  grd.addColorStop(1,  'rgba(251,247,238,0)');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0,0,W,H);
+}
+
+/* ═══════════════════════════════════════════════════════
+   HAND-HOLDING LINES
+   ═══════════════════════════════════════════════════════ */
+function drawHands(progress) {
+  if (progress <= 0 || people.length === 0) return;
+  const sc = Math.min(W,H)*0.038;
+
+  /* 手をつなぐ順番：id=0 → 1 → 2 … → N-1 → 0 (閉じる) */
+  const totalEdges = N;
+  const edgeProg   = progress * totalEdges; // 何本目まで伸びているか
+
+  for (let i = 0; i < N; i++) {
+    const p = people[i];
+    const q = people[(i + 1) % N];
+    if (p.state !== 'joined' && p.state !== 'positioning') continue;
+    if (q.state !== 'joined' && q.state !== 'positioning') continue;
+
+    const t = clamp(edgeProg - i, 0, 1);
+    if (t <= 0) continue;
+
+    const sc2 = Math.min(W,H)*0.038;
+    const reach = sc2 * 0.38;
+
+    // p の右手
+    const pAngle = p.finalAngle;
+    const pTx = -Math.sin(pAngle), pTy = Math.cos(pAngle);
+    const px = p.x + pTx * reach;
+    const py = p.y + pTy * reach;
+
+    // q の左手
+    const qAngle = q.finalAngle;
+    const qTx = -Math.sin(qAngle), qTy = Math.cos(qAngle);
+    const qx = q.x - qTx * reach;
+    const qy = q.y - qTy * reach;
+
+    // t=0→1 で線を伸ばす
+    const ex = lerp(px, qx, t);
+    const ey = lerp(py, qy, t);
+
+    ctx.save();
+    ctx.globalAlpha = 0.85;
+    const grd = ctx.createLinearGradient(px, py, ex, ey);
+    grd.addColorStop(0, p.skin);
+    grd.addColorStop(1, q.skin);
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    ctx.lineTo(ex, ey);
+    ctx.strokeStyle = grd;
+    ctx.lineWidth   = sc2 * 0.09;
+    ctx.lineCap     = 'round';
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   MAIN LOOP
+   ═══════════════════════════════════════════════════════ */
+function tick(ts) {
+  requestAnimationFrame(tick);
+  const dt = Math.min((ts - lastTime) / 1000, 0.05);
+  lastTime = ts;
+  if (phase === 0) return;
+
+  globalT += dt;
+  phaseT  += dt;
+
+  /* ── Phase 1: 歩き込み ── */
+  if (phase === 1) {
+    people.forEach(p => {
+      const t = globalT - p.startDelay;
+      if (t < 0) return;
+      if (p.state === 'waiting') { p.state = 'running'; p.opacity = 0; }
+      p.opacity = clamp(p.opacity + dt * 3.5, 0, 1);
+
+      /* 目標：円外縁の1.35倍 */
+      const interim = {
+        x: CX + Math.cos(p.finalAngle) * getCircleR() * 1.35,
+        y: CY + Math.sin(p.finalAngle) * getCircleR() * 1.35,
+      };
+      p.x = lerp(p.x, interim.x, dt * T.WALK_LERP);
+      p.y = lerp(p.y, interim.y, dt * T.WALK_LERP);
+
+      if (Math.hypot(p.x - interim.x, p.y - interim.y) < 8 && p.state === 'running') {
+        p.state = 'positioning';
+        p.setCircleTarget(getCircleR());
+      }
+    });
+
+    /* 全員が到着 OR 最後の人のdelay+余裕で移行 */
+    const lastDelay = (N - 1) * T.WALK_INTERVAL;
+    const allIn = people.every(p => p.state !== 'waiting' && p.state !== 'running');
+    if (allIn || phaseT > lastDelay + 5.5) { setPhase(2); }
+  }
+
+  /* ── Phase 2: 円形に整列 ── */
+  else if (phase === 2) {
+    let allClose = true;
+    people.forEach(p => {
+      p.setCircleTarget(getCircleR());
+      p.x = lerp(p.x, p.tx, dt * T.ALIGN_LERP);
+      p.y = lerp(p.y, p.ty, dt * T.ALIGN_LERP);
+      if (Math.hypot(p.x - p.tx, p.y - p.ty) < 4) p.state = 'joined';
+      else allClose = false;
+    });
+    if (allClose || phaseT > T.ALIGN_DUR) { setPhase(3); }
+  }
+
+  /* ── Phase 3: 手をつなぐ ── */
+  else if (phase === 3) {
+    people.forEach(p => {
+      p.setCircleTarget(getCircleR());
+      p.x = lerp(p.x, p.tx, dt * 4);
+      p.y = lerp(p.y, p.ty, dt * 4);
+      p.state = 'joined';
+    });
+    /* T.HAND_DUR 秒かけて 0→1 */
+    handJoinProgress = clamp(phaseT / T.HAND_DUR, 0, 1);
+    if (handJoinProgress >= 1 && !finaleStarted) {
+      finaleStarted = true;
+      setPhase(4);
+      setTimeout(startFinale, T.LOGO_DELAY_MS);
+    }
+  }
+
+  /* ── Phase 4: ロゴ表示中、人たちは静止 ── */
+  else if (phase === 4) {
+    people.forEach(p => {
+      p.setCircleTarget(getCircleR());
+      p.x = lerp(p.x, p.tx, dt * 2);
+      p.y = lerp(p.y, p.ty, dt * 2);
+      p.state = 'joined';
+    });
+  }
+
+  /* ── 描画 ── */
+  drawBg();
+  drawHands(handJoinProgress);
+  [...people].sort((a, b) => a.y - b.y).forEach(p => p.draw(globalT));
+
+  /* プログレスバー — 全体尺を逆算 */
+  const totalEst = (N - 1) * T.WALK_INTERVAL + 6.5 + T.ALIGN_DUR + T.HAND_DUR + 2.5;
+  document.getElementById('bar').style.width = clamp(globalT / totalEst * 100, 0, 100) + '%';
+}
+requestAnimationFrame(t => { lastTime = t; tick(t); });
+
+/* ═══════════════════════════════════════════════════════
+   LOAD & START
+   ═══════════════════════════════════════════════════════ */
+Promise.all(FLAG_CODES.map(loadFlag)).then(flags => {
+  people = flags.map((f, i) => new Person(i, f));
+  people.forEach(p => p.setCircleTarget(getCircleR()));
+  setPhase(1);
+  scheduleCopy();
+});
+
+
+/* ═══════════════════════════════════════════════════════
+   COPY TIMING — phaseスタンプ基準で同期
+   各フレーズは T.COPY[i] の設定に従い globalT で制御。
+   phaseStamps[1] が記録された瞬間を t=0 とする。
+   ─────────────────────────────────────────────────────
+   フレーズ設計（Phase1開始からのオフセット）:
+     phrase1: Phase1開始 +0.8s → 歩き始めの第一声
+     phrase2: Phase1開始 +6.0s → 続々と入ってくる中盤
+     phrase3: Phase2開始 +0.3s → 整列し始めたタイミング
+     phrase4: Phase3開始 +0.3s → 手をつなぎ始めたタイミング
+   ═══════════════════════════════════════════════════════ */
+
+/* phrase3・4 は phase2・3 スタンプ基準なのでコールバック形式で管理 */
+let copyScheduled = false;
+
+function scheduleCopy() {
+  if (copyScheduled) return;
+  copyScheduled = true;
+
+  /* phrase1・2 は globalT ベース（Phase1開始 = globalT≈0 ） */
+  function showEl(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('gone');
+    el.classList.add('visible');
+  }
+  function hideEl(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('visible');
+    el.classList.add('gone');
+  }
+
+  /* phase移行を待ってコールバック */
+  function waitPhase(n, cb) {
+    if (phaseStamps[n] !== undefined) { cb(); return; }
+    requestAnimationFrame(() => waitPhase(n, cb));
+  }
+
+  /* phrase1: Phase1開始 +0.8s 〜 5.5s */
+  setTimeout(() => showEl('phrase1'),  800);
+  setTimeout(() => hideEl('phrase1'), 5500);
+
+  /* phrase2: Phase1開始 +6.5s → Phase2開始直後に消す */
+  setTimeout(() => showEl('phrase2'), 6500);
+  waitPhase(2, () => {
+    setTimeout(() => hideEl('phrase2'), 300);
+  });
+
+  /* phrase3: Phase2開始 +0.5s 〜 整列完了直前 */
+  waitPhase(2, () => {
+    setTimeout(() => showEl('phrase3'),  500);
+    setTimeout(() => hideEl('phrase3'),  500 + T.ALIGN_DUR * 1000 - 800);
+  });
+
+  /* phrase4: Phase3開始 +0.5s 〜 手つなぎ完了直前 */
+  waitPhase(3, () => {
+    setTimeout(() => showEl('phrase4'),  500);
+    setTimeout(() => hideEl('phrase4'),  500 + T.HAND_DUR * 1000 - 800);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════
+   FINALE: ロゴ フェードイン
+   ═══════════════════════════════════════════════════════ */
+function startFinale() {
+  const fin      = document.getElementById('logo-finale');
+  const imgWrap  = document.getElementById('logo-img-wrap');
+  const imgEl    = document.getElementById('logo-img');
+  const fallback = document.getElementById('logo-fallback');
+  const jp       = document.getElementById('logo-jp');
+  const en       = document.getElementById('logo-en');
+  const dot      = document.getElementById('logo-dot');
+  const tag      = document.getElementById('logo-tag');
+
+  /* logo.png を試みる */
+  const testImg = new Image();
+  testImg.onload = () => {
+    imgEl.src = 'logo.png';
+    imgWrap.style.display = 'block';
+    fallback.style.display = 'none';
+    revealFinale(fin, imgWrap, jp, en, dot, tag);
+  };
+  testImg.onerror = () => {
+    imgWrap.style.display = 'none';
+    fallback.style.display = 'flex';
+    revealFinale(fin, fallback, jp, en, dot, tag);
+  };
+  testImg.src = 'logo.png';
+}
+
+function revealFinale(fin, logoEl, jp, en, dot, tag) {
+  const ease    = 'cubic-bezier(.22,1,.36,1)';
+  const popEase = 'cubic-bezier(.36,1.56,.64,1)';
+  const card    = document.getElementById('logo-card');
+  const divider = document.getElementById('logo-divider');
+
+  /* finale コンテナを表示（背景幕はここで） */
+  fin.style.transition = 'opacity 0.5s ease';
+  fin.style.opacity    = '1';
+
+  /* ① カード全体がポンと出る */
+  setTimeout(() => {
+    card.style.transition = `opacity 0.55s ease, transform 0.55s ${ease}`;
+    card.style.opacity    = '1';
+    card.style.transform  = 'scale(1) translateY(0)';
+  }, 80);
+
+  /* ② ロゴ画像 or フォールバック */
+  logoEl.style.opacity   = '0';
+  logoEl.style.transform = 'scale(0.75)';
+  setTimeout(() => {
+    logoEl.style.transition = `opacity 0.5s ease, transform 0.5s ${ease}`;
+    logoEl.style.opacity    = '1';
+    logoEl.style.transform  = 'scale(1)';
+  }, 300);
+
+  /* ③ るうまな */
+  setTimeout(() => {
+    jp.style.transition = `opacity 0.55s ease, transform 0.55s ${ease}`;
+    jp.style.opacity    = '1';
+    jp.style.transform  = 'translateY(0)';
+  }, 480);
+
+  /* ④ 区切り線が横に伸びる */
+  setTimeout(() => {
+    divider.style.transition = 'width 0.5s ease, opacity 0.4s ease';
+    divider.style.opacity    = '1';
+    divider.style.width      = '80%';
+  }, 650);
+
+  /* ⑤ ru-mana */
+  setTimeout(() => {
+    en.style.transition = `opacity 0.5s ease, transform 0.5s ${ease}`;
+    en.style.opacity    = '1';
+    en.style.transform  = 'translateY(0)';
+  }, 750);
+
+  /* ⑥ ドット pop */
+  setTimeout(() => {
+    dot.style.transition = `transform 0.4s ${popEase}`;
+    dot.style.transform  = 'scale(1)';
+  }, 980);
+
+  /* ⑦ タグライン */
+  setTimeout(() => {
+    tag.style.transition = 'opacity 0.5s ease';
+    tag.style.opacity    = '1';
+  }, 1100);
+}
+
+document.body.addEventListener('click', () => location.reload());
+</script>
+</body>
+</html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>るうまな — Intro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400&family=DM+Serif+Display:ital@0;1&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --ivory:   #F9F5E7;
+    --cream:   #FDFCF9;
+    --green:   #85C441;
+    --pink:    #E4007F;
+    --ink:     #1A1612;
+    --mist:    rgba(249,245,231,0.18);
+    --dur:     10s; /* total timeline */
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: var(--ink);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+  }
+
+  /* ─── STAGE ─────────────────────────────────────────── */
+  #stage {
+    position: relative;
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ─── BACKGROUND PAPER ───────────────────────────────── */
+  #bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 70% at 50% 45%,
+      #F5EDD0 0%, #EDE0C0 40%, #C8B98A 100%);
+    opacity: 0;
+    animation: bgReveal 1.2s 0.3s cubic-bezier(.22,1,.36,1) forwards;
+  }
+  @keyframes bgReveal { to { opacity: 1; } }
+
+  /* Washi texture overlay */
+  #bg::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  /* ─── INK BRUSHSTROKE (SVG) ──────────────────────────── */
+  #brush-wrap {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+  }
+  #brush-svg {
+    width: min(680px, 90vw);
+    opacity: 0;
+    transform: scaleX(0.1) rotate(-2deg);
+    transform-origin: left center;
+    animation: brushStroke 0.9s 0.8s cubic-bezier(.16,1,.3,1) forwards;
+  }
+  @keyframes brushStroke {
+    to { opacity: 0.13; transform: scaleX(1) rotate(-2deg); }
+  }
+
+  /* ─── TORII SILHOUETTE ───────────────────────────────── */
+  #torii {
+    position: absolute;
+    bottom: 0; right: 6%;
+    width: min(220px, 28vw);
+    opacity: 0;
+    transform: translateY(30px);
+    animation: toriiRise 1.4s 0.6s cubic-bezier(.22,1,.36,1) forwards;
+    filter: drop-shadow(0 -4px 24px rgba(228,0,127,0.18));
+  }
+  @keyframes toriiRise { to { opacity: 1; transform: translateY(0); } }
+
+  /* Torii fade out before end */
+  #torii { animation:
+    toriiRise 1.4s 0.6s cubic-bezier(.22,1,.36,1) forwards,
+    toriiOut  0.8s 8.8s ease-in forwards;
+  }
+  @keyframes toriiOut { to { opacity: 0; transform: translateY(-10px); } }
+
+  /* ─── FLOATING CULTURE CARDS ─────────────────────────── */
+  .c-card {
+    position: absolute;
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.8);
+    border-radius: 18px;
+    padding: 10px 14px;
+    font-size: clamp(9px, 1.4vw, 12px);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    color: var(--ink);
+    opacity: 0;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    pointer-events: none;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .c-card .icon { font-size: 1.6em; line-height: 1; }
+  .c-card .label { font-weight: 300; line-height: 1.3; }
+  .c-card .label span { display: block; font-size: 0.85em; opacity: 0.6; }
+
+  /* individual card positions & timings */
+  #card1 { top: 12%; left: 4%;  animation: cardFloat1 0.7s 1.4s ease-out forwards, cardBob 4s 2.1s ease-in-out infinite alternate; }
+  #card2 { top: 22%; right: 4%; animation: cardFloat1 0.7s 1.7s ease-out forwards, cardBob 5s 2.4s ease-in-out infinite alternate; }
+  #card3 { bottom: 24%; left: 6%;animation: cardFloat1 0.7s 2.0s ease-out forwards, cardBob 4.5s 2.7s ease-in-out infinite alternate; }
+  #card4 { top: 62%; right: 8%; animation: cardFloat1 0.7s 2.2s ease-out forwards, cardBob 3.8s 2.9s ease-in-out infinite alternate; }
+
+  @keyframes cardFloat1 { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes cardBob    { from{transform:translateY(0)} to{transform:translateY(-6px)} }
+
+  /* cards fade before end */
+  #card1,#card2,#card3,#card4 {
+    animation:
+      cardFloat1 0.7s var(--d, 1.4s) ease-out forwards,
+      cardBob    4s   calc(var(--d, 1.4s) + 0.7s) ease-in-out infinite alternate,
+      cardOut    0.6s 8.6s ease-in forwards;
+  }
+  #card1 { --d:1.4s }
+  #card2 { --d:1.7s }
+  #card3 { --d:2.0s }
+  #card4 { --d:2.2s }
+  @keyframes cardOut { to { opacity:0; transform:translateY(-8px) } }
+
+  /* ─── PARTICLE DOTS ──────────────────────────────────── */
+  #particles {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleFade var(--pd,3s) var(--pd2,1s) ease-in-out infinite;
+  }
+  @keyframes particleFade {
+    0%   { opacity:0; transform:translateY(0) scale(1); }
+    50%  { opacity:0.7; }
+    100% { opacity:0; transform:translateY(-40px) scale(0.5); }
+  }
+
+  /* ─── CENTER LOGO BLOCK ──────────────────────────────── */
+  #logo-block {
+    position: relative; z-index: 10;
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 0;
+  }
+
+  /* EN wordmark */
+  #wordmark-en {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: clamp(52px, 10vw, 96px);
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    opacity: 0;
+    transform: translateY(28px) scale(0.94);
+    animation: wordIn 1.1s 1.0s cubic-bezier(.16,1,.3,1) forwards;
+  }
+  /* accent dot */
+  #wordmark-en span {
+    color: var(--pink);
+    display: inline-block;
+    animation: dotPop 0.5s 2.2s cubic-bezier(.36,1.56,.64,1) forwards;
+    transform: scale(0);
+  }
+  @keyframes dotPop { from{transform:scale(0)} to{transform:scale(1)} }
+
+  /* JP wordmark */
+  #wordmark-jp {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 300;
+    font-size: clamp(14px, 2.8vw, 22px);
+    color: var(--ink);
+    letter-spacing: 0.36em;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: wordIn 1s 1.4s cubic-bezier(.22,1,.36,1) forwards;
+    margin-top: 4px;
+  }
+
+  @keyframes wordIn {
+    to { opacity:1; transform:translateY(0) scale(1); }
+  }
+
+  /* tagline */
+  #tagline {
+    margin-top: 24px;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 300;
+    font-size: clamp(10px, 1.8vw, 14px);
+    color: var(--ink);
+    letter-spacing: 0.12em;
+    opacity: 0;
+    max-width: 340px;
+    line-height: 1.8;
+    animation: tagIn 1s 2.0s cubic-bezier(.22,1,.36,1) forwards;
+  }
+  @keyframes tagIn { to { opacity:0.62; } }
+
+  /* ─── CATEGORY PILL STRIP ────────────────────────────── */
+  #pill-strip {
+    position: absolute;
+    bottom: 9%;
+    left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px;
+    opacity: 0;
+    animation: pillsIn 0.8s 2.6s cubic-bezier(.22,1,.36,1) forwards;
+    white-space: nowrap;
+  }
+  @keyframes pillsIn { to { opacity:1; } }
+
+  .pill {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: clamp(9px, 1.3vw, 11px);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    border: 1.5px solid;
+    opacity: 0;
+    transform: translateY(10px) scale(0.92);
+  }
+
+  /* pill staggered entrance */
+  .pill:nth-child(1){ animation: pillPop 0.5s 2.7s cubic-bezier(.36,1.2,.64,1) forwards; }
+  .pill:nth-child(2){ animation: pillPop 0.5s 2.85s cubic-bezier(.36,1.2,.64,1) forwards; }
+  .pill:nth-child(3){ animation: pillPop 0.5s 3.0s cubic-bezier(.36,1.2,.64,1) forwards; }
+  .pill:nth-child(4){ animation: pillPop 0.5s 3.15s cubic-bezier(.36,1.2,.64,1) forwards; }
+  .pill:nth-child(5){ animation: pillPop 0.5s 3.3s cubic-bezier(.36,1.2,.64,1) forwards; }
+  .pill:nth-child(6){ animation: pillPop 0.5s 3.45s cubic-bezier(.36,1.2,.64,1) forwards; }
+  .pill:nth-child(7){ animation: pillPop 0.5s 3.6s cubic-bezier(.36,1.2,.64,1) forwards; }
+  .pill:nth-child(8){ animation: pillPop 0.5s 3.75s cubic-bezier(.36,1.2,.64,1) forwards; }
+  @keyframes pillPop {
+    to { opacity:1; transform:translateY(0) scale(1); }
+  }
+
+  /* pill colors */
+  .pill.transport  { background:rgba(59,130,246,.12); color:#2563EB; border-color:#93C5FD; }
+  .pill.public     { background:rgba(168,85,247,.12); color:#7C3AED; border-color:#C4B5FD; }
+  .pill.spa        { background:rgba(20,184,166,.12); color:#0F766E; border-color:#5EEAD4; }
+  .pill.cafe       { background:rgba(245,158,11,.12); color:#B45309; border-color:#FCD34D; }
+  .pill.shopping   { background:rgba(236,72,153,.12); color:#BE185D; border-color:#F9A8D4; }
+  .pill.hotel      { background:rgba(132,204,22,.12); color:#4D7C0F; border-color:#BEF264; }
+  .pill.culture    { background:rgba(239,68,68,.12);  color:#B91C1C; border-color:#FCA5A5; }
+  .pill.trash      { background:rgba(34,197,94,.12);  color:#15803D; border-color:#86EFAC; }
+
+  /* pills fade out before finale */
+  #pill-strip { animation:
+    pillsIn 0.8s 2.6s cubic-bezier(.22,1,.36,1) forwards,
+    pillsOut 0.6s 8.5s ease-in forwards;
+  }
+  @keyframes pillsOut { to{opacity:0;transform:translateX(-50%) translateY(8px)} }
+
+  /* ─── DIVIDER LINE ───────────────────────────────────── */
+  #divider {
+    width: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--ink), transparent);
+    margin: 18px auto 0;
+    opacity: 0.2;
+    animation: lineGrow 1s 1.8s ease-out forwards;
+  }
+  @keyframes lineGrow { to { width: 220px; } }
+
+  /* ─── FINALE: FULL SCREEN HANDOFF ───────────────────── */
+  #finale {
+    position: absolute; inset: 0;
+    background: var(--green);
+    display: flex; flex-direction:column; align-items:center; justify-content:center; gap: 12px;
+    opacity: 0;
+    pointer-events: none;
+    animation: finaleIn 0.8s 9.2s cubic-bezier(.22,1,.36,1) forwards;
+  }
+  @keyframes finaleIn { to { opacity:1; } }
+
+  #finale-logo {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: clamp(48px, 9vw, 88px);
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    opacity: 0;
+    transform: scale(0.88);
+    animation: finaleLogoIn 0.6s 9.5s cubic-bezier(.36,1.2,.64,1) forwards;
+  }
+  @keyframes finaleLogoIn { to{opacity:1;transform:scale(1)} }
+
+  #finale-sub {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 300;
+    font-size: clamp(11px, 2vw, 16px);
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.3em;
+    opacity: 0;
+    animation: finaleLogoIn 0.6s 9.7s ease-out forwards;
+  }
+
+  /* ─── PROGRESS BAR ───────────────────────────────────── */
+  #progress {
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--green), var(--pink));
+    width: 0%;
+    animation: progressFill 10s linear forwards;
+    opacity: 0.7;
+    z-index: 100;
+  }
+  @keyframes progressFill { to { width: 100%; } }
+
+  /* ─── CONNECTING LINES (SVG) ─────────────────────────── */
+  #lines-svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    animation: linesIn 1s 2.5s ease-out forwards,
+               linesOut 0.6s 8.5s ease-in forwards;
+  }
+  @keyframes linesIn  { to { opacity: 0.18; } }
+  @keyframes linesOut { to { opacity: 0; } }
+
+</style>
+</head>
+<body>
+
+<div id="stage">
+
+  <!-- Background paper -->
+  <div id="bg"></div>
+
+  <!-- Ink brushstroke SVG -->
+  <div id="brush-wrap">
+    <svg id="brush-svg" viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20,100 C80,60 160,140 260,90 C360,40 440,130 560,95 C620,78 650,102 665,100"
+        stroke="#1A1612" stroke-width="52" stroke-linecap="round" stroke-linejoin="round"
+        fill="none" opacity="0.8"/>
+      <path d="M20,108 C90,72 155,148 258,98 C362,48 438,138 558,100 C618,84 648,106 663,104"
+        stroke="#1A1612" stroke-width="18" stroke-linecap="round"
+        fill="none" opacity="0.3"/>
+    </svg>
+  </div>
+
+  <!-- Connecting lines SVG -->
+  <svg id="lines-svg" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="15" y1="18" x2="50" y2="50" stroke="#1A1612" stroke-width="0.3"/>
+    <line x1="85" y1="26" x2="50" y2="50" stroke="#1A1612" stroke-width="0.3"/>
+    <line x1="10" y1="72" x2="50" y2="50" stroke="#1A1612" stroke-width="0.3"/>
+    <line x1="82" y1="66" x2="50" y2="50" stroke="#1A1612" stroke-width="0.3"/>
+  </svg>
+
+  <!-- Torii gate silhouette -->
+  <svg id="torii" viewBox="0 0 220 340" xmlns="http://www.w3.org/2000/svg">
+    <!-- columns -->
+    <rect x="46" y="90" width="18" height="250" fill="#C8003A" rx="2"/>
+    <rect x="156" y="90" width="18" height="250" fill="#C8003A" rx="2"/>
+    <!-- top kasagi (main) -->
+    <path d="M10,52 C10,48 22,38 110,32 C198,26 210,42 210,46 L210,66 C210,70 198,62 110,68 C22,74 10,68 10,66 Z" fill="#C8003A"/>
+    <!-- second beam (nuki) -->
+    <rect x="40" y="100" width="140" height="14" fill="#C8003A" rx="2"/>
+    <!-- shine -->
+    <rect x="10" y="52" width="200" height="5" fill="rgba(255,255,255,0.15)" rx="2"/>
+  </svg>
+
+  <!-- Floating culture cards -->
+  <div class="c-card" id="card1">
+    <div class="icon">🚃</div>
+    <div class="label">電車の中では静かに<span>Be quiet on trains</span></div>
+  </div>
+
+  <div class="c-card" id="card2">
+    <div class="icon">♨️</div>
+    <div class="label">入浴前にかけ湯を<span>Rinse before entering onsen</span></div>
+  </div>
+
+  <div class="c-card" id="card3">
+    <div class="icon">🍱</div>
+    <div class="label">お通しは文化です<span>Otōshi is a cultural custom</span></div>
+  </div>
+
+  <div class="c-card" id="card4">
+    <div class="icon">🗑️</div>
+    <div class="label">ゴミは持ち帰ろう<span>Take your trash with you</span></div>
+  </div>
+
+  <!-- Particles -->
+  <div id="particles"></div>
+
+  <!-- Center logo -->
+  <div id="logo-block">
+    <div id="wordmark-en">ru-mana<span>.</span></div>
+    <div id="wordmark-jp">る う ま な</div>
+    <div id="divider"></div>
+    <div id="tagline">
+      異文化の摩擦を、理解へ。<br>
+      <span style="font-size:0.85em;opacity:0.8;letter-spacing:0.08em">Turning cultural friction into connection.</span>
+    </div>
+  </div>
+
+  <!-- Category pill strip -->
+  <div id="pill-strip">
+    <div class="pill transport">🚃 交通</div>
+    <div class="pill public">🏛️ 公共</div>
+    <div class="pill spa">♨️ 温泉</div>
+    <div class="pill cafe">🍣 食事</div>
+    <div class="pill shopping">🛍️ 買い物</div>
+    <div class="pill hotel">🏯 宿泊</div>
+    <div class="pill culture">⛩️ 参拝</div>
+    <div class="pill trash">🗑️ ゴミ</div>
+  </div>
+
+  <!-- Finale overlay -->
+  <div id="finale">
+    <div id="finale-logo">ru-mana<span style="color:#FFD600">.</span></div>
+    <div id="finale-sub">る う ま な</div>
+  </div>
+
+  <!-- Progress bar -->
+  <div id="progress"></div>
+
+</div>
+
+<script>
+// ─── Particle generator ───────────────────────────────────────────────────────
+(function spawnParticles() {
+  const container = document.getElementById('particles');
+  const colors = ['#85C441','#E4007F','#F59E0B','#3B82F6','#1A1612'];
+  const count = 28;
+
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div');
+    el.className = 'particle';
+
+    const size = 3 + Math.random() * 5;
+    const x    = 5 + Math.random() * 90;
+    const y    = 10 + Math.random() * 80;
+    const dur  = 2.5 + Math.random() * 3.5;
+    const del  = 1.2 + Math.random() * 5;
+    const col  = colors[Math.floor(Math.random() * colors.length)];
+
+    el.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${x}%; top:${y}%;
+      background:${col};
+      --pd:${dur}s; --pd2:${del}s;
+      opacity:0;
+    `;
+    container.appendChild(el);
+  }
+})();
+
+// ─── Replay on click (for demo) ───────────────────────────────────────────────
+document.getElementById('stage').addEventListener('click', function() {
+  const el = document.documentElement;
+  const clone = document.createElementNS
+    ? null : null; // just reload
+  location.reload();
+});
+</script>
+</body>
+</html>

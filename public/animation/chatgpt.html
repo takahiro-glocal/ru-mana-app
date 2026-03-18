@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>るうまな | Intro Animation</title>
+  <style>
+    :root {
+      --bg: #fdfcf9;
+      --bg-soft: #f9f5e7;
+      --text: #21312b;
+      --muted: #66756d;
+      --green: #85c441;
+      --pink: #e4007f;
+      --glass: rgba(255,255,255,0.52);
+      --glass-strong: rgba(255,255,255,0.72);
+      --line: rgba(60, 80, 72, 0.12);
+      --shadow: 0 20px 60px rgba(69, 76, 55, 0.10);
+      --shadow-soft: 0 10px 30px rgba(69, 76, 55, 0.08);
+      --c1: #9ac7ff;
+      --c2: #8fd3a8;
+      --c3: #9ad6cf;
+      --c4: #f0b37a;
+      --c5: #d4b4ff;
+      --c6: #f2be80;
+      --c7: #e7a7c7;
+      --c8: #96b8ff;
+      --duration: 10s;
+      --ease: cubic-bezier(.22,.8,.17,1);
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(228, 0, 127, 0.09), transparent 28%),
+        radial-gradient(circle at 85% 18%, rgba(133, 196, 65, 0.12), transparent 32%),
+        radial-gradient(circle at 50% 85%, rgba(255, 196, 0, 0.08), transparent 30%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: absolute;
+      inset: auto;
+      width: 42vw;
+      height: 42vw;
+      filter: blur(80px);
+      border-radius: 999px;
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+      animation: floatGlow 9s ease-in-out infinite alternate;
+    }
+
+    body::before {
+      top: -10vw;
+      left: -6vw;
+      background: rgba(133, 196, 65, 0.18);
+    }
+
+    body::after {
+      bottom: -12vw;
+      right: -8vw;
+      background: rgba(228, 0, 127, 0.12);
+      animation-delay: -3s;
+    }
+
+    .film-grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.06;
+      z-index: 30;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(0,0,0,.9) 0.5px, transparent 0.7px),
+        radial-gradient(circle at 80% 40%, rgba(0,0,0,.9) 0.6px, transparent 0.8px),
+        radial-gradient(circle at 40% 80%, rgba(0,0,0,.8) 0.4px, transparent 0.7px);
+      background-size: 140px 140px, 160px 160px, 180px 180px;
+      mix-blend-mode: multiply;
+    }
+
+    .stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      isolation: isolate;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 4vw;
+      opacity: 0;
+      transform: scale(1.02);
+      animation: scene var(--duration) linear infinite;
+      z-index: 2;
+    }
+
+    .screen > .inner {
+      width: min(1180px, 92vw);
+      max-width: 1180px;
+      position: relative;
+    }
+
+    .glass {
+      background: linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.50));
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,.65);
+      box-shadow: var(--shadow);
+    }
+
+    .title-ja {
+      font-size: clamp(34px, 6vw, 82px);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .title-en {
+      font-size: clamp(15px, 1.3vw, 18px);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 14px;
+      font-weight: 700;
+    }
+
+    .lead {
+      font-size: clamp(15px, 1.7vw, 22px);
+      line-height: 1.7;
+      color: #405048;
+      margin: 18px 0 0;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.65);
+      border: 1px solid rgba(80,90,85,.08);
+      box-shadow: var(--shadow-soft);
+      font-size: 13px;
+      font-weight: 700;
+      color: #44544c;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--pink), var(--green));
+      box-shadow: 0 0 0 6px rgba(228,0,127,.08);
+    }
+
+    .line-bridge {
+      position: absolute;
+      width: min(48vw, 620px);
+      height: 2px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(90deg, rgba(228,0,127,0), rgba(228,0,127,.48), rgba(133,196,65,.48), rgba(133,196,65,0));
+      opacity: 0;
+      animation: bridgePulse var(--duration) linear infinite;
+      z-index: 1;
+    }
+
+    .avatar-side {
+      position: absolute;
+      top: 50%;
+      width: min(23vw, 270px);
+      aspect-ratio: 1 / 1.08;
+      transform: translateY(-50%);
+      border-radius: 2.3rem;
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .avatar-side.left { left: 6vw; }
+    .avatar-side.right { right: 6vw; }
+
+    .avatar-card {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 1.9rem;
+      border: 1px solid rgba(255,255,255,.6);
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.55));
+    }
+
+    .avatar-illu {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      text-align: center;
+      color: #46574e;
+      font-weight: 700;
+      line-height: 1.5;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255,255,255,.8), transparent 35%),
+        linear-gradient(160deg, rgba(228,0,127,.10), rgba(133,196,65,.10));
+    }
+
+    .avatar-bubble {
+      position: absolute;
+      bottom: 18px;
+      left: 18px;
+      right: 18px;
+      padding: 14px 16px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(66, 82, 73, 0.08);
+      font-size: 13px;
+      line-height: 1.5;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .center-copy {
+      position: relative;
+      z-index: 3;
+      width: min(700px, 70vw);
+      margin: 0 auto;
+      text-align: center;
+      padding: clamp(28px, 3vw, 42px);
+      border-radius: 40px;
+    }
+
+    .conflict-labels {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      border: 1px solid rgba(70,80,75,.08);
+      background: rgba(255,255,255,.66);
+      color: #4b5a53;
+    }
+
+    .pill.pink { background: rgba(228,0,127,.08); color: #9f135f; }
+    .pill.green { background: rgba(133,196,65,.14); color: #4c7d1b; }
+
+    .orbit-wrap {
+      position: relative;
+      width: min(88vw, 1000px);
+      aspect-ratio: 1.35 / 1;
+      margin: 0 auto;
+    }
+
+    .phone {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(34vw, 360px);
+      aspect-ratio: 0.52 / 1;
+      transform: translate(-50%, -50%);
+      border-radius: 40px;
+      padding: 12px;
+      background: linear-gradient(180deg, rgba(34,46,40,.98), rgba(46,59,51,.96));
+      box-shadow: 0 30px 70px rgba(35, 43, 36, 0.26);
+      z-index: 4;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 30px;
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,.95), rgba(252,249,240,.96) 45%, rgba(248,244,230,.98) 100%);
+    }
+
+    .phone-notch {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 34%;
+      height: 24px;
+      background: rgba(29, 37, 33, .95);
+      border-radius: 0 0 18px 18px;
+      z-index: 2;
+    }
+
+    .app-ui {
+      position: absolute;
+      inset: 0;
+      padding: 44px 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 4px;
+    }
+
+    .brand-mini {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: -.03em;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--green), var(--pink));
+      box-shadow: 0 8px 22px rgba(133,196,65,.25);
+      position: relative;
+    }
+
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.78);
+      clip-path: polygon(0 46%, 32% 46%, 32% 0, 68% 0, 68% 46%, 100% 46%, 100% 54%, 68% 54%, 68% 100%, 32% 100%, 32% 54%, 0 54%);
+    }
+
+    .chips-row,
+    .feed,
+    .support-row,
+    .qa-card,
+    .guide-card,
+    .map-card,
+    .category-dock {
+      animation: phoneFlow var(--duration) linear infinite;
+    }
+
+    .chips-row {
+      display: flex;
+      gap: 8px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #4a5b53;
+      background: rgba(255,255,255,.8);
+      border: 1px solid rgba(55, 73, 63, .08);
+      box-shadow: 0 6px 16px rgba(55,73,63,.06);
+    }
+
+    .hero-card {
+      border-radius: 26px;
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(133,196,65,.18), rgba(228,0,127,.10));
+      border: 1px solid rgba(255,255,255,.9);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .hero-card h3 {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.2;
+      letter-spacing: -.04em;
+    }
+
+    .hero-card p {
+      margin: 8px 0 0;
+      font-size: 12px;
+      line-height: 1.55;
+      color: #55645d;
+    }
+
+    .guide-card,
+    .qa-card,
+    .map-card {
+      border-radius: 24px;
+      padding: 14px;
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(62, 80, 70, 0.08);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .guide-card .thumb,
+    .qa-card .thumb,
+    .map-card .thumb {
+      height: 90px;
+      border-radius: 18px;
+      margin-bottom: 10px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: #52625b;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.5;
+      border: 1px dashed rgba(83, 97, 90, .18);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.7), rgba(255,255,255,.35)),
+        linear-gradient(135deg, rgba(133,196,65,.10), rgba(228,0,127,.10));
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -.03em;
+    }
+
+    .card-copy {
+      font-size: 11px;
+      line-height: 1.55;
+      color: #62716a;
+      margin: 6px 0 0;
+    }
+
+    .feed {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .support-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .mini-support {
+      padding: 12px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(62,80,70,.08);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .mini-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      color: #7b8b84;
+    }
+
+    .mini-title {
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+
+    .category-dock {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .cat {
+      height: 46px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 800;
+      text-align: center;
+      color: rgba(34,47,40,.9);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.55);
+    }
+
+    .cat:nth-child(1) { background: color-mix(in srgb, var(--c1) 66%, white); }
+    .cat:nth-child(2) { background: color-mix(in srgb, var(--c2) 66%, white); }
+    .cat:nth-child(3) { background: color-mix(in srgb, var(--c3) 66%, white); }
+    .cat:nth-child(4) { background: color-mix(in srgb, var(--c4) 66%, white); }
+    .cat:nth-child(5) { background: color-mix(in srgb, var(--c5) 66%, white); }
+    .cat:nth-child(6) { background: color-mix(in srgb, var(--c6) 66%, white); }
+    .cat:nth-child(7) { background: color-mix(in srgb, var(--c7) 66%, white); }
+    .cat:nth-child(8) { background: color-mix(in srgb, var(--c8) 66%, white); }
+
+    .orbit {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(76vw, 860px);
+      aspect-ratio: 1 / 1;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 1px dashed rgba(70,88,79, .10);
+      animation: spin 18s linear infinite;
+      z-index: 2;
+    }
+
+    .orbit.orbit-2 {
+      width: min(92vw, 1040px);
+      opacity: .65;
+      animation-direction: reverse;
+      animation-duration: 24s;
+    }
+
+    .orbit-item {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 120px;
+      transform:
+        rotate(calc(var(--i) * 45deg))
+        translateY(calc(-1 * var(--r)))
+        rotate(calc(var(--i) * -45deg));
+    }
+
+    .orbit-card {
+      padding: 14px 10px;
+      border-radius: 26px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.35;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(255,255,255,.7);
+      background: rgba(255,255,255,.72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: #425249;
+    }
+
+    .orbit-card .emoji {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .orbit-card.c1 { background: color-mix(in srgb, var(--c1) 36%, white); }
+    .orbit-card.c2 { background: color-mix(in srgb, var(--c2) 36%, white); }
+    .orbit-card.c3 { background: color-mix(in srgb, var(--c3) 36%, white); }
+    .orbit-card.c4 { background: color-mix(in srgb, var(--c4) 36%, white); }
+    .orbit-card.c5 { background: color-mix(in srgb, var(--c5) 36%, white); }
+    .orbit-card.c6 { background: color-mix(in srgb, var(--c6) 36%, white); }
+    .orbit-card.c7 { background: color-mix(in srgb, var(--c7) 36%, white); }
+    .orbit-card.c8 { background: color-mix(in srgb, var(--c8) 36%, white); }
+
+    .feature-stack {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .feature-copy {
+      padding: clamp(26px, 3vw, 38px);
+      border-radius: 42px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .feature-card {
+      min-height: 150px;
+      padding: 18px;
+      border-radius: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: "";
+      position: absolute;
+      inset: auto -20% -28% auto;
+      width: 120px;
+      height: 120px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.35);
+      filter: blur(8px);
+    }
+
+    .feature-card h4 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.1;
+      letter-spacing: -.03em;
+    }
+
+    .feature-card p {
+      margin: 10px 0 0;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #51605a;
+    }
+
+    .feature-card .tag {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      background: rgba(255,255,255,.55);
+    }
+
+    .feature-card.guide {
+      background: linear-gradient(160deg, rgba(133,196,65,.18), rgba(255,255,255,.66));
+    }
+    .feature-card.qa {
+      background: linear-gradient(160deg, rgba(228,0,127,.10), rgba(255,255,255,.68));
+    }
+    .feature-card.map {
+      background: linear-gradient(160deg, rgba(143,211,168,.18), rgba(255,255,255,.68));
+    }
+    .feature-card.multi {
+      background: linear-gradient(160deg, rgba(154,199,255,.18), rgba(255,255,255,.68));
+    }
+
+    .finale {
+      text-align: center;
+      padding: clamp(28px, 4vw, 48px);
+      border-radius: 44px;
+      width: min(940px, 92vw);
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .finale::before,
+    .finale::after {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      filter: blur(30px);
+      opacity: .45;
+      z-index: 0;
+    }
+
+    .finale::before {
+      left: -60px;
+      top: -80px;
+      background: rgba(133,196,65,.18);
+    }
+
+    .finale::after {
+      right: -40px;
+      bottom: -100px;
+      background: rgba(228,0,127,.12);
+    }
+
+    .finale > * { position: relative; z-index: 1; }
+
+    .brand-lockup {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand-lockup .logo {
+      width: 76px;
+      height: 76px;
+      border-radius: 26px;
+      background: linear-gradient(135deg, var(--green), var(--pink));
+      box-shadow: 0 18px 40px rgba(100, 139, 48, 0.22);
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .brand-lockup .logo::after {
+      content: "る";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: -.08em;
+    }
+
+    .finale-sub {
+      font-size: 15px;
+      color: #617069;
+      margin-top: 12px;
+      line-height: 1.8;
+    }
+
+    .cta-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .cta {
+      padding: 14px 22px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: .01em;
+      border: 1px solid rgba(78, 96, 87, .08);
+      background: rgba(255,255,255,.72);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .cta.primary {
+      background: linear-gradient(135deg, var(--green), #9dd65f);
+      color: white;
+      border: none;
+    }
+
+    .cta.secondary {
+      background: rgba(255,255,255,.74);
+      color: #495952;
+    }
+
+    .progress {
+      position: absolute;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      width: min(420px, 72vw);
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(61, 75, 67, .08);
+      overflow: hidden;
+      z-index: 25;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .progress::after {
+      content: "";
+      display: block;
+      width: 100%;
+      height: 100%;
+      transform-origin: left center;
+      background: linear-gradient(90deg, var(--pink), var(--green));
+      animation: progress var(--duration) linear infinite;
+    }
+
+    .s1 { animation-delay: 0s; }
+    .s2 { animation-delay: 0s; }
+    .s3 { animation-delay: 0s; }
+    .s4 { animation-delay: 0s; }
+
+    .scene-1 { animation-name: scene1; }
+    .scene-2 { animation-name: scene2; }
+    .scene-3 { animation-name: scene3; }
+    .scene-4 { animation-name: scene4; }
+
+    @keyframes scene1 {
+      0%, 4% { opacity: 0; transform: scale(1.03); }
+      7%, 22% { opacity: 1; transform: scale(1); }
+      26%, 100% { opacity: 0; transform: scale(.985); }
+    }
+
+    @keyframes scene2 {
+      0%, 23% { opacity: 0; transform: scale(1.03); }
+      28%, 47% { opacity: 1; transform: scale(1); }
+      52%, 100% { opacity: 0; transform: scale(.99); }
+    }
+
+    @keyframes scene3 {
+      0%, 49% { opacity: 0; transform: scale(1.03); }
+      54%, 73% { opacity: 1; transform: scale(1); }
+      78%, 100% { opacity: 0; transform: scale(.99); }
+    }
+
+    @keyframes scene4 {
+      0%, 75% { opacity: 0; transform: scale(1.03); }
+      80%, 96% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(.99); }
+    }
+
+    @keyframes scene {
+      0%, 100% { opacity: 0; }
+    }
+
+    @keyframes bridgePulse {
+      0%, 8% { opacity: 0; transform: translate(-50%, -50%) scaleX(.2); }
+      12%, 21% { opacity: .9; transform: translate(-50%, -50%) scaleX(1); }
+      25%, 100% { opacity: 0; transform: translate(-50%, -50%) scaleX(1.15); }
+    }
+
+    @keyframes progress {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    @keyframes spin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    @keyframes floatGlow {
+      from { transform: translateY(0) scale(1); }
+      to { transform: translateY(20px) scale(1.06); }
+    }
+
+    @keyframes phoneFlow {
+      0%, 27% { transform: translateY(0); opacity: 1; }
+      31%, 46% { transform: translateY(-72px); opacity: 1; }
+      50%, 63% { transform: translateY(-148px); opacity: 1; }
+      68%, 100% { transform: translateY(-212px); opacity: 1; }
+    }
+
+    .fade-up {
+      animation: fadeUp var(--duration) linear infinite;
+    }
+
+    @keyframes fadeUp {
+      0%, 5% { opacity: 0; transform: translateY(20px); }
+      9%, 100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+      .avatar-side {
+        width: min(34vw, 220px);
+      }
+      .feature-stack {
+        grid-template-columns: 1fr;
+      }
+      .feature-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .center-copy {
+        width: min(84vw, 640px);
+      }
+    }
+
+    @media (max-width: 700px) {
+      .avatar-side {
+        display: none;
+      }
+      .center-copy {
+        width: min(92vw, 680px);
+      }
+      .orbit-wrap {
+        aspect-ratio: .9 / 1.2;
+      }
+      .orbit,
+      .orbit.orbit-2 {
+        width: min(104vw, 700px);
+      }
+      .orbit-item {
+        width: 90px;
+      }
+      .orbit-card {
+        font-size: 10px;
+        padding: 10px 8px;
+      }
+      .phone {
+        width: min(54vw, 320px);
+      }
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+      .category-dock {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .lead {
+        line-height: 1.6;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="film-grain"></div>
+  <div class="stage">
+    <div class="line-bridge"></div>
+
+    <section class="screen scene-1 s1">
+      <div class="avatar-side left glass">
+        <div class="avatar-card">
+          <div class="avatar-illu">
+            サンプル画像枠<br />
+            「日本旅行中の訪日観光客」
+          </div>
+          <div class="avatar-bubble">I want to respect the culture, but some local rules are hard to see.</div>
+        </div>
+      </div>
+
+      <div class="inner">
+        <div class="center-copy glass fade-up">
+          <div class="badge"><span class="dot"></span> Understanding, not forcing</div>
+          <p class="title-en">Ru-mana intro film</p>
+          <h1 class="title-ja">違いは、<br />ぶつかるためじゃない。</h1>
+          <p class="lead">
+            旅人の「わからない」と、ホストの「伝わってほしい」。<br />
+            そのあいだにある見えない摩擦を、やさしく言葉に変えていく。
+          </p>
+          <div class="conflict-labels">
+            <span class="pill pink">暗黙の了解</span>
+            <span class="pill pink">文化の背景</span>
+            <span class="pill green">理解と共生</span>
+            <span class="pill green">安心して旅を楽しむ</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="avatar-side right glass">
+        <div class="avatar-card">
+          <div class="avatar-illu">
+            サンプル画像枠<br />
+            「日本の受け入れ側・ホスト」
+          </div>
+          <div class="avatar-bubble">Rules matter, but the reason behind them matters even more.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen scene-2 s2">
+      <div class="inner orbit-wrap">
+        <div class="orbit">
+          <div class="orbit-item" style="--i:0; --r: 340px;"><div class="orbit-card c1"><span class="emoji">🚆</span>交通マナー</div></div>
+          <div class="orbit-item" style="--i:1; --r: 340px;"><div class="orbit-card c2"><span class="emoji">🏛️</span>公共施設</div></div>
+          <div class="orbit-item" style="--i:2; --r: 340px;"><div class="orbit-card c3"><span class="emoji">♨️</span>温泉・公衆浴場</div></div>
+          <div class="orbit-item" style="--i:3; --r: 340px;"><div class="orbit-card c4"><span class="emoji">☕</span>食事・カフェ</div></div>
+          <div class="orbit-item" style="--i:4; --r: 340px;"><div class="orbit-card c5"><span class="emoji">🛍️</span>買い物・支払い</div></div>
+          <div class="orbit-item" style="--i:5; --r: 340px;"><div class="orbit-card c6"><span class="emoji">🏨</span>宿泊・旅館</div></div>
+          <div class="orbit-item" style="--i:6; --r: 340px;"><div class="orbit-card c7"><span class="emoji">⛩️</span>参拝・伝統</div></div>
+          <div class="orbit-item" style="--i:7; --r: 340px;"><div class="orbit-card c8"><span class="emoji">🗑️</span>ゴミ・トイレ</div></div>
+        </div>
+        <div class="orbit orbit-2"></div>
+
+        <div class="phone fade-up">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="app-ui">
+              <div class="app-header">
+                <div class="brand-mini">
+                  <span class="brand-mark"></span>
+                  <span>るうまな</span>
+                </div>
+                <div class="badge" style="padding:8px 12px; font-size:11px;">8 Hotspots</div>
+              </div>
+
+              <div class="chips-row">
+                <span class="chip">静かな車内</span>
+                <span class="chip">お通しって何？</span>
+                <span class="chip">Tattoo OK?</span>
+                <span class="chip">ゴミ箱どこ？</span>
+              </div>
+
+              <div class="hero-card">
+                <h3>わからないを、<br />わかりやすく。</h3>
+                <p>シーン別に、日本のマナーと文化の背景をやさしくナビゲート。</p>
+              </div>
+
+              <div class="category-dock">
+                <div class="cat">交通</div>
+                <div class="cat">公共</div>
+                <div class="cat">温泉</div>
+                <div class="cat">カフェ</div>
+                <div class="cat">買い物</div>
+                <div class="cat">宿泊</div>
+                <div class="cat">参拝</div>
+                <div class="cat">ゴミ</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen scene-3 s3">
+      <div class="inner feature-stack">
+        <div class="feature-copy glass fade-up">
+          <div class="badge"><span class="dot"></span> Conversation meets guidance</div>
+          <p class="title-en">Warm guidebook, not rulebook</p>
+          <h2 class="title-ja" style="font-size: clamp(30px, 5vw, 64px);">
+            正解を押しつけず、<br />
+            背景まで伝える。
+          </h2>
+          <p class="lead">
+            公式ガイドと、みんなのQ&A。さらに安全情報や多言語・多感覚の導線まで。<br />
+            るうまなは、旅先での「困った」を、理解に変えていくためのインターフェースです。
+          </p>
+        </div>
+
+        <div class="feature-grid fade-up">
+          <div class="feature-card guide glass">
+            <span class="tag">Shiru-mana</span>
+            <h4>ルールとマナー</h4>
+            <p>一方通行ではなく、文化や理由までわかる公式ガイド。</p>
+          </div>
+          <div class="feature-card qa glass">
+            <span class="tag">Community Q&amp;A</span>
+            <h4>みんなのQ&amp;A</h4>
+            <p>旅行者もホストも、経験と知識をシェアして学び合える。</p>
+          </div>
+          <div class="feature-card map glass">
+            <span class="tag">Safety &amp; Support</span>
+            <h4>防災マップ・おたすけ</h4>
+            <p>災害時の避難所や医療機関など、いざという時の安心を可視化。</p>
+          </div>
+          <div class="feature-card multi glass">
+            <span class="tag">Multi-approach</span>
+            <h4>みる・きく・いく</h4>
+            <p>視覚・聴覚・体験の多角的アプローチで、状況に合わせて理解できる。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen scene-4 s4">
+      <div class="inner">
+        <div class="finale glass fade-up">
+          <div class="brand-lockup">
+            <div class="logo"></div>
+            <div style="text-align:left;">
+              <p class="title-en" style="margin:0 0 6px;">Ru-mana</p>
+              <h2 class="title-ja" style="font-size: clamp(34px, 6vw, 76px); margin:0;">るうまな</h2>
+            </div>
+          </div>
+          <p class="lead" style="margin-top: 8px;">
+            日本の文化を、守らせるためではなく、<br />
+            <strong>わかり合うために。</strong>
+          </p>
+          <p class="finale-sub">
+            A friendly guidebook for respectful travel, safer moments, and better coexistence.<br />
+            異文化摩擦を、理解のきっかけへ。
+          </p>
+          <div class="cta-row">
+            <div class="cta primary">Shiru-mana をひらく</div>
+            <div class="cta secondary">Safety &amp; Support を見る</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="progress"></div>
+  </div>
+
+  <script>
+    // Optional: press Space to pause/resume the whole intro for review.
+    (() => {
+      let paused = false;
+      const toggle = () => {
+        paused = !paused;
+        document.querySelectorAll('*').forEach(el => {
+          el.style.animationPlayState = paused ? 'paused' : 'running';
+        });
+      };
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          toggle();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
