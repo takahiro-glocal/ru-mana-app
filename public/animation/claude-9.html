@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>るうまな — Intro Animation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;400;500&family=Fraunces:ital,opsz,wght@0,9..144,200;1,9..144,300&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg:    #FBF7EE;
+  --bg2:   #F9F5E7;
+  --ink:   #1A1612;
+  --green: #85C441;
+  --pink:  #E4007F;
+  --gold:  #E8A800;
+}
+html, body {
+  width:100%; height:100%; overflow:hidden;
+  background: var(--bg);
+  font-family: 'Noto Serif JP', serif;
+}
+
+/* ═══ Full-screen canvas for particles ═══ */
+canvas#particles {
+  position: absolute; inset:0; width:100%; height:100%;
+  z-index: 1; pointer-events: none;
+}
+
+/* ═══ Overlay layers ═══ */
+.layer {
+  position: absolute; inset:0;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  pointer-events: none;
+}
+
+/* ═══ ACT 1: Opening — Brush stroke & Japanese pattern ═══ */
+#act1 { z-index: 5; }
+
+/* Seigaiha (wave) pattern via SVG background */
+#pattern-overlay {
+  position: absolute; inset:0;
+  opacity: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Ccircle cx='40' cy='40' r='30' fill='none' stroke='%23e8d9b8' stroke-width='0.5' opacity='0.4'/%3E%3Ccircle cx='40' cy='40' r='20' fill='none' stroke='%23e8d9b8' stroke-width='0.5' opacity='0.3'/%3E%3Ccircle cx='40' cy='40' r='10' fill='none' stroke='%23e8d9b8' stroke-width='0.5' opacity='0.2'/%3E%3C/svg%3E");
+  background-size: 80px 80px;
+  animation: patternFade 3s ease-in-out forwards;
+}
+@keyframes patternFade {
+  0%   { opacity:0; transform: scale(1.1); }
+  40%  { opacity:0.6; }
+  100% { opacity:0; transform: scale(1.0); }
+}
+
+/* Brush stroke — horizontal ink line */
+#brush-stroke {
+  position: absolute;
+  top: 50%; left: 0;
+  width: 100%; height: 3px;
+  transform: translateY(-50%) scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(26,22,18,0.06) 10%,
+    rgba(26,22,18,0.25) 30%,
+    rgba(26,22,18,0.4) 50%,
+    rgba(26,22,18,0.25) 70%,
+    rgba(26,22,18,0.06) 90%,
+    transparent 100%
+  );
+  animation: brushDraw 1.2s cubic-bezier(.23,1,.32,1) 0.3s forwards;
+}
+@keyframes brushDraw {
+  0%   { transform: translateY(-50%) scaleX(0); opacity:1; }
+  60%  { transform: translateY(-50%) scaleX(1); opacity:1; }
+  100% { transform: translateY(-50%) scaleX(1); opacity:0; }
+}
+
+/* ═══ ACT 2: Category icons appear as floating orbs ═══ */
+#act2 { z-index: 10; }
+
+.category-ring {
+  position: relative;
+  width: min(380px, 72vw);
+  height: min(380px, 72vw);
+}
+
+.cat-orb {
+  position: absolute;
+  width: clamp(44px, 9vw, 64px);
+  height: clamp(44px, 9vw, 64px);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(20px, 4.5vw, 30px);
+  opacity: 0;
+  transform: scale(0) translateY(20px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(255,255,255,0.5);
+  transition: all 0.6s cubic-bezier(.23,1,.32,1);
+}
+.cat-orb.visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+.cat-orb.converge {
+  opacity: 0;
+  transform: scale(0.3) !important;
+  transition: all 0.7s cubic-bezier(.55,.06,.68,.19);
+}
+
+/* Category colors */
+.cat-orb[data-cat="transport"] { background: rgba(74,144,217,0.22); color: #4A90D9; }
+.cat-orb[data-cat="public"]    { background: rgba(133,196,65,0.22); color: #558B2F; }
+.cat-orb[data-cat="spa"]       { background: rgba(0,137,123,0.22); color: #00897B; }
+.cat-orb[data-cat="cafe"]      { background: rgba(245,200,66,0.22); color: #F57F17; }
+.cat-orb[data-cat="shopping"]  { background: rgba(228,0,127,0.22); color: #E4007F; }
+.cat-orb[data-cat="hotel"]     { background: rgba(123,78,160,0.22); color: #7B4EA0; }
+.cat-orb[data-cat="culture"]   { background: rgba(211,47,47,0.22); color: #D32F2F; }
+.cat-orb[data-cat="trash"]     { background: rgba(224,90,43,0.22); color: #E05A2B; }
+
+/* ═══ ACT 3: Phrase ═══ */
+#act3 { z-index: 15; }
+#phrase-main {
+  text-align: center;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(.23,1,.32,1);
+  padding: 0 24px;
+}
+#phrase-main.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+#phrase-main.fade-out {
+  opacity: 0;
+  transform: translateY(-12px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+#phrase-main .jp {
+  font-family: 'Noto Serif JP', serif;
+  font-weight: 300;
+  font-size: clamp(18px, 3.2vw, 32px);
+  color: var(--ink);
+  letter-spacing: 0.18em;
+  line-height: 1.7;
+}
+#phrase-main .en {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 200;
+  font-size: clamp(11px, 1.6vw, 15px);
+  color: rgba(26,22,18,0.45);
+  letter-spacing: 0.08em;
+  margin-top: 6px;
+}
+
+/* ═══ ACT 4: Logo Finale ═══ */
+#act4 { z-index: 20; }
+#logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  background: rgba(253,251,245,0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 32px;
+  padding: clamp(28px,5vw,48px) clamp(40px,10vw,80px) clamp(24px,4vw,40px);
+  box-shadow:
+    0 8px 48px rgba(0,0,0,0.06),
+    0 1px 0 rgba(255,255,255,0.6) inset;
+  border: 1px solid rgba(255,255,255,0.5);
+  opacity: 0;
+  transform: scale(0.85) translateY(20px);
+}
+#logo-container.visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.23,1,.32,1);
+}
+
+.logo-jp {
+  font-family: 'Noto Serif JP', serif;
+  font-weight: 400;
+  font-size: clamp(36px, 8vw, 72px);
+  color: var(--ink);
+  letter-spacing: 0.22em;
+  line-height: 1;
+  opacity: 0;
+  transform: translateY(14px);
+}
+.logo-jp.visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.55s ease 0.1s, transform 0.55s cubic-bezier(.23,1,.32,1) 0.1s;
+}
+
+.logo-divider {
+  width: 0;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, rgba(26,22,18,0.18), transparent);
+  margin: clamp(10px,2vw,16px) 0;
+  transition: width 0.5s ease 0.25s;
+}
+.logo-divider.visible {
+  width: 80%;
+}
+
+.logo-en {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(17px, 3.4vw, 32px);
+  color: rgba(26,22,18,0.65);
+  letter-spacing: 0.06em;
+  opacity: 0;
+  transform: translateY(8px);
+}
+.logo-en.visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease 0.3s, transform 0.5s cubic-bezier(.23,1,.32,1) 0.3s;
+}
+.logo-dot {
+  color: var(--green);
+  display: inline-block;
+  transform: scale(0);
+  transition: transform 0.4s cubic-bezier(.36,1.56,.64,1) 0.55s;
+}
+.logo-dot.visible {
+  transform: scale(1);
+}
+
+.logo-tagline {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-weight: 400;
+  font-size: clamp(11px, 2vw, 15px);
+  color: rgba(26,22,18,0.55);
+  letter-spacing: 0.22em;
+  margin-top: clamp(8px,1.5vw,12px);
+  opacity: 0;
+  transition: opacity 0.6s ease 0.6s;
+}
+.logo-tagline.visible {
+  opacity: 1;
+}
+
+/* ═══ Category labels around logo ═══ */
+.cat-label-ring {
+  position: absolute;
+  width: min(520px, 92vw);
+  height: min(520px, 92vw);
+  pointer-events: none;
+}
+.cat-label {
+  position: absolute;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-weight: 300;
+  font-size: clamp(9px, 1.5vw, 12px);
+  color: rgba(26,22,18,0.35);
+  letter-spacing: 0.12em;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  white-space: nowrap;
+}
+.cat-label.visible { opacity: 1; }
+
+/* ═══ Progress bar ═══ */
+#bar {
+  position: absolute; bottom:0; left:0; height:2px;
+  background: linear-gradient(90deg, var(--green), var(--pink), var(--gold));
+  width: 0%; z-index: 100;
+  transition: width 0.3s linear;
+}
+
+/* ═══ Click-to-replay hint ═══ */
+#replay-hint {
+  position: absolute;
+  bottom: 24px;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 11px;
+  color: rgba(26,22,18,0.25);
+  letter-spacing: 0.1em;
+  opacity: 0;
+  z-index: 50;
+  transition: opacity 0.6s ease;
+}
+#replay-hint.visible { opacity:1; cursor: pointer; pointer-events: auto; }
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+
+<!-- ACT 1: Opening -->
+<div class="layer" id="act1">
+  <div id="pattern-overlay"></div>
+  <div id="brush-stroke"></div>
+</div>
+
+<!-- ACT 2: Category orbs -->
+<div class="layer" id="act2">
+  <div class="category-ring" id="cat-ring">
+    <div class="cat-orb" data-cat="transport" title="交通マナー">🚃</div>
+    <div class="cat-orb" data-cat="public"    title="公共施設">🏛️</div>
+    <div class="cat-orb" data-cat="spa"       title="温泉">♨️</div>
+    <div class="cat-orb" data-cat="cafe"      title="食事">🍜</div>
+    <div class="cat-orb" data-cat="shopping"  title="買い物">🛍️</div>
+    <div class="cat-orb" data-cat="hotel"     title="宿泊">🏨</div>
+    <div class="cat-orb" data-cat="culture"   title="参拝">⛩️</div>
+    <div class="cat-orb" data-cat="trash"     title="ゴミ・トイレ">♻️</div>
+  </div>
+</div>
+
+<!-- ACT 3: Phrase -->
+<div class="layer" id="act3">
+  <div id="phrase-main">
+    <div class="jp">知ることが、やさしさになる。</div>
+    <div class="en">Understanding becomes kindness.</div>
+  </div>
+</div>
+
+<!-- ACT 4: Logo -->
+<div class="layer" id="act4">
+  <div id="logo-container">
+    <div class="logo-jp">るうまな</div>
+    <div class="logo-divider"></div>
+    <div class="logo-en">ru<span style="color:var(--pink)">-</span>mana<span class="logo-dot">.</span></div>
+    <div class="logo-tagline">異文化の摩擦を、理解へ。</div>
+  </div>
+  <div class="cat-label-ring" id="label-ring"></div>
+</div>
+
+<div id="bar"></div>
+<div id="replay-hint">click to replay</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   PARTICLE CANVAS — gentle floating motes
+   ═══════════════════════════════════════════════════════ */
+const canvas = document.getElementById('particles');
+const ctx    = canvas.getContext('2d');
+let W, H;
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+/* Particles: warm golden motes */
+const MOTE_COUNT = 60;
+const motes = [];
+const MOTE_COLORS = [
+  'rgba(232,168,0,0.15)',   // gold
+  'rgba(133,196,65,0.12)',  // green
+  'rgba(228,0,127,0.08)',   // pink
+  'rgba(26,22,18,0.05)',    // ink
+];
+
+for (let i = 0; i < MOTE_COUNT; i++) {
+  motes.push({
+    x:  Math.random() * 2000,
+    y:  Math.random() * 2000,
+    r:  1.5 + Math.random() * 3,
+    vx: (Math.random() - 0.5) * 12,
+    vy: -8 - Math.random() * 15,
+    color: MOTE_COLORS[i % MOTE_COLORS.length],
+    phase: Math.random() * Math.PI * 2,
+    life: 0,
+    maxLife: 4 + Math.random() * 6,
+  });
+}
+
+let animT = 0;
+let convergeCenterX = 0, convergeCenterY = 0;
+let convergeStrength = 0; // 0→1 during logo phase
+
+function drawMotes(dt) {
+  ctx.clearRect(0, 0, W, H);
+  const cx = W / 2, cy = H / 2;
+
+  motes.forEach(m => {
+    m.life += dt;
+    if (m.life > m.maxLife) {
+      m.x = Math.random() * W;
+      m.y = H + 20;
+      m.life = 0;
+      m.maxLife = 4 + Math.random() * 6;
+    }
+
+    /* float upward with gentle sway */
+    const sway = Math.sin(animT * 0.8 + m.phase) * 0.4;
+    m.x += (m.vx * 0.15 + sway) * dt * 15;
+    m.y += m.vy * dt * 8;
+
+    /* During convergence, pull toward center */
+    if (convergeStrength > 0) {
+      const dx = convergeCenterX - m.x;
+      const dy = convergeCenterY - m.y;
+      m.x += dx * convergeStrength * dt * 1.5;
+      m.y += dy * convergeStrength * dt * 1.5;
+    }
+
+    /* wrap */
+    if (m.y < -20) { m.y = H + 20; m.x = Math.random() * W; }
+    if (m.x < -20) m.x = W + 20;
+    if (m.x > W + 20) m.x = -20;
+
+    /* draw with fade-in/out lifecycle */
+    const lp = m.life / m.maxLife;
+    const alpha = lp < 0.15 ? lp / 0.15 : lp > 0.8 ? (1 - lp) / 0.2 : 1;
+
+    ctx.beginPath();
+    ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
+    ctx.fillStyle = m.color;
+    ctx.globalAlpha = alpha * 0.7;
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CATEGORY ORB POSITIONING — circle layout
+   ═══════════════════════════════════════════════════════ */
+const orbs = document.querySelectorAll('.cat-orb');
+const ring = document.getElementById('cat-ring');
+
+function positionOrbs() {
+  const ringW = ring.offsetWidth;
+  const ringH = ring.offsetHeight;
+  const r = ringW * 0.40; // radius
+  const orbSize = orbs[0]?.offsetWidth || 52;
+
+  orbs.forEach((orb, i) => {
+    const angle = (i / orbs.length) * Math.PI * 2 - Math.PI / 2;
+    const x = ringW / 2 + Math.cos(angle) * r - orbSize / 2;
+    const y = ringH / 2 + Math.sin(angle) * r - orbSize / 2;
+    orb.style.left = x + 'px';
+    orb.style.top  = y + 'px';
+
+    /* Store center for convergence */
+    orb.dataset.cx = (ringW / 2 + Math.cos(angle) * r) + '';
+    orb.dataset.cy = (ringH / 2 + Math.sin(angle) * r) + '';
+  });
+}
+
+/* ═══════════════════════════════════════════════════════
+   CATEGORY LABELS around logo
+   ═══════════════════════════════════════════════════════ */
+const CAT_NAMES = [
+  '交通', '公共', '温泉', '食事',
+  '買物', '宿泊', '参拝', 'ゴミ',
+];
+const labelRing = document.getElementById('label-ring');
+
+function createLabels() {
+  const ringW = labelRing.offsetWidth || 520;
+  const ringH = labelRing.offsetHeight || 520;
+  const r = ringW * 0.43;
+
+  CAT_NAMES.forEach((name, i) => {
+    const angle = (i / CAT_NAMES.length) * Math.PI * 2 - Math.PI / 2;
+    const el = document.createElement('div');
+    el.className = 'cat-label';
+    el.textContent = name;
+    const x = ringW / 2 + Math.cos(angle) * r;
+    const y = ringH / 2 + Math.sin(angle) * r;
+    el.style.left = x + 'px';
+    el.style.top  = y + 'px';
+    el.style.transform = 'translate(-50%, -50%)';
+    labelRing.appendChild(el);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════
+   TIMELINE — 10-second cinematic sequence
+   ═══════════════════════════════════════════════════════
+
+   0.0s  — Canvas particles begin, seigaiha pattern fades in
+   0.3s  — Brush stroke draws across screen
+   1.5s  — Brush stroke fades; 8 category orbs start appearing
+   1.5s–3.2s — Orbs pop in one by one (staggered 0.12s)
+   3.5s  — Orbs gently float/breathe
+   4.2s  — Phrase fades in: "知ることが、やさしさになる。"
+   6.2s  — Phrase fades out
+   6.5s  — Orbs converge to center (shrink & vanish)
+   7.0s  — Logo card appears
+   7.1s–8.5s — Logo elements cascade in
+   8.5s  — Category labels fade in around logo
+   9.5s  — Settled. Progress bar complete.
+   ═══════════════════════════════════════════════════════ */
+
+const TOTAL_DURATION = 10.0; // seconds
+const bar = document.getElementById('bar');
+
+function runTimeline() {
+  positionOrbs();
+  createLabels();
+
+  const start = performance.now();
+  let lastTs = start;
+
+  function frame(ts) {
+    const dt = Math.min((ts - lastTs) / 1000, 0.05);
+    lastTs = ts;
+    animT += dt;
+
+    const elapsed = (ts - start) / 1000;
+    const progress = Math.min(elapsed / TOTAL_DURATION, 1);
+    bar.style.width = (progress * 100) + '%';
+
+    convergeCenterX = W / 2;
+    convergeCenterY = H / 2;
+
+    /* — ACT 2: Show orbs staggered from 1.5s — */
+    const orbStart = 1.5;
+    const orbStagger = 0.12;
+    orbs.forEach((orb, i) => {
+      const t = orbStart + i * orbStagger;
+      if (elapsed >= t && !orb.classList.contains('visible') && !orb.classList.contains('converge')) {
+        orb.classList.add('visible');
+      }
+    });
+
+    /* Gentle floating for visible orbs */
+    if (elapsed > 2.5 && elapsed < 6.5) {
+      orbs.forEach((orb, i) => {
+        if (!orb.classList.contains('visible')) return;
+        const float = Math.sin(animT * 1.2 + i * 0.8) * 4;
+        const floatX = Math.cos(animT * 0.9 + i * 1.1) * 3;
+        orb.style.transform = `scale(1) translate(${floatX}px, ${float}px)`;
+      });
+    }
+
+    /* — ACT 3: Phrase — */
+    const phraseEl = document.getElementById('phrase-main');
+    if (elapsed >= 4.2 && elapsed < 4.3) {
+      phraseEl.classList.add('visible');
+    }
+    if (elapsed >= 6.2 && elapsed < 6.3) {
+      phraseEl.classList.add('fade-out');
+    }
+
+    /* — Converge orbs — */
+    if (elapsed >= 6.5 && elapsed < 6.6) {
+      orbs.forEach(orb => {
+        orb.classList.remove('visible');
+        orb.classList.add('converge');
+      });
+      convergeStrength = 0.5;
+    }
+
+    /* — ACT 4: Logo — */
+    const logoContainer = document.getElementById('logo-container');
+    if (elapsed >= 7.0 && elapsed < 7.1) {
+      /* Hide act2 orbs completely */
+      document.getElementById('act2').style.opacity = '0';
+      document.getElementById('act2').style.transition = 'opacity 0.3s';
+      document.getElementById('act3').style.opacity = '0';
+      document.getElementById('act3').style.transition = 'opacity 0.3s';
+
+      logoContainer.classList.add('visible');
+
+      /* Cascade logo elements */
+      setTimeout(() => document.querySelector('.logo-jp').classList.add('visible'), 100);
+      setTimeout(() => document.querySelector('.logo-divider').classList.add('visible'), 250);
+      setTimeout(() => document.querySelector('.logo-en').classList.add('visible'), 350);
+      setTimeout(() => document.querySelector('.logo-dot').classList.add('visible'), 550);
+      setTimeout(() => document.querySelector('.logo-tagline').classList.add('visible'), 650);
+    }
+
+    /* Category labels around logo */
+    if (elapsed >= 8.5 && elapsed < 8.6) {
+      document.querySelectorAll('.cat-label').forEach((el, i) => {
+        setTimeout(() => el.classList.add('visible'), i * 60);
+      });
+      convergeStrength = 0;
+    }
+
+    /* Replay hint */
+    if (elapsed >= 9.5) {
+      document.getElementById('replay-hint').classList.add('visible');
+    }
+
+    drawMotes(dt);
+
+    if (elapsed < TOTAL_DURATION + 2) {
+      requestAnimationFrame(frame);
+    } else {
+      /* Keep rendering particles gently */
+      function idle(ts2) {
+        const dt2 = Math.min((ts2 - lastTs) / 1000, 0.05);
+        lastTs = ts2;
+        animT += dt2;
+        drawMotes(dt2);
+        requestAnimationFrame(idle);
+      }
+      requestAnimationFrame(idle);
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
+
+/* ═══════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════ */
+/* Wait for fonts to load */
+document.fonts.ready.then(() => {
+  setTimeout(runTimeline, 100);
+});
+
+/* Replay on click */
+document.body.addEventListener('click', () => {
+  location.reload();
+});
+</script>
+</body>
+</html>
