@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>るうまな — Intro: ただひとりの人間</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;400;500&family=Fraunces:ital,opsz,wght@0,9..144,200;1,9..144,300&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/4.1.3/css/flag-icons.min.css">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg:    #FBF7EE;
+  --ink:   #1A1612;
+  --green: #85C441;
+  --pink:  #E4007F;
+  --gold:  #E8A800;
+  --warm:  #F2C97D;
+}
+html, body {
+  width:100%; height:100%; overflow:hidden;
+  background: #0a0806;
+  font-family: 'Noto Serif JP', serif;
+}
+
+/* ═══ Warm background — fades in ═══ */
+#bg-warm {
+  position: absolute; inset:0; z-index:0;
+  background: var(--bg);
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+#bg-warm.visible { opacity: 1; }
+
+/* ═══ Canvas for connection lines ═══ */
+canvas#connections {
+  position: absolute; inset:0; width:100%; height:100%;
+  z-index: 5; pointer-events: none;
+}
+
+/* ═══ Entity (flag + person dot) ═══ */
+#entities {
+  position: absolute; inset:0; z-index:10;
+  pointer-events: none;
+}
+.entity {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.entity.visible { opacity: 1; }
+.entity.converge {
+  transition: opacity 0.6s ease;
+  opacity: 0;
+}
+
+/* Flag circle */
+.flag-circle {
+  display: block;
+  border-radius: 50%;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12), 0 0 0 1.5px rgba(255,255,255,0.35) inset;
+  transition: filter 1.4s ease, opacity 1.4s ease, transform 1.4s ease;
+  position: relative;
+  z-index: 2;
+}
+.entity.rack-focus .flag-circle {
+  filter: blur(3px);
+  opacity: 0.18;
+  transform: scale(0.85);
+}
+
+/* Person dot — the universal human beneath the flag */
+.person-dot {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0.3);
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #FFEAB6, var(--warm), #E0A84C);
+  box-shadow: 0 0 0 rgba(242,201,125,0), 0 0 16px rgba(242,201,125,0);
+  opacity: 0;
+  z-index: 1;
+  transition: opacity 1.2s ease 0.2s, transform 1.2s cubic-bezier(.23,1,.32,1) 0.2s, box-shadow 1.2s ease 0.4s;
+}
+.entity.rack-focus .person-dot {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  box-shadow: 0 0 12px rgba(242,201,125,0.5), 0 0 28px rgba(242,201,125,0.2);
+}
+
+/* ═══ Text overlay ═══ */
+#text-overlay {
+  position: absolute; inset:0;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 20; pointer-events: none;
+}
+.phrase {
+  position: absolute;
+  text-align: center;
+  padding: 0 24px;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.23,1,.32,1);
+}
+.phrase.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.phrase.gone {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+.phrase-card {
+  display: inline-block;
+  background: rgba(251,247,238,0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 20px;
+  padding: 18px 36px 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  border: 1px solid rgba(255,255,255,0.4);
+}
+.phrase .jp {
+  font-family: 'Noto Serif JP', serif;
+  font-weight: 300;
+  font-size: clamp(16px, 2.8vw, 28px);
+  color: var(--ink);
+  letter-spacing: 0.16em;
+  line-height: 1.8;
+  display: block;
+}
+.phrase .en {
+  font-family: 'Fraunces', serif;
+  font-style: italic; font-weight: 200;
+  font-size: clamp(10px, 1.5vw, 14px);
+  color: rgba(26,22,18,0.40);
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+  display: block;
+}
+
+/* ═══ Logo finale ═══ */
+#logo-layer {
+  position: absolute; inset:0;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 25; pointer-events: none;
+}
+#logo-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(253,252,249,0.60);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 32px;
+  padding: clamp(28px,5vw,48px) clamp(40px,10vw,84px) clamp(24px,4vw,40px);
+  box-shadow: 0 8px 48px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.6) inset;
+  border: 1px solid rgba(255,255,255,0.5);
+  opacity: 0;
+  transform: scale(0.82) translateY(20px);
+  transition: opacity 0.65s ease, transform 0.65s cubic-bezier(.23,1,.32,1);
+}
+#logo-card.visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.logo-jp {
+  font-family: 'Noto Serif JP', serif;
+  font-weight: 400;
+  font-size: clamp(34px, 8vw, 70px);
+  color: var(--ink);
+  letter-spacing: 0.22em;
+  line-height: 1;
+  opacity: 0; transform: translateY(14px);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.23,1,.32,1);
+}
+.logo-jp.visible { opacity:1; transform:translateY(0); }
+
+.logo-divider {
+  width: 0; height: 1.5px;
+  background: linear-gradient(90deg, transparent, rgba(26,22,18,0.16), transparent);
+  margin: clamp(10px,2vw,16px) 0;
+  transition: width 0.5s ease;
+}
+.logo-divider.visible { width: 80%; }
+
+.logo-en {
+  font-family: 'Fraunces', serif; font-style:italic; font-weight:300;
+  font-size: clamp(17px,3.4vw,30px);
+  color: rgba(26,22,18,0.62); letter-spacing:0.06em;
+  opacity:0; transform:translateY(8px);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.23,1,.32,1);
+}
+.logo-en.visible { opacity:1; transform:translateY(0); }
+
+.logo-dot {
+  color: var(--green); display:inline-block;
+  transform: scale(0);
+  transition: transform 0.4s cubic-bezier(.36,1.56,.64,1);
+}
+.logo-dot.visible { transform:scale(1); }
+
+.logo-tag {
+  font-family:'Zen Kaku Gothic New',sans-serif; font-weight:400;
+  font-size:clamp(10px,1.8vw,14px);
+  color:rgba(26,22,18,0.50); letter-spacing:0.22em;
+  margin-top:clamp(6px,1.5vw,10px);
+  opacity:0;
+  transition: opacity 0.6s ease;
+}
+.logo-tag.visible { opacity:1; }
+
+/* ═══ Progress bar ═══ */
+#bar {
+  position:absolute; bottom:0; left:0; height:2px;
+  background:linear-gradient(90deg, var(--green), var(--pink), var(--gold));
+  width:0%; z-index:100;
+}
+
+/* ═══ Replay ═══ */
+#replay {
+  position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:11px; color:rgba(26,22,18,0.22); letter-spacing:0.1em;
+  opacity:0; z-index:50;
+  transition: opacity 0.6s ease;
+  cursor:pointer;
+}
+#replay.visible { opacity:1; pointer-events:auto; }
+</style>
+</head>
+<body>
+
+<div id="bg-warm"></div>
+<canvas id="connections"></canvas>
+<div id="entities"></div>
+
+<div id="text-overlay">
+  <div class="phrase" id="ph1">
+    <span class="phrase-card">
+      <span class="jp">目の前にいるのは、ただひとりの人間。</span>
+      <span class="en">Before any label — a person.</span>
+    </span>
+  </div>
+  <div class="phrase" id="ph2">
+    <span class="phrase-card">
+      <span class="jp">世界中に、ともだちができる。</span>
+      <span class="en">Friends across every horizon.</span>
+    </span>
+  </div>
+</div>
+
+<div id="logo-layer">
+  <div id="logo-card">
+    <div class="logo-jp">るうまな</div>
+    <div class="logo-divider"></div>
+    <div class="logo-en">ru<span style="color:var(--pink)">-</span>mana<span class="logo-dot">.</span></div>
+    <div class="logo-tag">異文化の摩擦を、理解へ。</div>
+  </div>
+</div>
+
+<div id="bar"></div>
+<div id="replay">click to replay</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   FLAGS — diverse selection from every continent
+   ═══════════════════════════════════════════════════════ */
+const FLAGS = [
+  // Asia & Oceania
+  'jp','kr','cn','th','vn','in','ph','id','my','tw','sg','au','nz',
+  // Europe
+  'gb','fr','de','it','es','nl','se','pt','ch','pl','no','fi','ie','dk',
+  // Americas
+  'us','ca','br','mx','ar','co','cl','pe','jm',
+  // Africa & Middle East
+  'za','ng','eg','ke','tr','ae','ma','gh',
+];
+const N = FLAGS.length;
+
+/* ═══════════════════════════════════════════════════════
+   CANVAS
+   ═══════════════════════════════════════════════════════ */
+const cvs = document.getElementById('connections');
+const ctx = cvs.getContext('2d');
+let W, H;
+function resize() {
+  W = cvs.width  = window.innerWidth;
+  H = cvs.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+/* ═══════════════════════════════════════════════════════
+   ENTITY DATA
+   ═══════════════════════════════════════════════════════ */
+const entities = [];
+const container = document.getElementById('entities');
+
+/* Flag circle size — responsive */
+function flagSize() { return Math.round(Math.min(W, H) * 0.065); }
+function dotSize()  { return Math.round(flagSize() * 0.52); }
+
+/* Scatter positions — random across screen with padding */
+function randomPos(padding) {
+  return {
+    x: padding + Math.random() * (W - padding * 2),
+    y: padding + Math.random() * (H - padding * 2),
+  };
+}
+
+/* Create entities */
+function createEntities() {
+  container.innerHTML = '';
+  entities.length = 0;
+  const sz = flagSize();
+  const dsz = dotSize();
+  const pad = sz * 1.2;
+
+  for (let i = 0; i < N; i++) {
+    const pos = randomPos(pad);
+    const el = document.createElement('div');
+    el.className = 'entity';
+    el.innerHTML = `
+      <span class="fi fi-${FLAGS[i]} fis flag-circle"
+            style="width:${sz}px;height:${sz}px;"></span>
+      <div class="person-dot"
+           style="width:${dsz}px;height:${dsz}px;"></div>
+    `;
+    el.style.left = pos.x + 'px';
+    el.style.top  = pos.y + 'px';
+    container.appendChild(el);
+
+    entities.push({
+      el,
+      x: pos.x, y: pos.y,
+      /* Drift target — a different random position */
+      tx: padding(pad), ty: padding(pad),
+      /* Velocity for gentle float */
+      vx: (Math.random() - 0.5) * 8,
+      vy: (Math.random() - 0.5) * 8,
+      phase: Math.random() * Math.PI * 2,
+      delay: i * 0.045, // stagger appearance
+    });
+  }
+
+  function padding(p) {
+    return p + Math.random() * (W > H ? W - p * 2 : W - p * 2);
+  }
+
+  /* Assign mixed/drift targets — more spread out */
+  entities.forEach(e => {
+    e.tx = pad + Math.random() * (W - pad * 2);
+    e.ty = pad + Math.random() * (H - pad * 2);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════
+   EASING HELPERS
+   ═══════════════════════════════════════════════════════ */
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+function lerp(a, b, t)  { return a + (b - a) * t; }
+function easeInOutCubic(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+
+/* ═══════════════════════════════════════════════════════
+   CONNECTION LINES
+   ═══════════════════════════════════════════════════════ */
+function drawConnections(progress) {
+  ctx.clearRect(0, 0, W, H);
+  if (progress <= 0) return;
+
+  const maxDist = Math.min(W, H) * 0.25;
+  const drawn = [];
+
+  for (let i = 0; i < N; i++) {
+    const a = entities[i];
+    for (let j = i + 1; j < N; j++) {
+      const b = entities[j];
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist > maxDist) continue;
+
+      const strength = 1 - dist / maxDist;
+      const alpha = strength * progress * 0.35;
+
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.strokeStyle = `rgba(242,201,125,${alpha})`;
+      ctx.lineWidth = 1.2 + strength * 1.0;
+      ctx.stroke();
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   TIMELINE — ~10 seconds
+   ═══════════════════════════════════════════════════════
+
+   0.0s       Background warms up
+   0.2–2.2s   Flags appear one by one, floating gently
+   2.5s       Phrase 1: "目の前にいるのは、ただひとりの人間。"
+   3.0–4.5s   Rack focus: flags blur → person dots glow
+   4.8s       Phrase 1 fades
+   5.2s       Phrase 2: "世界中に、ともだちができる。"
+   5.2–6.8s   Connection lines grow
+   7.0s       Phrase 2 fades
+   7.2s       Entities drift to center & fade
+   7.8s       Logo card
+   7.9–9.2s   Logo cascade
+   9.5s       Settled
+   ═══════════════════════════════════════════════════════ */
+const TOTAL = 10.5;
+let startTime = 0;
+let rackFocused = false;
+let connectProgress = 0;
+let converging = false;
+let logoShown = false;
+
+function show(id)  { document.getElementById(id)?.classList.add('visible'); }
+function hide(id)  {
+  const el = document.getElementById(id);
+  if (el) { el.classList.remove('visible'); el.classList.add('gone'); }
+}
+
+function animate(ts) {
+  if (!startTime) startTime = ts;
+  const elapsed = (ts - startTime) / 1000;
+  const bar = document.getElementById('bar');
+  bar.style.width = clamp(elapsed / TOTAL * 100, 0, 100) + '%';
+
+  /* Background warm-up */
+  if (elapsed >= 0.1) show('bg-warm');
+
+  /* Show flags staggered */
+  entities.forEach((e, i) => {
+    if (elapsed >= 0.2 + e.delay && !e.el.classList.contains('visible') && !converging) {
+      e.el.classList.add('visible');
+    }
+  });
+
+  /* Gentle float */
+  entities.forEach((e, i) => {
+    if (!e.el.classList.contains('visible')) return;
+    const t = elapsed * 0.6;
+    const floatX = Math.sin(t + e.phase) * 6;
+    const floatY = Math.cos(t * 0.7 + e.phase * 1.3) * 5;
+
+    /* During drift phase (2.5–7.0s), slowly move toward mixed target */
+    if (elapsed > 2.5 && elapsed < 7.2) {
+      const driftT = clamp((elapsed - 2.5) / 4.0, 0, 1);
+      const dt = easeInOutCubic(driftT);
+      e.x = lerp(e.x, e.tx, 0.003);
+      e.y = lerp(e.y, e.ty, 0.003);
+    }
+
+    /* During convergence (7.2+), pull to center */
+    if (elapsed > 7.2) {
+      e.x = lerp(e.x, W / 2, 0.04);
+      e.y = lerp(e.y, H / 2, 0.04);
+    }
+
+    e.el.style.left = (e.x + floatX) + 'px';
+    e.el.style.top  = (e.y + floatY) + 'px';
+  });
+
+  /* Phrase 1 */
+  if (elapsed >= 2.5 && elapsed < 2.6)  show('ph1');
+  if (elapsed >= 4.8 && elapsed < 4.9)  hide('ph1');
+
+  /* Rack focus: flags blur → person dots glow */
+  if (elapsed >= 3.0 && !rackFocused) {
+    rackFocused = true;
+    entities.forEach((e, i) => {
+      setTimeout(() => e.el.classList.add('rack-focus'), i * 30);
+    });
+  }
+
+  /* Phrase 2 */
+  if (elapsed >= 5.2 && elapsed < 5.3) show('ph2');
+  if (elapsed >= 7.0 && elapsed < 7.1) hide('ph2');
+
+  /* Connection lines */
+  if (elapsed > 5.2 && elapsed < 7.5) {
+    connectProgress = clamp((elapsed - 5.2) / 1.8, 0, 1);
+  } else if (elapsed >= 7.5) {
+    connectProgress = Math.max(0, connectProgress - 0.05);
+  }
+  drawConnections(connectProgress);
+
+  /* Convergence */
+  if (elapsed >= 7.2 && !converging) {
+    converging = true;
+    entities.forEach((e, i) => {
+      setTimeout(() => e.el.classList.add('converge'), i * 15);
+    });
+  }
+
+  /* Logo */
+  if (elapsed >= 7.8 && !logoShown) {
+    logoShown = true;
+    const card = document.getElementById('logo-card');
+    card.classList.add('visible');
+    setTimeout(() => document.querySelector('.logo-jp').classList.add('visible'), 120);
+    setTimeout(() => document.querySelector('.logo-divider').classList.add('visible'), 300);
+    setTimeout(() => document.querySelector('.logo-en').classList.add('visible'), 420);
+    setTimeout(() => document.querySelector('.logo-dot').classList.add('visible'), 620);
+    setTimeout(() => document.querySelector('.logo-tag').classList.add('visible'), 750);
+  }
+
+  /* Replay hint */
+  if (elapsed >= 10.0) {
+    document.getElementById('replay').classList.add('visible');
+  }
+
+  if (elapsed < TOTAL + 3) {
+    requestAnimationFrame(animate);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════ */
+document.fonts.ready.then(() => {
+  createEntities();
+  requestAnimationFrame(animate);
+});
+
+/* Resize handler */
+window.addEventListener('resize', () => {
+  resize();
+  /* Recalculate entity sizes */
+  const sz  = flagSize();
+  const dsz = dotSize();
+  entities.forEach(e => {
+    const flag = e.el.querySelector('.flag-circle');
+    const dot  = e.el.querySelector('.person-dot');
+    if (flag) { flag.style.width = sz+'px'; flag.style.height = sz+'px'; }
+    if (dot)  { dot.style.width = dsz+'px'; dot.style.height = dsz+'px'; }
+  });
+});
+
+/* Replay */
+document.body.addEventListener('click', () => location.reload());
+</script>
+</body>
+</html>
