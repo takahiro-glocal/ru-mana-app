@@ -211,7 +211,7 @@
                 </div>
               </div>
               <div class="tw-flex tw-items-center tw-gap-4 md:tw-border-l md:tw-border-gray-100 md:tw-pl-4">
-                <div class="tw-text-center tw-cursor-pointer tw-relative" @click="showComingSoon($t('dashboard.gallery'))">
+                <div class="tw-text-center tw-cursor-pointer tw-relative" @click="navigateTo(localePath('/animation'))">
                   <div class="tw-bg-[#2C3E50] tw-text-white tw-w-10 tw-h-10 tw-rounded-xl tw-flex tw-items-center tw-justify-center tw-text-xl tw-font-black active:tw-scale-95 tw-transition-transform">G</div>
                   <span class="tw-text-[9px] tw-text-gray-400 tw-font-bold">{{ $t('dashboard.gallery') }}</span>
                 </div>

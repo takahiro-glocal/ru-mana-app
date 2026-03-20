@@ -22,6 +22,7 @@
           target="_blank"
           rel="noopener"
           class="tw-bg-white tw-rounded-2xl tw-shadow-sm hover:tw-shadow-lg tw-transition-all tw-border tw-border-gray-50 tw-overflow-hidden tw-group tw-block"
+          @contextmenu.prevent
           @mouseenter="onHoverStart(anim.id)"
           @mouseleave="onHoverEnd(anim.id)"
           @touchstart.passive="onTouchStart($event, anim.id)"
@@ -91,58 +92,58 @@ const localePath = useLocalePath()
 
 const animations = [
   {
-    id: 'claude',
-    titleKey: 'animation.claude_title',
-    descKey: 'animation.claude_desc',
+    id: 'brush-torii',
+    titleKey: 'animation.brush_torii_title',
+    descKey: 'animation.brush_torii_desc',
     tags: ['SVG', 'CSS'],
     fallbackGradient: 'tw-bg-gradient-to-br tw-from-[#85C441] tw-to-[#4B3E8E]',
   },
   {
-    id: 'claude-5',
-    titleKey: 'animation.claude5_title',
-    descKey: 'animation.claude5_desc',
+    id: 'flags-gathering',
+    titleKey: 'animation.flags_gathering_title',
+    descKey: 'animation.flags_gathering_desc',
     tags: ['Canvas'],
     fallbackGradient: 'tw-bg-gradient-to-br tw-from-[#E4007F] tw-to-[#4B3E8E]',
   },
   {
-    id: 'claude-7',
-    titleKey: 'animation.claude7_title',
-    descKey: 'animation.claude7_desc',
+    id: 'circle-of-hands',
+    titleKey: 'animation.circle_of_hands_title',
+    descKey: 'animation.circle_of_hands_desc',
     tags: ['Canvas'],
     fallbackGradient: 'tw-bg-gradient-to-br tw-from-[#F26522] tw-to-[#4B3E8E]',
   },
   {
-    id: 'claude-8',
-    titleKey: 'animation.claude8_title',
-    descKey: 'animation.claude8_desc',
+    id: 'walking-together',
+    titleKey: 'animation.walking_together_title',
+    descKey: 'animation.walking_together_desc',
     tags: ['Canvas'],
     fallbackGradient: 'tw-bg-gradient-to-br tw-from-[#0099DD] tw-to-[#4B3E8E]',
   },
   {
-    id: 'claude-9',
-    titleKey: 'animation.claude9_title',
-    descKey: 'animation.claude9_desc',
+    id: 'flags-particles',
+    titleKey: 'animation.flags_particles_title',
+    descKey: 'animation.flags_particles_desc',
     tags: ['Canvas', 'Flags'],
     fallbackGradient: 'tw-bg-gradient-to-br tw-from-[#E8A800] tw-to-[#85C441]',
   },
   {
-    id: 'claude-10',
-    titleKey: 'animation.claude10_title',
-    descKey: 'animation.claude10_desc',
+    id: 'just-one-human',
+    titleKey: 'animation.just_one_human_title',
+    descKey: 'animation.just_one_human_desc',
     tags: ['Canvas', 'Flags'],
     fallbackGradient: 'tw-bg-gradient-to-br tw-from-[#4B3E8E] tw-to-[#E4007F]',
   },
   {
-    id: 'chatgpt',
-    titleKey: 'animation.chatgpt_title',
-    descKey: 'animation.chatgpt_desc',
+    id: 'glass-intro',
+    titleKey: 'animation.glass_intro_title',
+    descKey: 'animation.glass_intro_desc',
     tags: ['Glassmorphism'],
     fallbackGradient: 'tw-bg-gradient-to-br tw-from-[#9ac7ff] tw-to-[#8fd3a8]',
   },
   {
-    id: 'chatgpt-2',
-    titleKey: 'animation.chatgpt2_title',
-    descKey: 'animation.chatgpt2_desc',
+    id: 'human-first',
+    titleKey: 'animation.human_first_title',
+    descKey: 'animation.human_first_desc',
     tags: ['Glassmorphism'],
     fallbackGradient: 'tw-bg-gradient-to-br tw-from-[#9ad6cf] tw-to-[#9ac7ff]',
   },
@@ -195,5 +196,15 @@ function onTouchEnd(event: TouchEvent, id: string) {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+a {
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+a img {
+  -webkit-touch-callout: none;
+  pointer-events: none;
 }
 </style>
