@@ -553,5 +553,26 @@
     "store_suffix": "商店",
     "police_suffix": "派出所",
     "public_suffix": "公民馆"
+  },
+  "animation": {
+    "page_title": "动画画廊",
+    "subtitle": "ru-mana 介绍动画原型集",
+    "previewing": "播放中",
+    "claude_title": "Intro — 笔触・�的鸟居・文化卡片",
+    "claude_desc": "基于SVG/CSS的笔触动画，鸟居和文化卡片依次出现",
+    "claude5_title": "Intro v4 — 短语轮播",
+    "claude5_desc": "基于Canvas的短语轮播，模糊面板上显示日语短语",
+    "claude7_title": "Intro v5 — 轮播变体A",
+    "claude7_desc": "基于Canvas的短语轮播，v5系时间调整版",
+    "claude8_title": "Intro v5 — 轮播变体B",
+    "claude8_desc": "基于Canvas的短语轮播，v5系的变体",
+    "claude9_title": "Intro Animation — 国旗图标",
+    "claude9_desc": "Canvas动画结合国旗图标的演出",
+    "claude10_title": "唯一的人",
+    "claude10_desc": "哲学主题的Canvas动画，附带国旗图标",
+    "chatgpt_title": "Intro — 玻璃拟态",
+    "chatgpt_desc": "玻璃拟态设计的多屏幕动画",
+    "chatgpt2_title": "Intro v2 — Human First",
+    "chatgpt2_desc": "玻璃拟态设计改良版，Human First主题"
   }
 }
