@@ -553,5 +553,26 @@
     "store_suffix": "商店",
     "police_suffix": "交番",
     "public_suffix": "公民館"
+  },
+  "animation": {
+    "page_title": "アニメーション ギャラリー",
+    "subtitle": "るうまな イントロアニメーション プロトタイプ集",
+    "previewing": "再生中",
+    "claude_title": "Intro — 筆・鳥居・文化カード",
+    "claude_desc": "SVG/CSSベースの筆書きアニメーション。墨の筆致、鳥居、文化カードが順に登場する",
+    "claude5_title": "Intro v4 — フレーズカルーセル",
+    "claude5_desc": "Canvasベースのフレーズカルーセル。ぼかしパネル上に日本語フレーズを表示",
+    "claude7_title": "Intro v5 — カルーセル変種A",
+    "claude7_desc": "Canvasベースのフレーズカルーセル。v5系タイミング調整版",
+    "claude8_title": "Intro v5 — カルーセル変種B",
+    "claude8_desc": "Canvasベースのフレーズカルーセル。v5系のバリエーション",
+    "claude9_title": "Intro Animation — フラグアイコン",
+    "claude9_desc": "Canvasアニメーションに国旗アイコンを組み合わせた演出",
+    "claude10_title": "ただひとりの人間",
+    "claude10_desc": "哲学的テーマのCanvasアニメーション。国旗アイコン付き",
+    "chatgpt_title": "Intro — グラスモーフィズム",
+    "chatgpt_desc": "グラスモーフィズムデザインのマルチスクリーンアニメーション",
+    "chatgpt2_title": "Intro v2 — Human First",
+    "chatgpt2_desc": "グラスモーフィズムデザインの改良版。Human Firstテーマ"
   }
 }

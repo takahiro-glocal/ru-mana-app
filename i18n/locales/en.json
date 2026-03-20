@@ -553,5 +553,26 @@
     "store_suffix": "Store",
     "police_suffix": "Koban",
     "public_suffix": "Community Center"
+  },
+  "animation": {
+    "page_title": "Animation Gallery",
+    "subtitle": "ru-mana intro animation prototypes",
+    "previewing": "Playing",
+    "claude_title": "Intro — Brush, Torii & Culture Cards",
+    "claude_desc": "SVG/CSS brushstroke animation with torii gate and culture cards",
+    "claude5_title": "Intro v4 — Phrase Carousel",
+    "claude5_desc": "Canvas-based phrase carousel with blur panels",
+    "claude7_title": "Intro v5 — Carousel Variant A",
+    "claude7_desc": "Canvas phrase carousel with v5 timing adjustments",
+    "claude8_title": "Intro v5 — Carousel Variant B",
+    "claude8_desc": "Canvas phrase carousel, v5 variation",
+    "claude9_title": "Intro Animation — Flag Icons",
+    "claude9_desc": "Canvas animation combined with national flag icons",
+    "claude10_title": "Just One Human",
+    "claude10_desc": "Philosophical canvas animation with flag icons",
+    "chatgpt_title": "Intro — Glassmorphism",
+    "chatgpt_desc": "Multi-screen animation with glassmorphism design",
+    "chatgpt2_title": "Intro v2 — Human First",
+    "chatgpt2_desc": "Improved glassmorphism design with Human First theme"
   }
 }
