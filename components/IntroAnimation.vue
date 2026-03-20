@@ -1,5 +1,6 @@
 <template>
   <Teleport to="body">
+    <Transition name="intro-fade" @after-leave="onAfterLeave">
     <div v-if="showOverlay" class="intro-overlay">
       <iframe
         :src="`/animation/${selectedAnimation}.html`"
@@ -30,6 +31,7 @@
         </div>
       </Transition>
     </div>
+    </Transition>
   </Teleport>
 </template>
 
@@ -45,12 +47,16 @@ const selectedAnimation = ref(ANIMATIONS[0])
 let fallbackTimeout: ReturnType<typeof setTimeout> | null = null
 
 function close() {
-  showOverlay.value = false
   showSkipModal.value = false
+  showOverlay.value = false
   if (fallbackTimeout) {
     clearTimeout(fallbackTimeout)
     fallbackTimeout = null
   }
+}
+
+function onAfterLeave() {
+  window.removeEventListener('message', onMessage)
 }
 
 function skipThisTime() {
@@ -191,6 +197,14 @@ onUnmounted(() => {
   text-align: center;
   margin: 0;
   line-height: 1.5;
+}
+
+.intro-fade-leave-active {
+  transition: opacity 0.8s ease;
+}
+
+.intro-fade-leave-to {
+  opacity: 0;
 }
 
 .intro-modal-enter-active,
