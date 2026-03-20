@@ -385,7 +385,7 @@ const createPulseOverlayClass = (gMaps: typeof google.maps) => {
     div: HTMLElement | null = null;
     position: google.maps.LatLng | null = null;
     constructor(map: google.maps.Map) { super(); this.setMap(map); }
-    onAdd() {
+    override onAdd() {
       const div = document.createElement('div');
       div.className = 'user-location-pulse';
       div.innerHTML = `<div class="pulse-ring"></div><div class="pulse-core"></div>`;
@@ -393,14 +393,14 @@ const createPulseOverlayClass = (gMaps: typeof google.maps) => {
       const panes = this.getPanes();
       if (panes) panes.overlayMouseTarget.appendChild(div);
     }
-    draw() {
+    override draw() {
       if (!this.div || !this.position) return;
       const projection = this.getProjection();
       if (!projection) return;
       const point = projection.fromLatLngToDivPixel(this.position);
       if (point) { this.div.style.left = point.x + 'px'; this.div.style.top = point.y + 'px'; }
     }
-    onRemove() { if (this.div) { this.div.parentNode?.removeChild(this.div); this.div = null; } }
+    override onRemove() { if (this.div) { this.div.parentNode?.removeChild(this.div); this.div = null; } }
     setPosition(latlng: google.maps.LatLng) { this.position = latlng; this.draw(); }
   };
 };
@@ -429,6 +429,7 @@ const initGoogleMap = async () => {
 const startTracking = () => {
   if (navigator.geolocation && googleMaps) {
     watchId = navigator.geolocation.watchPosition((position) => {
+      if (!googleMaps) return;
       const pos = new googleMaps.LatLng(position.coords.latitude, position.coords.longitude);
       if (userOverlay) userOverlay.setPosition(pos);
       if (mapInstance) mapInstance.panTo(pos);

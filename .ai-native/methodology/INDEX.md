@@ -237,7 +237,9 @@ load: core-principles + phase-definitions + review-standards + educator
 ```
 Phase 3（圧縮版）: 既存要件への増分として要件を定義
 Phase 5（圧縮版）: 既存設計への増分としてI/F設計をレビュー
-Phase 7-8（統合）: 実装 → 二重ゲートレビュー → オペレーター承認
+Phase 7-8（統合）: 実装 → SP-8 インクリメンタルレビュー → 二重ゲートレビュー → オペレーター承認
+  → インクリメンタルレビュー: 実装タスク完了ごとに CLEAR/ISSUE で品質・安全チェック
+  → ゲートレビュー: 蓄積されたインクリメンタル記録を参照しつつ全体を判定
 
 load: core-principles + phase-definitions + coding-agent + code-reviewer + system-auditor
 ```
