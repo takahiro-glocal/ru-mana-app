@@ -1,5 +1,6 @@
 <template>
   <NuxtPwaManifest />
+  <IntroAnimation />
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>

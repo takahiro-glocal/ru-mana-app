@@ -610,8 +610,11 @@ function tick(ts) {
         p.opacity = 0;
         /* 最終目標を確定 */
         p.setCircleTarget(getCircleR());
-        /* 全員同じ速度でゆっくり歩く */
-        p.walkSpeed = 60;
+        /* 画面サイズに応じた速度: タイムアウト前に到着できるよう距離から逆算 */
+        const walkDist = Math.hypot(p.tx - p.x, p.ty - p.y);
+        const lastDelay = (N - 1) * T.WALK_INTERVAL;
+        const budget = lastDelay + 5.0 - (globalT - dt);
+        p.walkSpeed = walkDist / Math.max(budget, 3.0);
       }
       p.opacity = clamp(p.opacity + dt * 3.0, 0, 1);
 
@@ -844,6 +847,13 @@ function revealFinale(fin, logoEl, jp, en, dot, tag) {
     tag.style.transition = 'opacity 0.5s ease';
     tag.style.opacity    = '1';
   }, 1100);
+
+  /* 親フレームにアニメーション完了を通知 */
+  setTimeout(() => {
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'ru-mana-animation-complete' }, '*');
+    }
+  }, 2600);
 }
 
 document.body.addEventListener('click', () => location.reload());

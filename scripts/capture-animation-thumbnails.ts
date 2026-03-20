@@ -22,14 +22,14 @@ interface AnimationConfig {
 }
 
 const animations: AnimationConfig[] = [
-  { id: 'claude', delay: 3000 },
-  { id: 'claude-5', delay: 2500 },
-  { id: 'claude-7', delay: 2500 },
-  { id: 'claude-8', delay: 2500 },
-  { id: 'claude-9', delay: 2500 },
-  { id: 'claude-10', delay: 3000 },
-  { id: 'chatgpt', delay: 3000 },
-  { id: 'chatgpt-2', delay: 3000 },
+  { id: 'brush-torii', delay: 3000 },
+  { id: 'flags-gathering', delay: 2500 },
+  { id: 'circle-of-hands', delay: 2500 },
+  { id: 'walking-together', delay: 2500 },
+  { id: 'flags-particles', delay: 2500 },
+  { id: 'just-one-human', delay: 3000 },
+  { id: 'glass-intro', delay: 3000 },
+  { id: 'human-first', delay: 3000 },
 ]
 
 function findChromiumExecutable(): string | undefined {
