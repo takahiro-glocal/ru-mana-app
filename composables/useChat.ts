@@ -63,8 +63,11 @@ ${KNOWLEDGE_BASE}
 ---`
   }
 
+  const MAX_CHAT_MESSAGE_LENGTH = 2000
+
   const sendMessage = async (text: string) => {
     if (!text.trim() || isTyping.value) return
+    if (text.length > MAX_CHAT_MESSAGE_LENGTH) return
 
     const userMsg: ChatMessage = {
       id: `msg-${Date.now()}-user`,
@@ -102,7 +105,12 @@ ${KNOWLEDGE_BASE}
         ],
       })
 
-      const result = await chat.sendMessage(text.trim())
+      const result = await Promise.race([
+        chat.sendMessage(text.trim()),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Request timed out')), 30_000)
+        )
+      ])
       const reply = result.response.text()?.trim()
 
       if (!reply) throw new Error('No response from AI')
