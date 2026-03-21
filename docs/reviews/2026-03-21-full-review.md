@@ -200,6 +200,7 @@
 | 11 | Availability | WARNING | PWA オフライン書込キューなし | オフラインでの投稿データ消失 | Firestore offline persistence の書込キュー活用検討 | `plugins/firebase.client.ts:22-26` |
 | 12 | Availability | INFO | 単一 Firebase プロジェクト | リージョン障害時の全面停止リスク | MVP 段階では許容。将来的にマルチリージョン検討 | `.firebaserc` |
 | 13 | Fatal Pattern | WARNING | `onSnapshot` リスナーのライフサイクル管理が呼出元依存 | メモリリーク・不要な Firestore 読取課金 | composable 内で `onUnmounted` 自動解除を実装 | `useFirestore.ts:61, 184, 208` |
+| 14 | Fatal Pattern | WARNING | `pages/shiru/index.vue:138` の `onSnapshot` が unsubscribe なし。返り値を変数に保存せず `onUnmounted` での解除もない。ページ遷移のたびにリスナーが累積する | メモリリーク・Firestore 読取課金の累積 | `const unsub = onSnapshot(...)` + `onUnmounted(() => unsub())` を追加 | `pages/shiru/index.vue:138` |
 
 **重大度の定義:**
 - **CRITICAL:** 即対応が必要。リリース絶対不可。全ロールに最優先で通知
@@ -210,7 +211,7 @@
 - **安全ゲート:** FAIL
 - **リリース可否:** リリース不可
 - **CRITICAL指摘数:** 2件
-- **WARNING指摘数:** 8件
+- **WARNING指摘数:** 9件
 - **INFO指摘数:** 3件
-- **判定根拠:** Gemini API キーのクライアント側露出（CRITICAL #1）は課金型 API の不正利用リスクがあり、即対応が必要。Firestore Security Rules のバージョン管理外（CRITICAL #2）はデータ保護の検証が不可能であり、安全性を保証できない。加えて、認証ルート保護なし（#5）、非アトミック操作（#8）、タイムアウト未設定（#7）等の WARNING が複数あり、安定した運用に懸念がある。
+- **判定根拠:** Gemini API キーのクライアント側露出（CRITICAL #1）は課金型 API の不正利用リスクがあり、即対応が必要。Firestore Security Rules のバージョン管理外（CRITICAL #2）はデータ保護の検証が不可能であり、安全性を保証できない。加えて、認証ルート保護なし（#5）、非アトミック操作（#8）、タイムアウト未設定（#7）、`onSnapshot` リスナー未解除によるメモリリーク（#14）等の WARNING が複数あり、安定した運用に懸念がある。
 - **次のアクション:** CRITICAL 2件を解消後、コーディングエージェントへ差し戻し。WARNING の対応後に再監査を実施。
