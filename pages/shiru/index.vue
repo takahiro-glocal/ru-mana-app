@@ -129,13 +129,14 @@ const { categories, loadCategories, getCategoryName } = useShiru()
 const localePath = useLocalePath()
 
 const threadCounts = ref<Record<string, number>>({})
+let unsubThreadCounts: (() => void) | null = null
 
 onMounted(async () => {
   initAuth()
   await loadCategories()
 
   const q = query(collection($firestore, 'threads'))
-  onSnapshot(q, (snapshot) => {
+  unsubThreadCounts = onSnapshot(q, (snapshot) => {
     const counts: Record<string, number> = {}
     snapshot.docs.forEach(doc => {
       const data = doc.data()
@@ -145,6 +146,10 @@ onMounted(async () => {
     })
     threadCounts.value = counts
   })
+})
+
+onUnmounted(() => {
+  unsubThreadCounts?.()
 })
 
 const getThreadCount = (categoryId: string) => {

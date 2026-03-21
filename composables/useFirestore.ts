@@ -14,7 +14,8 @@ import {
   deleteDoc,
   increment,
   getDoc,
-  setDoc
+  setDoc,
+  writeBatch
 } from "firebase/firestore";
 
 export interface Post {
@@ -42,12 +43,26 @@ export interface Thread {
 
 export const useFirestore = () => {
   const { $firestore } = useNuxtApp();
-  
+
   // State
   const posts = ref<Post[]>([]);
   const threads = ref<Thread[]>([]); // スレッド一覧用
   const allThreads = ref<Thread[]>([]); // 全スレッド (検索用)
   const isLoading = ref(false);
+
+  // onSnapshot リスナーの自動解除ヘルパー
+  const activeUnsubscribes: (() => void)[] = [];
+  const registerUnsubscribe = (unsubscribe: () => void) => {
+    activeUnsubscribes.push(unsubscribe);
+    return unsubscribe;
+  };
+
+  if (getCurrentInstance()) {
+    onUnmounted(() => {
+      activeUnsubscribes.forEach(unsub => unsub());
+      activeUnsubscribes.length = 0;
+    });
+  }
 
   // --- Posts Logic (Existing) ---
   
@@ -58,18 +73,27 @@ export const useFirestore = () => {
       orderBy("createdAt", "asc")
     );
     
-    return onSnapshot(q, (snapshot) => {
+    return registerUnsubscribe(onSnapshot(q, (snapshot) => {
       posts.value = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       } as Post));
       isLoading.value = false;
-    });
+    }));
   };
 
+  const MAX_POST_BODY_LENGTH = 5000;
+  const MAX_THREAD_TITLE_LENGTH = 200;
+
   const addPost = async (threadId: string, threadTitle: string, postData: Omit<Post, 'id' | 'createdAt' | 'likes'>) => {
+    if (postData.body.length > MAX_POST_BODY_LENGTH) {
+      throw new Error(`Post body exceeds maximum length of ${MAX_POST_BODY_LENGTH} characters`);
+    }
+    const batch = writeBatch($firestore);
+
     // 1. Add Post
-    await addDoc(collection($firestore, `threads/${threadId}/posts`), {
+    const postRef = doc(collection($firestore, `threads/${threadId}/posts`));
+    batch.set(postRef, {
       ...postData,
       createdAt: serverTimestamp(),
       likes: 0
@@ -77,10 +101,12 @@ export const useFirestore = () => {
 
     // 2. Update Thread Meta (Last updated & count)
     const threadRef = doc($firestore, 'threads', threadId);
-    await updateDoc(threadRef, {
+    batch.update(threadRef, {
       updatedAt: serverTimestamp(),
       postCount: increment(1)
     });
+
+    await batch.commit();
   };
 
   const updatePost = async (threadId: string, postId: string, body: string) => {
@@ -89,11 +115,15 @@ export const useFirestore = () => {
   };
 
   const deletePost = async (threadId: string, postId: string) => {
+    const batch = writeBatch($firestore);
+
     const postRef = doc($firestore, `threads/${threadId}/posts`, postId);
-    await deleteDoc(postRef);
-    // Decrement count
+    batch.delete(postRef);
+
     const threadRef = doc($firestore, 'threads', threadId);
-    await updateDoc(threadRef, { postCount: increment(-1) });
+    batch.update(threadRef, { postCount: increment(-1) });
+
+    await batch.commit();
   };
 
   const likePost = async (threadId: string, postId: string) => {
@@ -130,19 +160,24 @@ export const useFirestore = () => {
    * ポイント加算
    */
   const addPoints = async (userId: string, amount: number, reason: string) => {
+    const batch = writeBatch($firestore);
     const userRef = doc($firestore, 'users', userId);
     const userDoc = await getDoc(userRef);
+
     if (!userDoc.exists()) {
-      await setDoc(userRef, { points: amount });
+      batch.set(userRef, { points: amount });
     } else {
-      await updateDoc(userRef, { points: increment(amount) });
+      batch.update(userRef, { points: increment(amount) });
     }
-    // ポイント履歴を追加
-    await addDoc(collection($firestore, `users/${userId}/point_history`), {
+
+    const historyRef = doc(collection($firestore, `users/${userId}/point_history`));
+    batch.set(historyRef, {
       amount,
       reason,
       createdAt: serverTimestamp()
     });
+
+    await batch.commit();
   };
 
   /**
@@ -161,7 +196,12 @@ export const useFirestore = () => {
   /**
    * フィードバック送信 → Firestore保存
    */
+  const MAX_FEEDBACK_LENGTH = 5000;
+
   const submitFeedback = async (content: string, userId: string, userName: string) => {
+    if (content.length > MAX_FEEDBACK_LENGTH) {
+      throw new Error(`Feedback exceeds maximum length of ${MAX_FEEDBACK_LENGTH} characters`);
+    }
     await addDoc(collection($firestore, 'feedback'), {
       content,
       userId,
@@ -178,18 +218,19 @@ export const useFirestore = () => {
     isLoading.value = true;
     const q = query(
       collection($firestore, 'threads'),
-      orderBy('updatedAt', 'desc')
+      orderBy('updatedAt', 'desc'),
+      firestoreLimit(limitCount)
     );
 
-    return onSnapshot(q, (snapshot) => {
+    return registerUnsubscribe(onSnapshot(q, (snapshot) => {
       const fetched = snapshot.docs.map(d => ({
         id: d.id,
         ...d.data()
       } as Thread));
       allThreads.value = fetched;
-      threads.value = fetched.slice(0, limitCount);
+      threads.value = fetched;
       isLoading.value = false;
-    });
+    }));
   };
 
   // --- ★ New: Threads Logic ---
@@ -205,13 +246,13 @@ export const useFirestore = () => {
       orderBy('updatedAt', 'desc')
     );
 
-    return onSnapshot(q, (snapshot) => {
+    return registerUnsubscribe(onSnapshot(q, (snapshot) => {
       threads.value = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       } as Thread));
       isLoading.value = false;
-    });
+    }));
   };
 
   /**
@@ -219,6 +260,12 @@ export const useFirestore = () => {
    * スレッドドキュメントを作成し、直後に最初の投稿を追加します
    */
   const createThread = async (categoryId: string, title: string, body: string, user: FirebaseUserInfo) => {
+    if (title.length > MAX_THREAD_TITLE_LENGTH) {
+      throw new Error(`Thread title exceeds maximum length of ${MAX_THREAD_TITLE_LENGTH} characters`);
+    }
+    if (body.length > MAX_POST_BODY_LENGTH) {
+      throw new Error(`Post body exceeds maximum length of ${MAX_POST_BODY_LENGTH} characters`);
+    }
     // 1. Create Thread Document
     const threadRef = await addDoc(collection($firestore, 'threads'), {
       categoryId,

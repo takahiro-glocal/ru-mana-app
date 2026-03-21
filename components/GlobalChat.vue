@@ -123,6 +123,7 @@
           @keydown.enter.exact.prevent="handleSend"
           :placeholder="$t('chat.input_placeholder')"
           :disabled="isTyping"
+          maxlength="2000"
           rows="1"
           class="tw-flex-1 tw-bg-gray-50 tw-border tw-border-gray-100 tw-rounded-2xl tw-px-4 tw-py-2.5 tw-text-sm tw-resize-none tw-outline-none focus:tw-border-[#4B3E8E] tw-transition-colors tw-max-h-24"
           @input="autoResize"

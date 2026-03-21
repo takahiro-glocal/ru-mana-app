@@ -67,8 +67,18 @@ export const useAuth = () => {
     }
   };
 
+  // パスワードポリシーチェック（最低8文字、英字+数字を含む）
+  const validatePassword = (pass: string): string | null => {
+    if (pass.length < 8) return 'Password must be at least 8 characters';
+    if (!/[A-Za-z]/.test(pass)) return 'Password must contain at least one letter';
+    if (!/[0-9]/.test(pass)) return 'Password must contain at least one number';
+    return null;
+  };
+
   // メールアドレスで新規登録
   const registerWithEmail = async (email: string, pass: string) => {
+    const policyError = validatePassword(pass);
+    if (policyError) throw new Error(policyError);
     try {
       await createUserWithEmailAndPassword($auth, email, pass);
     } catch (error) {

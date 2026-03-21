@@ -102,14 +102,19 @@ Translate the following text. Return ONLY the translated text, nothing else:
 
 ${text}`
 
-      const result = await model.generateContent(prompt)
+      const result = await Promise.race([
+        model.generateContent(prompt),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Translation timed out')), 30_000)
+        )
+      ])
       const translatedText = result.response.text()?.trim()
 
       if (!translatedText) throw new Error('No translation returned')
 
-      // メモリとFirestoreの両方にキャッシュ
+      // メモリとFirestoreの両方にキャッシュ（SoT: Firestore を先に保存）
+      await saveToFirestore(firestoreCacheId, text, locale.value, translatedText)
       translations.value[memKey] = translatedText
-      saveToFirestore(firestoreCacheId, text, locale.value, translatedText)
 
       return translatedText
     } catch (e) {
