@@ -25,11 +25,11 @@
           </div>
           <Home class="tw-text-[#BCAF92] tw-w-9 tw-h-9 tw-cursor-pointer" />
           
+          <LanguageSwitcher />
           <div v-if="user" @click="openDrawer()" class="tw-cursor-pointer">
             <img :src="userPhotoURL" class="tw-w-10 tw-h-10 tw-rounded-full tw-border-2 tw-border-[#BCAF92]" />
           </div>
           <template v-else>
-            <LanguageSwitcher />
             <button @click="isLoginModalOpen = true" class="tw-bg-[#E4007F] tw-text-white tw-font-bold tw-px-6 tw-py-2 tw-rounded-full tw-shadow-sm hover:tw-bg-[#c0006b] tw-transition-colors">
               {{ $t('common.login') }}
             </button>
@@ -50,11 +50,11 @@
                 </div>
               </div>
             </div>
+            <LanguageSwitcher />
             <div v-if="user" @click="openDrawer()" class="tw-cursor-pointer">
               <img :src="userPhotoURL" class="tw-w-10 tw-h-10 tw-rounded-full tw-border-2 tw-border-[#BCAF92]" />
             </div>
             <template v-else>
-              <LanguageSwitcher />
               <UserCircle class="tw-text-[#BCAF92] tw-w-10 tw-h-10 tw-cursor-pointer" @click="isLoginModalOpen = true" />
             </template>
           </div>
