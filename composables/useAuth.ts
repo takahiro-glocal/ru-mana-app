@@ -30,7 +30,10 @@ export const useAuth = () => {
 
     // リダイレクトログインの結果を処理（フォールバック時用）
     getRedirectResult($auth).catch((error) => {
-      if (error?.code !== "auth/redirect-cancelled-by-user") {
+      if (
+        error?.code !== "auth/redirect-cancelled-by-user" &&
+        error?.code !== "auth/argument-error"
+      ) {
         console.error("Redirect result error:", error);
       }
     });

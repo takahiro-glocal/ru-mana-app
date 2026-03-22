@@ -1,24 +1,23 @@
-let loadingPromise: Promise<void> | null = null;
+import { Loader } from '@googlemaps/js-api-loader';
+
+let loader: Loader | null = null;
 
 export const useMapsLoader = () => {
   const config = useRuntimeConfig();
   const isLoaded = useState('gmaps_loaded', () => false);
 
-  const load = (): Promise<void> => {
-    if (isLoaded.value) return Promise.resolve();
-    if (loadingPromise) return loadingPromise;
+  const load = async (): Promise<void> => {
+    if (isLoaded.value) return;
 
-    loadingPromise = new Promise<void>((resolve) => {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${config.public.googleMapsApiKey}&libraries=places`;
-      script.async = true;
-      script.onload = () => {
-        isLoaded.value = true;
-        resolve();
-      };
-      document.head.appendChild(script);
-    });
-    return loadingPromise;
+    if (!loader) {
+      loader = new Loader({
+        apiKey: config.public.googleMapsApiKey as string,
+        libraries: ['places'],
+      });
+    }
+
+    await loader.importLibrary('maps');
+    isLoaded.value = true;
   };
 
   return { load, isLoaded };

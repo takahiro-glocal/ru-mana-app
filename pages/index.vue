@@ -262,12 +262,10 @@ const isLoginModalOpen = ref(false);
 
 // --- PWA Install Prompt ---
 let deferredPrompt: BeforeInstallPromptEvent | null = null;
-if (process.client) {
-  window.addEventListener('beforeinstallprompt', (e: Event) => {
-    e.preventDefault();
-    deferredPrompt = e as BeforeInstallPromptEvent;
-  });
-}
+const onBeforeInstallPrompt = (e: Event) => {
+  e.preventDefault();
+  deferredPrompt = e as BeforeInstallPromptEvent;
+};
 
 const handleInstall = async () => {
   if (deferredPrompt) {
@@ -457,6 +455,7 @@ const router = useRouter();
 onMounted(() => {
   initAuth();
   initGoogleMap();
+  window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt);
 
   // Coming Soon リダイレクトからのトースト表示
   const comingSoonPage = route.query.coming_soon as string | undefined;
@@ -481,6 +480,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt);
   if (watchId !== null) navigator.geolocation.clearWatch(watchId);
   if (userOverlay) userOverlay.setMap(null);
   if (unsubLatest) unsubLatest();
