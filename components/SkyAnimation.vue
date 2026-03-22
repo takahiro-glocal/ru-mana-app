@@ -1,5 +1,5 @@
 <template>
-    <div class="sky-container">
+    <div class="sky-container" :style="props.flagSize ? { '--flag-size': `${props.flagSize}px` } as any : {}">
         <div class="sky-gradient" :style="{ background: skyGradient }"></div>
         <div class="sky-content">
             <div class="orbits-area">
@@ -33,11 +33,13 @@ import { countries } from '~/utils/countries';
 interface Props {
     showLogo?: boolean
     compact?: boolean
+    flagSize?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
     showLogo: true,
     compact: false,
+    flagSize: 0,
 });
 
 const { skyGradient } = useSkyGradient();
@@ -172,8 +174,8 @@ onUnmounted(() => {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 20px;
-    height: 20px;
+    width: var(--flag-size, 20px);
+    height: var(--flag-size, 20px);
     transform-origin: 50% 50%;
     transform: translate(-50%, -50%) rotate(var(--initial-angle)) translate(var(--layer-radius), 0) rotate(calc(-1 * var(--initial-angle)));
     animation: rotateOrbit var(--rotation-duration, 20s) linear infinite;
