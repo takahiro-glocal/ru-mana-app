@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { initializeFirestore, persistentLocalCache, persistentSingleTabManager } from "firebase/firestore";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
@@ -21,7 +21,7 @@ export default defineNuxtPlugin((_nuxtApp) => {
   // Firestore: 新しいキャッシュAPI (enableIndexedDbPersistence は非推奨)
   const firestore = initializeFirestore(app, {
     localCache: persistentLocalCache({
-      tabManager: persistentSingleTabManager({}),
+      tabManager: persistentMultipleTabManager(),
     }),
   });
 
