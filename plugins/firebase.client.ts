@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { initializeFirestore, persistentLocalCache, persistentSingleTabManager } from "firebase/firestore";
-import { initializeAuth, indexedDBLocalPersistence, browserLocalPersistence } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
 export default defineNuxtPlugin((_nuxtApp) => {
@@ -25,9 +25,7 @@ export default defineNuxtPlugin((_nuxtApp) => {
     }),
   });
 
-  const auth = initializeAuth(app, {
-    persistence: [indexedDBLocalPersistence, browserLocalPersistence],
-  });
+  const auth = getAuth(app);
   const storage = getStorage(app);
 
   return {
