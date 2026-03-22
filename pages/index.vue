@@ -320,9 +320,9 @@ const fetchWeather = async (lat: number, lng: number) => {
       weather.temp = '25';
       return;
     }
-    const data = await $fetch<WeatherResponse>(
+    const data = await $fetch(
       `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=metric&lang=${locale.value}&appid=${apiKey}`
-    );
+    ) as WeatherResponse;
     weather.temp = Math.round(data.main.temp).toString();
     weather.area = data.name || 'Unknown';
     const mainWeather = data.weather?.[0]?.main?.toLowerCase() || '';
