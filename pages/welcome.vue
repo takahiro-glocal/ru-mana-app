@@ -2,6 +2,9 @@
   <div class="landing-page">
     <!-- Hero Section -->
     <section class="landing-hero">
+      <div class="tw-absolute tw-top-4 tw-right-4 tw-z-[3]">
+        <LanguageSwitcher variant="light" />
+      </div>
       <SkyAnimation :show-logo="false" :flag-size="32" />
       <div class="landing-hero-overlay" />
       <div class="landing-hero-content">

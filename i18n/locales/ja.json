@@ -158,6 +158,7 @@
   },
   "settings": {
     "language": "言語設定 / Language",
+    "switch_language": "言語を切替",
     "notifications": "通知設定",
     "push_notifications": "プッシュ通知を受け取る"
   },

@@ -158,6 +158,7 @@
   },
   "settings": {
     "language": "Language Settings",
+    "switch_language": "Switch language",
     "notifications": "Notification Settings",
     "push_notifications": "Receive Push Notifications"
   },
