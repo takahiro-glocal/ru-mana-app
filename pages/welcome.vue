@@ -2,7 +2,7 @@
   <div class="landing-page">
     <!-- Hero Section -->
     <section class="landing-hero">
-      <SkyAnimation :show-logo="false" />
+      <SkyAnimation :show-logo="false" :flag-size="32" />
       <div class="landing-hero-overlay" />
       <div class="landing-hero-content">
         <div class="landing-logo-area">
@@ -55,21 +55,41 @@
       </div>
     </section>
 
-    <!-- Screenshot / App Preview Placeholder -->
+    <!-- Screenshot / App Preview -->
     <section class="tw-bg-white tw-py-16 tw-px-6">
-      <div class="tw-max-w-4xl tw-mx-auto tw-text-center">
-        <h2 class="tw-text-2xl md:tw-text-3xl tw-font-bold tw-text-[#4B3E8E] tw-mb-8">
+      <div class="tw-max-w-5xl tw-mx-auto tw-text-center">
+        <h2 class="tw-text-2xl md:tw-text-3xl tw-font-bold tw-text-[#4B3E8E] tw-mb-4">
           {{ $t('landing.preview_title') }}
         </h2>
-        <div class="tw-bg-gradient-to-br tw-from-[#4B3E8E]/10 tw-to-[#E4007F]/10 tw-rounded-3xl tw-p-8 md:tw-p-12 tw-border-2 tw-border-dashed tw-border-[#4B3E8E]/20">
-          <div class="tw-flex tw-items-center tw-justify-center tw-gap-4 tw-flex-wrap">
-            <div class="tw-w-48 tw-h-80 md:tw-w-56 md:tw-h-96 tw-bg-[#2C3E50] tw-rounded-[2rem] tw-shadow-2xl tw-flex tw-items-center tw-justify-center tw-border-4 tw-border-gray-700">
-              <div class="tw-text-center tw-text-white/60">
-                <Smartphone class="tw-w-12 tw-h-12 tw-mx-auto tw-mb-3" />
-                <p class="tw-text-xs">{{ $t('landing.preview_placeholder') }}</p>
+        <p class="tw-text-gray-500 tw-text-sm md:tw-text-base tw-mb-10">
+          {{ $t('landing.preview_subtitle') }}
+        </p>
+        <!-- Carousel (CoverFlow) -->
+        <div class="screenshot-carousel" @touchstart.passive="onTouchStart" @touchend.passive="onTouchEnd">
+          <div class="screenshot-stage">
+            <div
+              v-for="(ss, i) in screenshots"
+              :key="i"
+              class="screenshot-slide"
+              :class="{
+                'screenshot-slide--active': i === activeSlide,
+                'screenshot-slide--prev': i === activeSlide - 1,
+                'screenshot-slide--next': i === activeSlide + 1,
+                'screenshot-slide--hidden': Math.abs(i - activeSlide) > 1
+              }"
+              @click="goToSlide(i)"
+            >
+              <div class="phone-mockup">
+                <div class="phone-notch" />
+                <img :src="ss.src" :alt="$t(ss.captionKey)" class="phone-screen" loading="lazy" />
               </div>
+              <p class="screenshot-caption">{{ $t(ss.captionKey) }}</p>
             </div>
           </div>
+        </div>
+        <!-- Dots -->
+        <div class="tw-flex tw-justify-center tw-gap-2 tw-mt-6">
+          <button v-for="(_, i) in screenshots" :key="i" class="screenshot-dot" :class="{ 'screenshot-dot--active': i === activeSlide }" :aria-label="`Slide ${i + 1}`" @click="goToSlide(i)" />
         </div>
       </div>
     </section>
@@ -188,7 +208,7 @@
 <script setup lang="ts">
 import {
   Heart, Users, Globe, Lightbulb, Binoculars, Ear, Footprints,
-  Download, Smartphone, X
+  Download, X
 } from 'lucide-vue-next'
 
 definePageMeta({
@@ -220,6 +240,49 @@ const features = [
   { id: 'kiku', icon: Ear, color: '#E4007F', labelKey: 'common.kiku', descKey: 'landing.feature_kiku' },
   { id: 'iku', icon: Footprints, color: '#0099DD', labelKey: 'common.iku', descKey: 'landing.feature_iku' },
 ]
+
+// --- Screenshots Carousel ---
+const screenshots = [
+  { src: '/screenshots/Screenshot_top.jpg', captionKey: 'landing.ss_top' },
+  { src: '/screenshots/Screenshot_shiru_top.jpg', captionKey: 'landing.ss_shiru' },
+  { src: '/screenshots/Screenshot_q_and_a.jpg', captionKey: 'landing.ss_qa' },
+  { src: '/screenshots/Screenshot_rule_and_manner.jpg', captionKey: 'landing.ss_rule' },
+  { src: '/screenshots/Screenshot_thread.jpg', captionKey: 'landing.ss_thread' },
+]
+
+const activeSlide = ref(0)
+let autoPlayTimer: ReturnType<typeof setInterval> | null = null
+let touchStartX = 0
+
+const goToSlide = (index: number) => {
+  activeSlide.value = index
+  resetAutoPlay()
+}
+
+const nextSlide = () => {
+  activeSlide.value = (activeSlide.value + 1) % screenshots.length
+}
+
+const onTouchStart = (e: TouchEvent) => {
+  touchStartX = e.changedTouches[0].clientX
+}
+
+const onTouchEnd = (e: TouchEvent) => {
+  const diff = touchStartX - e.changedTouches[0].clientX
+  if (Math.abs(diff) > 50) {
+    if (diff > 0) {
+      activeSlide.value = Math.min(activeSlide.value + 1, screenshots.length - 1)
+    } else {
+      activeSlide.value = Math.max(activeSlide.value - 1, 0)
+    }
+    resetAutoPlay()
+  }
+}
+
+const resetAutoPlay = () => {
+  if (autoPlayTimer) clearInterval(autoPlayTimer)
+  autoPlayTimer = setInterval(nextSlide, 4000)
+}
 
 // --- PWA Install ---
 const showInstallGuide = ref(false)
@@ -264,11 +327,13 @@ const triggerNativeInstall = async () => {
 onMounted(() => {
   window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt)
   window.addEventListener('keydown', onEscKey)
+  autoPlayTimer = setInterval(nextSlide, 4000)
 })
 
 onUnmounted(() => {
   window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt)
   window.removeEventListener('keydown', onEscKey)
+  if (autoPlayTimer) clearInterval(autoPlayTimer)
 })
 </script>
 
@@ -387,6 +452,139 @@ onUnmounted(() => {
 .landing-cta-content {
   position: relative;
   z-index: 2;
+}
+
+/* Screenshot Carousel — CoverFlow */
+.screenshot-carousel {
+  overflow: hidden;
+  touch-action: pan-y;
+  margin: 0 -1.5rem;
+  padding: 0 1.5rem;
+}
+
+.screenshot-stage {
+  position: relative;
+  height: 480px;
+  perspective: 1000px;
+}
+
+.screenshot-slide {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+}
+
+.screenshot-slide--active {
+  transform: translateX(-50%) scale(1);
+  z-index: 3;
+  opacity: 1;
+}
+
+.screenshot-slide--prev {
+  transform: translateX(calc(-50% - 160px)) scale(0.82);
+  z-index: 2;
+  opacity: 0.6;
+}
+
+.screenshot-slide--next {
+  transform: translateX(calc(-50% + 160px)) scale(0.82);
+  z-index: 2;
+  opacity: 0.6;
+}
+
+.screenshot-slide--hidden {
+  transform: translateX(-50%) scale(0.6);
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.phone-mockup {
+  position: relative;
+  width: 200px;
+  height: 420px;
+  background: #1a1a2e;
+  border-radius: 2rem;
+  padding: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 2px rgba(255, 255, 255, 0.1) inset;
+  transition: box-shadow 0.5s ease;
+}
+
+.screenshot-slide--active .phone-mockup {
+  box-shadow: 0 25px 80px rgba(75, 62, 142, 0.3), 0 0 0 2px rgba(255, 255, 255, 0.15) inset;
+}
+
+.phone-notch {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 20px;
+  background: #1a1a2e;
+  border-radius: 0 0 12px 12px;
+  z-index: 2;
+}
+
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1.5rem;
+}
+
+.screenshot-caption {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4b5563;
+  margin-top: 1rem;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.screenshot-slide--active .screenshot-caption {
+  opacity: 1;
+}
+
+.screenshot-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: #d1d5db;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+.screenshot-dot--active {
+  background: #4B3E8E;
+  transform: scale(1.3);
+}
+
+@media (min-width: 768px) {
+  .screenshot-stage {
+    height: 580px;
+  }
+  .screenshot-slide {
+    width: 240px;
+  }
+  .phone-mockup {
+    width: 240px;
+    height: 500px;
+  }
+  .screenshot-slide--prev {
+    transform: translateX(calc(-50% - 200px)) scale(0.82);
+  }
+  .screenshot-slide--next {
+    transform: translateX(calc(-50% + 200px)) scale(0.82);
+  }
 }
 
 /* Modal */
