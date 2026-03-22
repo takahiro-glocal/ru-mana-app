@@ -11,7 +11,7 @@ export const useMapsLoader = () => {
 
     if (!optionsSet) {
       setOptions({
-        apiKey: config.public.googleMapsApiKey as string,
+        key: config.public.googleMapsApiKey as string,
       });
       optionsSet = true;
     }
