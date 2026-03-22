@@ -1,6 +1,6 @@
-import { Loader } from '@googlemaps/js-api-loader';
+import { setOptions, importLibrary } from '@googlemaps/js-api-loader';
 
-let loader: Loader | null = null;
+let optionsSet = false;
 
 export const useMapsLoader = () => {
   const config = useRuntimeConfig();
@@ -9,14 +9,17 @@ export const useMapsLoader = () => {
   const load = async (): Promise<void> => {
     if (isLoaded.value) return;
 
-    if (!loader) {
-      loader = new Loader({
+    if (!optionsSet) {
+      setOptions({
         apiKey: config.public.googleMapsApiKey as string,
-        libraries: ['places'],
       });
+      optionsSet = true;
     }
 
-    await loader.importLibrary('maps');
+    await Promise.all([
+      importLibrary('maps'),
+      importLibrary('places'),
+    ]);
     isLoaded.value = true;
   };
 

@@ -5,13 +5,13 @@
       :aria-label="$t('settings.switch_language')"
       :aria-expanded="isOpen"
       :class="[
-        'tw-flex tw-items-center tw-gap-1.5 tw-whitespace-nowrap tw-rounded-full tw-px-3 tw-py-1.5 tw-text-sm tw-font-bold tw-transition-colors tw-cursor-pointer',
+        'tw-flex tw-items-center tw-gap-1 tw-whitespace-nowrap tw-rounded-full tw-px-2 tw-py-1 tw-text-xs tw-font-bold tw-transition-colors tw-cursor-pointer',
         variant === 'light'
           ? 'tw-bg-white/30 tw-backdrop-blur-md tw-text-white tw-border tw-border-white/40 hover:tw-bg-white/50'
           : 'tw-bg-[#4B3E8E]/15 tw-text-[#4B3E8E] tw-border tw-border-[#4B3E8E]/20 hover:tw-bg-[#4B3E8E]/25'
       ]"
     >
-      <Languages class="tw-w-4 tw-h-4" />
+      <Languages class="tw-w-3.5 tw-h-3.5" />
       <span>{{ currentLocaleName }}</span>
     </button>
 
