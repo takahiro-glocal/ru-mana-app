@@ -12,7 +12,7 @@
       ]"
     >
       <Languages class="tw-w-3.5 tw-h-3.5" />
-      <span>{{ currentLocaleName }}</span>
+      <span class="tw-hidden sm:tw-inline">{{ currentLocaleName }}</span>
     </button>
 
     <!-- Backdrop -->

@@ -2,14 +2,14 @@
   <div class="tw-min-h-screen tw-bg-white md:tw-bg-[#F9F5E7] tw-pb-20 md:tw-pb-0">
     <header class="tw-bg-white tw-border-b tw-border-gray-100 tw-p-4 md:tw-px-8 md:tw-py-6 tw-z-30 tw-flex-shrink-0">
       <div class="tw-max-w-7xl tw-mx-auto tw-flex tw-justify-between tw-items-center">
-        <div class="tw-flex tw-items-center tw-gap-4">
-          <div class="tw-bg-[#85C441] tw-p-2 tw-rounded-xl md:tw-p-3 md:tw-rounded-2xl tw-cursor-pointer"
+        <div class="tw-flex tw-items-center tw-gap-4 tw-min-w-0">
+          <div class="tw-bg-[#85C441] tw-p-2 tw-rounded-xl md:tw-p-3 md:tw-rounded-2xl tw-cursor-pointer tw-shrink-0"
             @click="() => $router.push(localePath('/shiru'))">
             <Lightbulb class="tw-w-6 md:tw-w-10 tw-h-6 md:tw-h-10 tw-text-white" />
           </div>
-          <div>
+          <div class="tw-min-w-0">
             <h1 class="tw-text-xl md:tw-text-4xl tw-font-bold tw-text-gray-800">{{ $t('shiru.title') }}</h1>
-            <p class="tw-text-[9px] md:tw-text-sm tw-text-gray-500 tw-font-medium">{{ $t('shiru.tagline') }}</p>
+            <p class="tw-text-[9px] md:tw-text-sm tw-text-gray-500 tw-font-medium tw-truncate">{{ $t('shiru.tagline') }}</p>
           </div>
         </div>
 
