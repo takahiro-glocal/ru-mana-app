@@ -40,7 +40,7 @@
       <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-12 tw-gap-6">
         
         <div class="tw-col-span-1 md:tw-col-span-7 tw-space-y-6">
-          <div class="md:tw-hidden tw-flex tw-items-center tw-justify-between tw-mb-4">
+          <div class="md:tw-hidden tw-flex tw-items-center tw-justify-between tw-gap-2 tw-mb-4">
             <div class="tw-relative tw-flex-1 tw-mx-4">
               <input v-model="searchQuery" type="text" :placeholder="$t('dashboard.search_short')" class="tw-w-full tw-bg-[#4B3E8E] tw-bg-opacity-80 tw-text-white tw-placeholder-white/50 tw-rounded-md tw-py-1.5 tw-px-10" @input="onSearch" />
               <Search class="tw-absolute tw-left-3 tw-top-1/2 tw-transform -tw-translate-y-1/2 tw-text-white tw-w-4" />

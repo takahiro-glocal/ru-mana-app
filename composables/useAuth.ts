@@ -7,8 +7,6 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-  browserLocalPersistence,
-  setPersistence,
   type User
 } from "firebase/auth";
 import { shallowRef, computed } from "vue";
@@ -24,11 +22,6 @@ export const useAuth = () => {
   // 自動初期化: composable呼び出し時にリスナーを1回だけ登録
   if (process.client && !authInitialized) {
     authInitialized = true;
-
-    // 明示的に永続化方式を設定
-    setPersistence($auth, browserLocalPersistence).catch((err) => {
-      console.warn("Auth persistence setup failed:", err);
-    });
 
     onAuthStateChanged($auth, (currentUser) => {
       user.value = currentUser;
