@@ -27,15 +27,21 @@
             <div v-if="user" @click="openDrawer()" class="tw-cursor-pointer">
               <img :src="userPhotoURL" class="tw-w-10 tw-h-10 tw-rounded-full tw-border-2 tw-border-gray-100 shadow-sm" />
             </div>
-            <UserCircle v-else class="tw-w-10 tw-h-10 tw-text-gray-400 tw-cursor-pointer" @click="isLoginModalOpen = true" />
+            <template v-else>
+              <LanguageSwitcher />
+              <UserCircle class="tw-w-10 tw-h-10 tw-text-gray-400 tw-cursor-pointer" @click="isLoginModalOpen = true" />
+            </template>
           </div>
         </div>
 
-        <div class="md:tw-hidden tw-flex tw-items-center">
+        <div class="md:tw-hidden tw-flex tw-items-center tw-gap-2">
             <div v-if="user" @click="openDrawer()" class="tw-cursor-pointer">
               <img :src="userPhotoURL" class="tw-w-8 tw-h-8 tw-rounded-full tw-border-2 tw-border-gray-100 shadow-sm" />
             </div>
-            <UserCircle v-else class="tw-w-8 tw-h-8 tw-text-gray-400 tw-cursor-pointer" @click="isLoginModalOpen = true" />
+            <template v-else>
+              <LanguageSwitcher />
+              <UserCircle class="tw-w-8 tw-h-8 tw-text-gray-400 tw-cursor-pointer" @click="isLoginModalOpen = true" />
+            </template>
         </div>
 
       </div>

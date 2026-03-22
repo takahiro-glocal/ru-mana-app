@@ -28,9 +28,12 @@
           <div v-if="user" @click="openDrawer()" class="tw-cursor-pointer">
             <img :src="userPhotoURL" class="tw-w-10 tw-h-10 tw-rounded-full tw-border-2 tw-border-[#BCAF92]" />
           </div>
-          <button v-else @click="isLoginModalOpen = true" class="tw-bg-[#E4007F] tw-text-white tw-font-bold tw-px-6 tw-py-2 tw-rounded-full tw-shadow-sm hover:tw-bg-[#c0006b] tw-transition-colors">
-            {{ $t('common.login') }}
-          </button>
+          <template v-else>
+            <LanguageSwitcher />
+            <button @click="isLoginModalOpen = true" class="tw-bg-[#E4007F] tw-text-white tw-font-bold tw-px-6 tw-py-2 tw-rounded-full tw-shadow-sm hover:tw-bg-[#c0006b] tw-transition-colors">
+              {{ $t('common.login') }}
+            </button>
+          </template>
         </div>
       </header>
 
@@ -50,7 +53,10 @@
             <div v-if="user" @click="openDrawer()" class="tw-cursor-pointer">
               <img :src="userPhotoURL" class="tw-w-10 tw-h-10 tw-rounded-full tw-border-2 tw-border-[#BCAF92]" />
             </div>
-             <UserCircle v-else class="tw-text-[#BCAF92] tw-w-10 tw-h-10" @click="isLoginModalOpen = true" />
+            <template v-else>
+              <LanguageSwitcher />
+              <UserCircle class="tw-text-[#BCAF92] tw-w-10 tw-h-10 tw-cursor-pointer" @click="isLoginModalOpen = true" />
+            </template>
           </div>
 
           <div class="tw-grid tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-4">
