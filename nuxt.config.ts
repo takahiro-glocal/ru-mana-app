@@ -119,8 +119,6 @@ export default defineNuxtConfig({
     // Workbox設定（オフラインキャッシュ）
     workbox: {
       navigateFallback: '/',
-      // ここでFCMのService Workerロジックをインポートする
-      importScripts: ['/firebase-messaging-sw.js'], // または '/firebase-messaging-sw.js'
     },
     // デバイスへのインストールを促す設定
     devOptions: {

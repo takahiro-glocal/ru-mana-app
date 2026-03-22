@@ -6,7 +6,7 @@ export const useMapsLoader = () => {
     if (isLoaded.value) return Promise.resolve();
     return new Promise((resolve) => {
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${config.public.googleMapsApiKey}&libraries=places`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${config.public.googleMapsApiKey}&libraries=places&loading=async`;
       script.async = true;
       script.onload = () => {
         isLoaded.value = true;
