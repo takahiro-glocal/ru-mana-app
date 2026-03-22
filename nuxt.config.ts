@@ -134,6 +134,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       googleMapsApiKey: process.env.GOOGLE_MAP_API_KEY,
+      googleMapsMapId: process.env.GOOGLE_MAP_MAP_ID,
       apiKey: process.env.API_KEY,
       authDomain: process.env.AUTH_DOMAIN,
       databaseURL: process.env.DATABASE_URL,

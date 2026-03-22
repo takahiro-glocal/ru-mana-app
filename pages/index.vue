@@ -376,7 +376,6 @@ const onSearch = () => {
 let unsubLatest: (() => void) | null = null;
 
 // --- Google Maps Logic ---
-const MAP_ID = '880da9152ccc05531e5c5014'; 
 const { load } = useMapsLoader();
 const mapContainerPC = ref<HTMLElement | null>(null);
 let mapInstance: google.maps.Map | null = null;
@@ -414,10 +413,11 @@ const initGoogleMap = async () => {
     await load();
     googleMaps = google.maps;
     if (mapContainerPC.value && googleMaps) {
+      const mapId = useRuntimeConfig().public.googleMapsMapId as string | undefined;
       mapInstance = new googleMaps.Map(mapContainerPC.value, {
         center: { lat: 35.6895, lng: 139.6917 },
         zoom: 16,
-        mapId: MAP_ID,
+        ...(mapId ? { mapId } : {}),
         disableDefaultUI: true,
         gestureHandling: "none",
         zoomControl: false,

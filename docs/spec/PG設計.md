@@ -302,6 +302,7 @@ MESSAGING_SENDER_ID=xxx        # Firebase
 APP_ID=xxx                     # Firebase
 GEMINI_API_KEY=xxx             # Google AI
 GOOGLE_MAP_API_KEY=xxx         # Google Maps
+GOOGLE_MAP_MAP_ID=xxx          # Google Maps Map ID（任意・クラウドマップスタイル用）
 OPEN_WEATHER_API_KEY=xxx       # OpenWeatherMap
 ```
 
