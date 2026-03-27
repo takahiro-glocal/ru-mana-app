@@ -132,6 +132,9 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    // サーバーサイド専用（クライアントに露出しない）
+    geminiApiKey: process.env.GEMINI_API_KEY,
+    openWeatherApiKey: process.env.OPEN_WEATHER_API_KEY,
     public: {
       googleMapsApiKey: process.env.GOOGLE_MAP_API_KEY,
       googleMapsMapId: process.env.GOOGLE_MAP_MAP_ID,
@@ -144,13 +147,13 @@ export default defineNuxtConfig({
       appId: process.env.APP_ID,
       measurementId: process.env.MEASUREMENT_ID,
       googleFcmPublicVapidKey: process.env.GOOGLE_FCM_PUBLICVAPIDKEY,
-      openWeatherApiKey: process.env.OPEN_WEATHER_API_KEY,
-      geminiApiKey: process.env.GEMINI_API_KEY,
     }
   },
   ssr: false,
   nitro: {
-    preset: 'static',
+    // 本番デプロイ時は NITRO_PRESET=firebase を設定すること
+    // （server/api/ ルートを有効にするためサーバーランタイムが必要）
+    preset: process.env.NITRO_PRESET || 'firebase',
   },
   devtools: { enabled: false },
 })

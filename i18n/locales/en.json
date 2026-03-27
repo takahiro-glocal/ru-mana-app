@@ -30,6 +30,7 @@
     "today_event": "Today's Event",
     "no_events_today": "No events today",
     "default_event": "Japan on {month}/{day}",
+    "weather_unavailable": "Weather unavailable",
     "disaster_map": "Disaster Map",
     "sns": "SNS",
     "what_doing": "What's everyone up to?",

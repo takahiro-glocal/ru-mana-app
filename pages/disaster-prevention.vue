@@ -324,7 +324,10 @@ const drawUserMarker = (pos: google.maps.LatLngLiteral) => {
 }
 
 const renderMarkers = () => {
-  markers.forEach(m => m.setMap(null))
+  markers.forEach(m => {
+    google.maps.event.clearInstanceListeners(m)
+    m.setMap(null)
+  })
   markers.length = 0
 
   facilities.value.forEach(loc => {

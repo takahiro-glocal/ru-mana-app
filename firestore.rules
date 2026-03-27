@@ -26,8 +26,9 @@ service cloud.firestore {
       // 認証済みユーザーのみ作成可能、タイトル文字数制限
       allow create: if isAuthenticated()
         && maxStringLength(request.resource.data.title, 200);
-      // postCount, updatedAt の更新のみ許可
-      allow update: if isAuthenticated();
+      // postCount, updatedAt の更新のみ許可（フィールド制限付き）
+      allow update: if isAuthenticated()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['postCount', 'updatedAt']);
       allow delete: if false;
 
       // Posts subcollection
@@ -36,7 +37,10 @@ service cloud.firestore {
         allow create: if isAuthenticated()
           && request.resource.data.userId == request.auth.uid
           && maxStringLength(request.resource.data.body, 5000);
-        allow update: if isOwner(resource.data.userId);
+        // オーナーは全フィールド編集可、他ユーザーは likes のみ更新可
+        allow update: if isOwner(resource.data.userId)
+          || (isAuthenticated()
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']));
         allow delete: if isOwner(resource.data.userId);
       }
     }
@@ -72,8 +76,14 @@ service cloud.firestore {
     // ============================================
     match /translations/{translationId} {
       allow read: if true;
-      allow create, update: if isAuthenticated();
-      allow delete: if false;
+      // 翻訳キャッシュは作成のみ許可（上書き防止）、フィールド検証付き
+      allow create: if isAuthenticated()
+        && request.resource.data.keys().hasAll(['sourceText', 'targetLang', 'translatedText', 'createdAt'])
+        && request.resource.data.sourceText is string
+        && request.resource.data.translatedText is string
+        && request.resource.data.sourceText.size() <= 5000
+        && request.resource.data.translatedText.size() <= 10000;
+      allow update, delete: if false;
     }
   }
 }

@@ -8,17 +8,18 @@ export const useTranslation = () => {
   const { $firestore } = useNuxtApp()
 
   /**
-   * Firestoreのキャッシュキーを生成（テキスト+言語のハッシュ）
+   * Firestoreのキャッシュキーを生成（テキスト+言語のSHA-256ハッシュ）
+   * 衝突リスクを排除するため暗号学的ハッシュを使用
    */
-  const generateCacheId = (text: string, targetLang: string): string => {
-    let hash = 0
+  const generateCacheId = async (text: string, targetLang: string): Promise<string> => {
     const str = `${text}::${targetLang}`
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i)
-      hash = ((hash << 5) - hash) + char
-      hash |= 0
-    }
-    return `tr_${Math.abs(hash).toString(36)}`
+    const encoder = new TextEncoder()
+    const data = encoder.encode(str)
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+    // Firestoreドキュメント名制限に収まるよう先頭32文字を使用（128bit = 十分な衝突耐性）
+    return `tr_${hashHex.substring(0, 32)}`
   }
 
   /**
@@ -65,10 +66,10 @@ export const useTranslation = () => {
       return translations.value[memKey]
     }
 
-    const firestoreCacheId = generateCacheId(text, locale.value)
-
     loadingIds.value[id] = true
     try {
+      const firestoreCacheId = await generateCacheId(text, locale.value)
+
       // 2. Firestoreキャッシュ確認
       const cached = await getFromFirestore(firestoreCacheId)
       if (cached) {
@@ -76,9 +77,8 @@ export const useTranslation = () => {
         return cached
       }
 
-      // 3. クライアントサイドGemini APIで翻訳
-      const { getModel } = useGemini()
-      const model = getModel()
+      // 3. サーバーサイドGemini API経由で翻訳
+      const { generateContent } = useGemini()
 
       const langNames: Record<string, string> = {
         ja: 'Japanese',
@@ -102,13 +102,7 @@ Translate the following text. Return ONLY the translated text, nothing else:
 
 ${text}`
 
-      const result = await Promise.race([
-        model.generateContent(prompt),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('Translation timed out')), 30_000)
-        )
-      ])
-      const translatedText = result.response.text()?.trim()
+      const translatedText = await generateContent(prompt)
 
       if (!translatedText) throw new Error('No translation returned')
 
@@ -137,10 +131,26 @@ ${text}`
     return !!translations.value[`${id}:${locale.value}`]
   }
 
+  // スレッドタイトル翻訳ヘルパー（複数ページで共通利用）
+  const needsTranslation = computed(() => locale.value !== 'ja')
+
+  const isTitleTranslated = (threadId: string): boolean => {
+    if (!needsTranslation.value) return true
+    return !!getTranslation(`title:${threadId}`)
+  }
+
+  const getTranslatedTitle = (threadId: string, originalTitle: string): string => {
+    if (!needsTranslation.value) return originalTitle
+    return getTranslation(`title:${threadId}`) || originalTitle
+  }
+
   return {
     translateText,
     getTranslation,
     isTranslating,
     hasTranslation,
+    needsTranslation,
+    isTitleTranslated,
+    getTranslatedTitle,
   }
 }

@@ -175,7 +175,7 @@
                 </div>
                 <div class="tw-grid tw-grid-cols-7 tw-text-center tw-text-[10px] tw-gap-y-1">
                   <span v-for="d in ['S','M','T','W','T','F','S']" :key="d" class="tw-opacity-60">{{ d }}</span>
-                  <div v-for="n in 31" :key="n" :class="[n === todayDay ? 'tw-bg-[#2C3E50] tw-rounded-full tw-font-bold' : '']">{{ n }}</div>
+                  <div v-for="n in daysInMonth" :key="n" :class="[n === todayDay ? 'tw-bg-[#2C3E50] tw-rounded-full tw-font-bold' : '']">{{ n }}</div>
                 </div>
               </div>
             </div>
@@ -323,20 +323,17 @@ const weatherIcon = computed(() => {
   }
 });
 
+const DEFAULT_LOCATION = { lat: 35.6895, lng: 139.6917 };
+const weatherUnavailable = ref(false);
+
 const fetchWeather = async (lat: number, lng: number) => {
   try {
-    const config = useRuntimeConfig();
-    const apiKey = config.public.openWeatherApiKey;
-    if (!apiKey) {
-      weather.area = 'Tokyo / Shinjuku';
-      weather.temp = '25';
-      return;
-    }
     const data = await $fetch(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=metric&lang=${locale.value}&appid=${apiKey}`
+      `/api/weather?lat=${lat}&lon=${lng}&lang=${locale.value}`
     ) as WeatherResponse;
     weather.temp = Math.round(data.main.temp).toString();
     weather.area = data.name || 'Unknown';
+    weatherUnavailable.value = false;
     const mainWeather = data.weather?.[0]?.main?.toLowerCase() || '';
     if (mainWeather.includes('clear')) weather.condition = 'clear';
     else if (mainWeather.includes('rain') || mainWeather.includes('drizzle')) weather.condition = 'rain';
@@ -344,8 +341,9 @@ const fetchWeather = async (lat: number, lng: number) => {
     else weather.condition = 'cloudy';
   } catch (e) {
     console.error('Weather fetch failed:', e);
-    weather.area = 'Tokyo / Shinjuku';
-    weather.temp = '25';
+    weather.area = t('dashboard.weather_unavailable');
+    weather.temp = '--';
+    weatherUnavailable.value = true;
   }
 };
 
@@ -427,7 +425,7 @@ const initGoogleMap = async () => {
     if (mapContainerPC.value && googleMaps) {
       const mapId = useRuntimeConfig().public.googleMapsMapId as string | undefined;
       mapInstance = new googleMaps.Map(mapContainerPC.value, {
-        center: { lat: 35.6895, lng: 139.6917 },
+        center: DEFAULT_LOCATION,
         zoom: 16,
         ...(mapId ? { mapId } : {}),
         disableDefaultUI: true,
@@ -449,12 +447,13 @@ const startTracking = () => {
       const pos = new googleMaps.LatLng(position.coords.latitude, position.coords.longitude);
       if (userOverlay) userOverlay.setPosition(pos);
       if (mapInstance) mapInstance.panTo(pos);
-    }, null, { enableHighAccuracy: true });
+    }, null, { enableHighAccuracy: true, maximumAge: 30000, timeout: 10000 });
   }
 };
 
 const now = new Date();
 const todayDay = now.getDate();
+const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
 const localeMap: Record<string, string> = { ja: 'ja-JP', en: 'en-US', zh: 'zh-CN' };
 const formattedDate = computed(() => {
   const loc = localeMap[locale.value] || locale.value;
@@ -484,10 +483,10 @@ onMounted(() => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (pos) => fetchWeather(pos.coords.latitude, pos.coords.longitude),
-      () => fetchWeather(35.6895, 139.6917)
+      () => fetchWeather(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng)
     );
   } else {
-    fetchWeather(35.6895, 139.6917);
+    fetchWeather(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng);
   }
 });
 

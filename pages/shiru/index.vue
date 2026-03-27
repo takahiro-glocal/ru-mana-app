@@ -182,59 +182,8 @@ const handleScroll = (event: Event) => {
   activeIndex.value = Math.round(scrollLeft / itemWidth)
 }
 
-// カテゴリごとのテーマ設定
-const categoryOptions: Record<string, CategoryTheme> = {
-  transport: {
-    bg: 'tw-bg-[#E0F2F7]',
-    border: 'tw-border-[#A5D1E1]',
-    text: 'tw-text-[#5FB3D5]'
-  },
-  public: {
-    bg: 'tw-bg-[#FCE7EB]',
-    border: 'tw-border-[#F4A7B9]',
-    text: 'tw-text-[#E95295]'
-  },
-  spa: {
-    bg: 'tw-bg-[#E5F1F6]',
-    border: 'tw-border-[#7DB9DE]',
-    text: 'tw-text-[#3E91FF]'
-  },
-  cafe: {
-    bg: 'tw-bg-[#FFF3E0]',
-    border: 'tw-border-[#F5B169]',
-    text: 'tw-text-[#F39800]'
-  },
-  shopping: {
-    bg: 'tw-bg-[#F3E5F5]',
-    border: 'tw-border-[#CE93D8]',
-    text: 'tw-text-[#9C27B0]'
-  },
-  hotel: {
-    bg: 'tw-bg-[#E8F5E9]',
-    border: 'tw-border-[#81C784]',
-    text: 'tw-text-[#4CAF50]'
-  },
-  culture: {
-    bg: 'tw-bg-[#FFEBEE]',
-    border: 'tw-border-[#E57373]',
-    text: 'tw-text-[#F44336]'
-  },
-  trash: {
-    bg: 'tw-bg-[#ECEFF1]',
-    border: 'tw-border-[#90A4AE]',
-    text: 'tw-text-[#607D8B]'
-  },
-  new: {
-    bg: 'tw-bg-[#F3E5F5]',
-    border: 'tw-border-[#B28FCE]',
-    text: 'tw-text-[#9C27B0]'
-  }
-}
-
-// 修正: 存在しないIDが来てもエラーにならないようラップ
-const getTheme = (id: string) => {
-  return categoryOptions[id] || categoryOptions.new
-}
+import { getCategoryTheme } from '~/constants/categoryThemes'
+const getTheme = (id: string) => getCategoryTheme(id)
 
 const getIcon = (name: string) => {
   const icons: Record<string, Component> = {

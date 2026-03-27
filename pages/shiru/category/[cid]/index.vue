@@ -251,12 +251,18 @@
     </div>
 
     <AuthModal :is-open="isLoginModalOpen" @close="isLoginModalOpen = false" />
-    <ThreadCreateModal 
-      :is-open="isCreateModalOpen" 
+    <ThreadCreateModal
+      :is-open="isCreateModalOpen"
       :theme="getTheme(cid)"
       @close="isCreateModalOpen = false"
       @create="handleCreateThread"
     />
+
+    <Transition name="toast">
+      <div v-if="toastMessage" class="tw-fixed tw-bottom-24 tw-left-1/2 tw-transform -tw-translate-x-1/2 tw-bg-[#2C3E50] tw-text-white tw-px-6 tw-py-3 tw-rounded-full tw-shadow-lg tw-text-sm tw-font-bold tw-z-50 tw-whitespace-nowrap">
+        {{ toastMessage }}
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -295,18 +301,8 @@ const activeTab = ref<'threads' | 'guides'>('guides')
 let isInitialScroll = true
 let unsubscribe: (() => void) | null = null
 
-const themeMap: Record<string, CategoryTheme> = {
-  transport: { bg: 'tw-bg-[#E0F2F7]', border: 'tw-border-[#A5D1E1]', text: 'tw-text-[#5FB3D5]', dot: 'tw-bg-[#A5D1E1]', btnBg: 'tw-bg-[#5FB3D5]' },
-  public: { bg: 'tw-bg-[#FCE7EB]', border: 'tw-border-[#F4A7B9]', text: 'tw-text-[#E95295]', dot: 'tw-bg-[#F4A7B9]', btnBg: 'tw-bg-[#E95295]' },
-  spa: { bg: 'tw-bg-[#E5F1F6]', border: 'tw-border-[#7DB9DE]', text: 'tw-text-[#3E91FF]', dot: 'tw-bg-[#7DB9DE]', btnBg: 'tw-bg-[#3E91FF]' },
-  cafe: { bg: 'tw-bg-[#FFF3E0]', border: 'tw-border-[#F5B169]', text: 'tw-text-[#F39800]', dot: 'tw-bg-[#F5B169]', btnBg: 'tw-bg-[#F39800]' },
-  shopping: { bg: 'tw-bg-[#F3E5F5]', border: 'tw-border-[#CE93D8]', text: 'tw-text-[#9C27B0]', dot: 'tw-bg-[#CE93D8]', btnBg: 'tw-bg-[#9C27B0]' },
-  hotel: { bg: 'tw-bg-[#E8F5E9]', border: 'tw-border-[#81C784]', text: 'tw-text-[#4CAF50]', dot: 'tw-bg-[#81C784]', btnBg: 'tw-bg-[#4CAF50]' },
-  culture: { bg: 'tw-bg-[#FFEBEE]', border: 'tw-border-[#E57373]', text: 'tw-text-[#F44336]', dot: 'tw-bg-[#E57373]', btnBg: 'tw-bg-[#F44336]' },
-  trash: { bg: 'tw-bg-[#ECEFF1]', border: 'tw-border-[#90A4AE]', text: 'tw-text-[#607D8B]', dot: 'tw-bg-[#90A4AE]', btnBg: 'tw-bg-[#607D8B]' },
-  new: { bg: 'tw-bg-[#F3E5F5]', border: 'tw-border-[#B28FCE]', text: 'tw-text-[#9C27B0]', dot: 'tw-bg-[#B28FCE]', btnBg: 'tw-bg-[#9C27B0]' }
-}
-const getTheme = (id: string): CategoryTheme => themeMap[id] || themeMap.new
+import { getCategoryTheme } from '~/constants/categoryThemes'
+const getTheme = (id: string) => getCategoryTheme(id)
 
 const getCategoryIcon = (name: string) => {
   const icons: Record<string, Component> = { train: Train, users: Users, waves: Waves, utensils: Utensils, 'shopping-bag': ShoppingBag, bed: Bed, landmark: Landmark, 'trash-2': Trash2, plus: Plus }
@@ -329,11 +325,8 @@ const currentThreads = computed(() => firestoreThreads.value)
 const currentGuides = getGuidesByCategory(cid.value)
 const getGuides = (categoryId: string) => getGuidesByCategory(categoryId).value
 
-const formatDate = (date: FirebaseTimestamp | Date | string | null) => {
-  if (!date) return ''
-  const d = (typeof date === 'object' && 'seconds' in date) ? new Date(date.seconds * 1000) : new Date(date)
-  return d.toLocaleString(locale.value, { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-}
+import { formatFirestoreDate } from '~/utils/formatDate'
+const formatDate = (date: FirebaseTimestamp | Date | string | null) => formatFirestoreDate(date, locale.value)
 
 const onMobileScroll = (e: Event) => {
   const target = e.target as HTMLElement
@@ -361,14 +354,26 @@ const openCreateModal = () => {
   isCreateModalOpen.value = true
 }
 
+const toastMessage = ref('')
+let toastTimer: ReturnType<typeof setTimeout> | null = null
+const showToast = (msg: string) => {
+  toastMessage.value = msg
+  if (toastTimer) clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => { toastMessage.value = '' }, 3000)
+}
+
 const handleCreateThread = async (data: { title: string, body: string }) => {
+  if (!user.value) {
+    isLoginModalOpen.value = true
+    return
+  }
   try {
     const threadId = await createThread(cid.value, data.title, data.body, user.value)
     isCreateModalOpen.value = false
     router.push(localePath(`/shiru/category/${cid.value}/thread/${threadId}`))
   } catch (e) {
     console.error("Failed to create thread", e)
-    alert(t('thread.create_failed'))
+    showToast(t('thread.create_failed'))
   }
 }
 
@@ -402,20 +407,7 @@ onUnmounted(() => {
 })
 
 const { t, locale } = useI18n()
-const { translateText, getTranslation } = useTranslation()
-
-// === 自動翻訳（スレッドタイトル） ===
-const needsTranslation = computed(() => locale.value !== 'ja')
-
-const isTitleTranslated = (threadId: string): boolean => {
-  if (!needsTranslation.value) return true
-  return !!getTranslation(`title:${threadId}`)
-}
-
-const getTranslatedTitle = (threadId: string, originalTitle: string): string => {
-  if (!needsTranslation.value) return originalTitle
-  return getTranslation(`title:${threadId}`) || originalTitle
-}
+const { translateText, needsTranslation, isTitleTranslated, getTranslatedTitle } = useTranslation()
 
 // スレッドタイトルを非同期で個別翻訳（完了したものから順次表示）
 watch(
@@ -440,4 +432,7 @@ useHead(() => ({
 .tw-animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 768px) { div[ref="carouselRef"] { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; } }
+.toast-enter-active { transition: all 0.3s ease; }
+.toast-leave-active { transition: all 0.3s ease; }
+.toast-enter-from, .toast-leave-to { opacity: 0; transform: translate(-50%, 20px); }
 </style>

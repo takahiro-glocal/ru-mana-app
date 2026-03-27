@@ -11,9 +11,20 @@
     ],
     "rewrites": [
       {
+        "source": "/api/**",
+        "function": "server"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
     ]
-  }
+  },
+  "functions": [
+    {
+      "source": ".output/server",
+      "codebase": "nuxt-server",
+      "runtime": "nodejs20"
+    }
+  ]
 }
