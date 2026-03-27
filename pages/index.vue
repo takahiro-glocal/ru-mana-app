@@ -26,7 +26,7 @@
           <Home class="tw-text-[#BCAF92] tw-w-9 tw-h-9 tw-cursor-pointer" />
 
           <LanguageSwitcher data-onboarding="lang-switcher" />
-          <div v-if="user" @click="openDrawer()" class="tw-cursor-pointer">
+          <div v-if="user" data-onboarding="account-icon" @click="openDrawer()" class="tw-cursor-pointer">
             <img :src="userPhotoURL" class="tw-w-10 tw-h-10 tw-rounded-full tw-border-2 tw-border-[#BCAF92]" />
           </div>
           <template v-else>
@@ -51,7 +51,7 @@
               </div>
             </div>
             <LanguageSwitcher />
-            <div v-if="user" @click="openDrawer()" class="tw-cursor-pointer">
+            <div v-if="user" data-onboarding="account-icon" @click="openDrawer()" class="tw-cursor-pointer">
               <img :src="userPhotoURL" class="tw-w-10 tw-h-10 tw-rounded-full tw-border-2 tw-border-[#BCAF92]" />
             </div>
             <template v-else>
@@ -268,6 +268,7 @@ const homeOnboardingSteps = [
   { id: 'disaster-map', target: '[data-onboarding="disaster-map"]', titleKey: 'onboarding.home.step5_title', descKey: 'onboarding.home.step5_desc' },
   { id: 'sns-links', target: '[data-onboarding="sns-links"]', titleKey: 'onboarding.home.step6_title', descKey: 'onboarding.home.step6_desc' },
   { id: 'lang-switcher', target: '[data-onboarding="lang-switcher"]', titleKey: 'onboarding.home.step7_title', descKey: 'onboarding.home.step7_desc' },
+  { id: 'account-icon', target: '[data-onboarding="account-icon"]', titleKey: 'onboarding.home.step8_title', descKey: 'onboarding.home.step8_desc' },
 ];
 
 const startHomeOnboarding = () => startOnboarding('home', homeOnboardingSteps);

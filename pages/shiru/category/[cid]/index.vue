@@ -303,6 +303,14 @@ const categoryOnboardingSteps = [
 
 const startCategoryOnboarding = () => startOnboarding('shiru-category', categoryOnboardingSteps)
 
+// Switch to threads tab when onboarding step targets category-create (Q&A tab content)
+const { currentStep: onboardingCurrentStep, isActive: onboardingIsActive } = useOnboarding()
+watch([onboardingCurrentStep, onboardingIsActive], ([step, active]) => {
+  if (active && step?.id === 'category-create') {
+    activeTab.value = 'threads'
+  }
+})
+
 const cid = computed(() => route.params.cid as string)
 const carouselRef = ref<HTMLElement | null>(null)
 const activeIndex = ref(0)
