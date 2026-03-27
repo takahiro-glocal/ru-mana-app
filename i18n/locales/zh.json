@@ -618,5 +618,50 @@
     "install_android_step2": "选择「添加到主屏幕」或「安装应用」",
     "install_pc_step1": "点击地址栏右侧的安装图标",
     "install_pc_step2": "选择「安装」"
+  },
+  "onboarding": {
+    "next": "下一步",
+    "prev": "上一步",
+    "skip": "跳过",
+    "done": "完成",
+    "help_tooltip": "使用指南",
+    "home": {
+      "step1_title": "欢迎来到 RUUMANA！",
+      "step1_desc": "一款帮助您轻松学习日本文化和礼仪的应用。让我们为您介绍主要功能。",
+      "step2_title": "四大板块",
+      "step2_desc": "知る・见る・听く・行く — 从4个角度深入了解日本文化。",
+      "step3_title": "帮助 & 最新动态",
+      "step3_desc": "快速获取紧急帮助和最新帖子更新。",
+      "step4_title": "防灾地图 & 社交媒体",
+      "step4_desc": "在地图上查找附近的避难所和设施。社交媒体链接也在这里。",
+      "step5_title": "切换语言",
+      "step5_desc": "支持日语、英语和中文，随时切换。"
+    },
+    "shiru": {
+      "step1_title": "欢迎来到「知识学习」",
+      "step1_desc": "通过8个分类学习日本的礼仪和文化。",
+      "step2_title": "选择分类",
+      "step2_desc": "点击交通、温泉、餐饮等分类，深入了解详情。",
+      "step3_title": "帖子数量",
+      "step3_desc": "查看每个分类的讨论数量。"
+    },
+    "trouble": {
+      "step1_title": "紧急帮助",
+      "step1_desc": "一键拨打警察（110）或急救（119）。",
+      "step2_title": "分享位置",
+      "step2_desc": "复制当前地址，通过电话分享您的位置。",
+      "step3_title": "帮助分类",
+      "step3_desc": "获取针对疾病、物品丢失或灾害的分步指南。",
+      "step4_title": "多语言支持",
+      "step4_desc": "直接拨打24小时多语言支持热线。"
+    },
+    "disaster": {
+      "step1_title": "防灾地图",
+      "step1_desc": "在地图上查找附近的医疗设施、避难所、警察局等。",
+      "step2_title": "搜索设施",
+      "step2_desc": "使用搜索栏按名称或类型查找设施。",
+      "step3_title": "SOS按钮",
+      "step3_desc": "紧急情况下，点击SOS直接跳转到帮助页面。"
+    }
   }
 }

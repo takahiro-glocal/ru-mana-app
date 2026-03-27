@@ -7,6 +7,7 @@
   <MobileBottomNav v-if="!isLandingPage" />
   <GlobalDrawer v-if="!isLandingPage" />
   <GlobalChat v-if="!isLandingPage" />
+  <OnboardingGuide v-if="!isLandingPage" />
 </template>
 
 <script setup lang="ts">

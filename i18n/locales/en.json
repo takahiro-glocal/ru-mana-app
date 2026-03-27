@@ -618,5 +618,50 @@
     "install_android_step2": "Select \"Add to Home Screen\" or \"Install App\"",
     "install_pc_step1": "Click the install icon in the address bar",
     "install_pc_step2": "Select \"Install\""
+  },
+  "onboarding": {
+    "next": "Next",
+    "prev": "Previous",
+    "skip": "Skip",
+    "done": "Done",
+    "help_tooltip": "How to use",
+    "home": {
+      "step1_title": "Welcome to RUUMANA!",
+      "step1_desc": "An app to learn Japanese culture and manners in a fun way. Let us show you the main features.",
+      "step2_title": "The 4 Pillars",
+      "step2_desc": "Shiru, Miru, Kiku, Iku — Explore Japanese culture through 4 different perspectives.",
+      "step3_title": "Help & Updates",
+      "step3_desc": "Quick access to emergency help and the latest thread updates.",
+      "step4_title": "Disaster Map & SNS",
+      "step4_desc": "Find nearby shelters and facilities on the map. Access social media links here.",
+      "step5_title": "Language Switcher",
+      "step5_desc": "Switch between Japanese, English, and Chinese anytime."
+    },
+    "shiru": {
+      "step1_title": "Welcome to Shiru Mana",
+      "step1_desc": "Learn Japanese manners and culture across 8 categories.",
+      "step2_title": "Choose a Category",
+      "step2_desc": "Tap on categories like Transport, Hot Springs, Dining, and more to explore.",
+      "step3_title": "Thread Count",
+      "step3_desc": "See how many discussions are happening in each category."
+    },
+    "trouble": {
+      "step1_title": "Emergency Help",
+      "step1_desc": "Call Police (110) or Ambulance (119) with one tap.",
+      "step2_title": "Share Your Location",
+      "step2_desc": "Copy your current address to share it over the phone.",
+      "step3_title": "Help Categories",
+      "step3_desc": "Get step-by-step guides for medical issues, lost items, or disasters.",
+      "step4_title": "Multilingual Support",
+      "step4_desc": "Call 24-hour multilingual support hotlines directly."
+    },
+    "disaster": {
+      "step1_title": "Disaster Prevention Map",
+      "step1_desc": "Find nearby medical facilities, shelters, police stations, and more on the map.",
+      "step2_title": "Search Facilities",
+      "step2_desc": "Use the search bar to find facilities by name or type.",
+      "step3_title": "SOS Button",
+      "step3_desc": "In an emergency, tap SOS to go directly to the help page."
+    }
   }
 }
