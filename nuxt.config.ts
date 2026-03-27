@@ -87,6 +87,7 @@ export default defineNuxtConfig({
     vueI18n: './i18n.config.ts', // (後述)
   },
   pwa: {
+    registerType: 'autoUpdate',
     manifest: {
       name: 'るうまな',
       short_name: 'るうまな',
@@ -118,7 +119,8 @@ export default defineNuxtConfig({
     },
     // Workbox設定（オフラインキャッシュ）
     workbox: {
-      navigateFallback: '/',
+      navigateFallback: '/index.html',
+      navigateFallbackDenylist: [/^\/api\//],
     },
     // デバイスへのインストールを促す設定
     devOptions: {
