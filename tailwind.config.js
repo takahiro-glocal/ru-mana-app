@@ -4,6 +4,7 @@ export default {
   prefix: 'tw-',
   content: [
     "./components/**/*.{js,vue,ts}",
+    "./constants/**/*.{js,ts}",
     "./layouts/**/*.vue",
     "./pages/**/*.vue",
     "./plugins/**/*.{js,ts}",
