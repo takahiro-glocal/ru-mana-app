@@ -94,26 +94,16 @@ const PADDING = 8
 const spotlightRect = ref({ x: 0, y: 0, width: 0, height: 0 })
 const tooltipStyle = ref<Record<string, string>>({})
 
-const updatePosition = () => {
-  if (!currentStep.value) return
-
-  // Find the first visible element matching the selector (skip hidden mobile/desktop elements)
+const findTargetEl = (): Element | null => {
+  if (!currentStep.value) return null
   const els = document.querySelectorAll(currentStep.value.target)
-  const el = Array.from(els).find(e => {
+  return Array.from(els).find(e => {
     const r = e.getBoundingClientRect()
     return r.width > 0 && r.height > 0
   }) || null
-  if (!el) {
-    // Target not found — center tooltip
-    spotlightRect.value = { x: -100, y: -100, width: 0, height: 0 }
-    tooltipStyle.value = {
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)'
-    }
-    return
-  }
+}
 
+const applyPosition = (el: Element) => {
   const rect = el.getBoundingClientRect()
   spotlightRect.value = {
     x: rect.left - PADDING,
@@ -122,14 +112,16 @@ const updatePosition = () => {
     height: rect.height + PADDING * 2
   }
 
-  // Determine best tooltip position
   const viewW = window.innerWidth
   const viewH = window.innerHeight
+  const isMobile = viewW < 768
   const tooltipW = 320
   const tooltipH = 220
   const gap = 16
+  // Reserve space for mobile bottom nav
+  const bottomReserved = isMobile ? 80 : 0
 
-  const spaceBelow = viewH - rect.bottom
+  const spaceBelow = viewH - bottomReserved - rect.bottom
   const spaceAbove = rect.top
   const spaceRight = viewW - rect.right
   const spaceLeft = rect.left
@@ -145,24 +137,69 @@ const updatePosition = () => {
     top = `${rect.top - gap}px`
     left = `${Math.max(16, Math.min(rect.left, viewW - tooltipW - 16))}px`
     transform = 'translateY(-100%)'
-  } else if (spaceRight >= tooltipW + gap) {
+  } else if (!isMobile && spaceRight >= tooltipW + gap) {
     top = `${Math.max(16, rect.top)}px`
     left = `${rect.right + gap}px`
-  } else if (spaceLeft >= tooltipW + gap) {
+  } else if (!isMobile && spaceLeft >= tooltipW + gap) {
     top = `${Math.max(16, rect.top)}px`
     left = `${rect.left - gap}px`
     transform = 'translateX(-100%)'
   } else {
-    // Fallback: center
-    top = '50%'
+    // Fallback: center horizontally, position above or below target
     left = '50%'
-    transform = 'translate(-50%, -50%)'
+    transform = 'translateX(-50%)'
+    if (spaceAbove > spaceBelow) {
+      top = `${rect.top - gap}px`
+      transform += ' translateY(-100%)'
+    } else {
+      top = `${rect.bottom + gap}px`
+    }
   }
 
   tooltipStyle.value = { top, left, transform }
+}
 
-  // Scroll target into view if needed
-  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+let scrollRecalcTimer: ReturnType<typeof setTimeout> | null = null
+
+const updatePosition = () => {
+  if (!currentStep.value) return
+
+  const el = findTargetEl()
+  if (!el) {
+    spotlightRect.value = { x: -100, y: -100, width: 0, height: 0 }
+    tooltipStyle.value = {
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)'
+    }
+    return
+  }
+
+  const rect = el.getBoundingClientRect()
+  const viewH = window.innerHeight
+  const isMobile = window.innerWidth < 768
+  const isOutOfView = rect.top < 0 || rect.bottom > viewH
+
+  if (isMobile && isOutOfView) {
+    // On mobile, scroll first then recalculate after scroll settles
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    if (scrollRecalcTimer) clearTimeout(scrollRecalcTimer)
+    scrollRecalcTimer = setTimeout(() => {
+      const updated = findTargetEl()
+      if (updated) applyPosition(updated)
+    }, 400)
+    // Set initial position to avoid flash
+    spotlightRect.value = { x: -100, y: -100, width: 0, height: 0 }
+    tooltipStyle.value = { opacity: '0' }
+    return
+  }
+
+  applyPosition(el)
+
+  // Scroll target into view if needed (PC: smooth, non-blocking)
+  if (isOutOfView) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }
 }
 
 watch([currentStep, isActive], () => {
@@ -188,6 +225,7 @@ onUnmounted(() => {
     window.removeEventListener('resize', resizeHandler)
     window.removeEventListener('scroll', resizeHandler, true)
   }
+  if (scrollRecalcTimer) clearTimeout(scrollRecalcTimer)
 })
 </script>
 
@@ -214,6 +252,7 @@ onUnmounted(() => {
   padding: 1.25rem;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
   z-index: 9501;
+  transition: opacity 0.2s ease;
 }
 
 .onboarding-tooltip-header {
