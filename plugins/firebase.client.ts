@@ -16,6 +16,14 @@ export default defineNuxtPlugin((_nuxtApp) => {
     measurementId: config.public.measurementId,
   };
 
+  const requiredKeys = ['apiKey', 'projectId'] as const;
+  const missing = requiredKeys.filter(k => !firebaseConfig[k]);
+  if (missing.length > 0) {
+    console.error(
+      `[Firebase] Missing required config: ${missing.join(', ')}. Check environment variables (API_KEY, PROJECT_ID). Auth and Firestore will not work correctly.`
+    );
+  }
+
   const app = initializeApp(firebaseConfig);
 
   // Firestore: 新しいキャッシュAPI (enableIndexedDbPersistence は非推奨)
