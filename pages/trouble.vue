@@ -52,7 +52,7 @@
         <!-- Left Column: Emergency + Categories -->
         <div class="md:tw-col-span-7">
           <!-- Emergency Buttons -->
-          <section class="tw-grid tw-grid-cols-2 tw-gap-4 tw-mb-8">
+          <section data-onboarding="emergency-buttons" class="tw-grid tw-grid-cols-2 tw-gap-4 tw-mb-8">
             <button
               @click="() => makeCall('110')"
               class="tw-bg-white tw-p-5 md:tw-p-6 tw-rounded-3xl tw-shadow-lg tw-flex tw-flex-col tw-items-center tw-justify-center tw-border-2 tw-border-transparent hover:tw-border-blue-200 active:tw-scale-95 tw-transition-all"
@@ -77,7 +77,7 @@
           </section>
 
           <!-- Location Section -->
-          <section class="tw-bg-blue-50 tw-rounded-2xl tw-p-5 tw-mb-8 tw-border tw-border-blue-100">
+          <section data-onboarding="location-section" class="tw-bg-blue-50 tw-rounded-2xl tw-p-5 tw-mb-8 tw-border tw-border-blue-100">
             <div class="tw-flex tw-items-start">
               <MapPin class="tw-w-5 tw-h-5 tw-text-blue-600 tw-mr-3 tw-mt-1" />
               <div class="tw-flex-1">
@@ -96,7 +96,7 @@
 
           <!-- Help Categories -->
           <h3 class="tw-text-lg tw-font-bold tw-text-gray-800 tw-mb-4 tw-px-2">{{ $t('trouble.select_issue') }}</h3>
-          <section class="tw-grid tw-grid-cols-1 tw-gap-4">
+          <section data-onboarding="help-categories" class="tw-grid tw-grid-cols-1 tw-gap-4">
             <button
               v-for="item in helpCategories"
               :key="item.id"
@@ -118,7 +118,7 @@
         <!-- Right Column: Hotlines + Quick Links -->
         <div class="md:tw-col-span-5 tw-mt-10 md:tw-mt-0">
           <!-- Support Hotlines -->
-          <section class="tw-p-6 tw-bg-white tw-rounded-3xl tw-shadow-sm tw-border tw-border-gray-100">
+          <section data-onboarding="support-hotlines" class="tw-p-6 tw-bg-white tw-rounded-3xl tw-shadow-sm tw-border tw-border-gray-100">
             <div class="tw-flex tw-items-center tw-mb-5">
               <div class="tw-bg-gray-100 tw-p-2 tw-rounded-lg tw-mr-3">
                 <Globe class="tw-w-5 tw-h-5 tw-text-gray-500" />
@@ -206,6 +206,7 @@
       </div>
     </Transition>
 
+    <OnboardingTrigger @click="startTroubleOnboarding" />
     <AuthModal :is-open="isLoginModalOpen" @close="isLoginModalOpen = false" />
   </div>
 </template>
@@ -222,6 +223,16 @@ const { t } = useI18n();
 const localePath = useLocalePath();
 const { user, userPhotoURL } = useAuth();
 const { openDrawer } = useDrawer();
+const { start: startOnboarding } = useOnboarding();
+
+const troubleOnboardingSteps = [
+  { id: 'emergency', target: '[data-onboarding="emergency-buttons"]', titleKey: 'onboarding.trouble.step1_title', descKey: 'onboarding.trouble.step1_desc' },
+  { id: 'location', target: '[data-onboarding="location-section"]', titleKey: 'onboarding.trouble.step2_title', descKey: 'onboarding.trouble.step2_desc' },
+  { id: 'categories', target: '[data-onboarding="help-categories"]', titleKey: 'onboarding.trouble.step3_title', descKey: 'onboarding.trouble.step3_desc' },
+  { id: 'hotlines', target: '[data-onboarding="support-hotlines"]', titleKey: 'onboarding.trouble.step4_title', descKey: 'onboarding.trouble.step4_desc' },
+];
+
+const startTroubleOnboarding = () => startOnboarding('trouble', troubleOnboardingSteps);
 
 const selectedGuide = ref<HelpCategory | null>(null);
 const isLoginModalOpen = ref(false);

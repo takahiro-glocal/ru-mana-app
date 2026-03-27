@@ -24,8 +24,8 @@
             </div>
           </div>
           <Home class="tw-text-[#BCAF92] tw-w-9 tw-h-9 tw-cursor-pointer" />
-          
-          <LanguageSwitcher />
+
+          <LanguageSwitcher data-onboarding="lang-switcher" />
           <div v-if="user" @click="openDrawer()" class="tw-cursor-pointer">
             <img :src="userPhotoURL" class="tw-w-10 tw-h-10 tw-rounded-full tw-border-2 tw-border-[#BCAF92]" />
           </div>
@@ -59,7 +59,7 @@
             </template>
           </div>
 
-          <div class="tw-grid tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-4">
+          <div data-onboarding="pillars" class="tw-grid tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-4">
             <NuxtLink :to="localePath('/shiru')" class="tw-bg-[#85C441] tw-aspect-square tw-rounded-2xl tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-sm hover:tw-opacity-90 tw-transition-all">
               <Lightbulb class="tw-w-14 tw-h-14 tw-mb-2" />
               <span class="tw-font-bold tw-text-lg">{{ $t('common.shiru') }}</span>
@@ -107,7 +107,7 @@
           </div>
 
           <!-- モバイル: おたすけボタン + Update を横並び -->
-          <div class="md:tw-hidden tw-flex tw-gap-3">
+          <div data-onboarding="trouble-update" class="md:tw-hidden tw-flex tw-gap-3">
             <NuxtLink :to="localePath('/trouble')" class="tw-flex tw-items-center tw-gap-3 tw-bg-white tw-rounded-2xl tw-p-3 tw-shadow-sm tw-border-2 tw-border-[#E4007F] active:tw-scale-95 tw-transition-transform tw-flex-shrink-0">
               <div class="tw-bg-[#E4007F] tw-text-white tw-w-10 tw-h-10 tw-rounded-full tw-flex tw-items-center tw-justify-center">
                 <span class="tw-font-black tw-text-xl">!</span>
@@ -186,7 +186,7 @@
               <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800" class="tw-w-full tw-h-full tw-object-cover" />
             </div>
             <div class="tw-w-full md:tw-w-24 tw-flex tw-flex-row md:tw-flex-col tw-gap-3">
-              <NuxtLink :to="localePath('/disaster-prevention')" class="tw-flex-1 tw-bg-[#BCAF92] tw-rounded-2xl tw-p-3 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md tw-cursor-pointer hover:tw-opacity-90 tw-transition-opacity">
+              <NuxtLink data-onboarding="disaster-sns" :to="localePath('/disaster-prevention')" class="tw-flex-1 tw-bg-[#BCAF92] tw-rounded-2xl tw-p-3 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md tw-cursor-pointer hover:tw-opacity-90 tw-transition-opacity">
                 <MapIcon class="tw-w-10 tw-h-10" />
                 <span class="tw-text-[9px] tw-font-bold tw-mt-1">{{ $t('dashboard.disaster_map') }}</span>
               </NuxtLink>
@@ -233,6 +233,7 @@
 
     </div>
 
+    <OnboardingTrigger @click="startHomeOnboarding" />
     <AuthModal :is-open="isLoginModalOpen" @close="isLoginModalOpen = false" />
 
     <Transition name="toast">
@@ -257,6 +258,17 @@ const { user, initAuth, userDisplayName, userPhotoURL } = useAuth();
 const { openDrawer } = useDrawer();
 const { threads: latestThreads, allThreads: allThreadsForSearch, subscribeToLatestThreads } = useFirestore();
 const localePath = useLocalePath();
+const { start: startOnboarding } = useOnboarding();
+
+const homeOnboardingSteps = [
+  { id: 'welcome', target: '[data-onboarding="pillars"]', titleKey: 'onboarding.home.step1_title', descKey: 'onboarding.home.step1_desc' },
+  { id: 'pillars', target: '[data-onboarding="pillars"]', titleKey: 'onboarding.home.step2_title', descKey: 'onboarding.home.step2_desc' },
+  { id: 'trouble-update', target: '[data-onboarding="trouble-update"]', titleKey: 'onboarding.home.step3_title', descKey: 'onboarding.home.step3_desc' },
+  { id: 'disaster-sns', target: '[data-onboarding="disaster-sns"]', titleKey: 'onboarding.home.step4_title', descKey: 'onboarding.home.step4_desc' },
+  { id: 'lang-switcher', target: '[data-onboarding="lang-switcher"]', titleKey: 'onboarding.home.step5_title', descKey: 'onboarding.home.step5_desc' },
+];
+
+const startHomeOnboarding = () => startOnboarding('home', homeOnboardingSteps);
 
 const isLoginModalOpen = ref(false);
 

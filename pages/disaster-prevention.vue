@@ -11,13 +11,13 @@
           <img src="/images/logo.png" alt="るうまな" class="tw-w-8 tw-h-8 tw-rounded-full" />
         </NuxtLink>
         <div>
-          <h1 class="tw-text-lg md:tw-text-2xl tw-font-bold tw-text-gray-800">{{ $t('disaster.title') }}</h1>
+          <h1 data-onboarding="disaster-title" class="tw-text-lg md:tw-text-2xl tw-font-bold tw-text-gray-800">{{ $t('disaster.title') }}</h1>
           <span class="tw-hidden md:tw-inline tw-text-xs tw-text-gray-500">{{ $t('disaster.subtitle') }}</span>
         </div>
       </div>
 
       <div class="tw-flex tw-items-center tw-gap-3 md:tw-gap-5">
-        <NuxtLink :to="localePath('/trouble')" class="tw-flex tw-items-center tw-gap-1 tw-bg-[#E4007F] tw-text-white tw-px-3 tw-py-1.5 tw-rounded-full tw-text-xs tw-font-bold tw-shadow-sm hover:tw-bg-[#c0006b] tw-transition-colors">
+        <NuxtLink data-onboarding="disaster-sos" :to="localePath('/trouble')" class="tw-flex tw-items-center tw-gap-1 tw-bg-[#E4007F] tw-text-white tw-px-3 tw-py-1.5 tw-rounded-full tw-text-xs tw-font-bold tw-shadow-sm hover:tw-bg-[#c0006b] tw-transition-colors">
           <AlertTriangle class="tw-w-3.5 tw-h-3.5" />
           <span class="tw-hidden md:tw-inline">{{ $t('common.trouble') }}</span>
           <span class="md:tw-hidden">SOS</span>
@@ -37,7 +37,7 @@
       class="tw-hidden md:tw-flex tw-absolute tw-top-24 tw-left-6 tw-w-72 tw-flex-col tw-gap-4 tw-z-40 tw-transition-transform tw-duration-300"
       :class="isSidebarOpen ? 'tw-translate-x-0' : '-tw-translate-x-[110%]'"
     >
-      <div class="tw-bg-white/80 tw-backdrop-blur-md tw-rounded-2xl tw-p-2 tw-shadow-lg tw-border tw-border-white/50">
+      <div data-onboarding="disaster-search" class="tw-bg-white/80 tw-backdrop-blur-md tw-rounded-2xl tw-p-2 tw-shadow-lg tw-border tw-border-white/50">
         <div class="tw-relative">
           <input v-model="searchQuery" type="text" :placeholder="$t('disaster.search_facilities')" class="tw-w-full tw-bg-white tw-rounded-xl tw-py-2 tw-pl-10 tw-pr-8 tw-text-sm tw-outline-none focus:tw-ring-2 focus:tw-ring-[#85C441]/50 tw-text-gray-700" />
           <Search class="tw-absolute tw-left-3 tw-top-1/2 -tw-translate-y-1/2 tw-w-4 tw-h-4 tw-text-gray-400" />
@@ -176,6 +176,7 @@
       </div>
     </div>
 
+    <OnboardingTrigger @click="startDisasterOnboarding" />
     <AuthModal :is-open="isLoginModalOpen" @close="isLoginModalOpen = false" />
   </div>
 </template>
@@ -191,6 +192,15 @@ const { user, userPhotoURL } = useAuth()
 const { openDrawer } = useDrawer()
 const localePath = useLocalePath()
 const { t, locale } = useI18n()
+const { start: startOnboarding } = useOnboarding()
+
+const disasterOnboardingSteps = [
+  { id: 'title', target: '[data-onboarding="disaster-title"]', titleKey: 'onboarding.disaster.step1_title', descKey: 'onboarding.disaster.step1_desc' },
+  { id: 'search', target: '[data-onboarding="disaster-search"]', titleKey: 'onboarding.disaster.step2_title', descKey: 'onboarding.disaster.step2_desc' },
+  { id: 'sos', target: '[data-onboarding="disaster-sos"]', titleKey: 'onboarding.disaster.step3_title', descKey: 'onboarding.disaster.step3_desc' },
+]
+
+const startDisasterOnboarding = () => startOnboarding('disaster', disasterOnboardingSteps)
 const { load } = useMapsLoader()
 const {
   init: initFacilityData,

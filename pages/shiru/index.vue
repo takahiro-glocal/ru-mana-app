@@ -8,7 +8,7 @@
             <Lightbulb class="tw-w-6 md:tw-w-10 tw-h-6 md:tw-h-10 tw-text-white" />
           </div>
           <div class="tw-min-w-0">
-            <h1 class="tw-text-xl md:tw-text-4xl tw-font-bold tw-text-gray-800">{{ $t('shiru.title') }}</h1>
+            <h1 data-onboarding="shiru-title" class="tw-text-xl md:tw-text-4xl tw-font-bold tw-text-gray-800">{{ $t('shiru.title') }}</h1>
             <p class="tw-text-[9px] md:tw-text-sm tw-text-gray-500 tw-font-medium tw-truncate">{{ $t('shiru.tagline') }}</p>
           </div>
         </div>
@@ -52,7 +52,7 @@
         {{ $t('shiru.breadcrumb') }}
       </nav>
 
-      <div class="tw-hidden md:tw-flex tw-flex-col tw-gap-6">
+      <div data-onboarding="shiru-categories" class="tw-hidden md:tw-flex tw-flex-col tw-gap-6">
         <div v-for="cat in categories" :key="cat.id"
           class="tw-group tw-bg-white tw-rounded-3xl tw-shadow-sm hover:tw-shadow-xl tw-transition-all tw-duration-300 tw-flex tw-items-center tw-overflow-hidden tw-cursor-pointer"
           @click="() => $router.push(localePath(`/shiru/category/${cat.id}`))">
@@ -70,7 +70,7 @@
               <h2 class="tw-text-3xl tw-font-bold tw-text-gray-800">{{ getCategoryName(cat.id) }}</h2>
               <p class="tw-text-xs tw-text-gray-400 tw-mt-1">{{ cat.updateDate }} update</p>
             </div>
-            <div class="tw-text-2xl tw-font-bold tw-text-gray-700">
+            <div data-onboarding="shiru-thread-count" class="tw-text-2xl tw-font-bold tw-text-gray-700">
               {{ getThreadCount(cat.id) }}{{ $t('shiru.thread_count') }}
             </div>
           </div>
@@ -113,6 +113,7 @@
       </div>
     </div>
 
+    <OnboardingTrigger @click="startShiruOnboarding" />
     <AuthModal :is-open="isLoginModalOpen" @close="isLoginModalOpen = false" />
   </div>
 </template>
@@ -130,6 +131,15 @@ const { user, initAuth, userPhotoURL } = useAuth()
 const { openDrawer } = useDrawer()
 const { $firestore } = useNuxtApp()
 const isLoginModalOpen = ref(false)
+const { start: startOnboarding } = useOnboarding()
+
+const shiruOnboardingSteps = [
+  { id: 'title', target: '[data-onboarding="shiru-title"]', titleKey: 'onboarding.shiru.step1_title', descKey: 'onboarding.shiru.step1_desc' },
+  { id: 'categories', target: '[data-onboarding="shiru-categories"]', titleKey: 'onboarding.shiru.step2_title', descKey: 'onboarding.shiru.step2_desc' },
+  { id: 'thread-count', target: '[data-onboarding="shiru-thread-count"]', titleKey: 'onboarding.shiru.step3_title', descKey: 'onboarding.shiru.step3_desc' },
+]
+
+const startShiruOnboarding = () => startOnboarding('shiru', shiruOnboardingSteps)
 
 const { categories, loadCategories, getCategoryName } = useShiru()
 const localePath = useLocalePath()
