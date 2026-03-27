@@ -30,6 +30,7 @@
     "today_event": "今天是什么日子",
     "no_events_today": "今天没有活动",
     "default_event": "{month}月{day}日的日本",
+    "weather_unavailable": "天气不可用",
     "disaster_map": "防灾地图",
     "sns": "社交媒体",
     "what_doing": "大家在做什么？",

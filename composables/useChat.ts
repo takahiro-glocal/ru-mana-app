@@ -1,12 +1,14 @@
 import { KNOWLEDGE_BASE } from '~/constants/knowledgeBase'
 
+const MAX_CHAT_MESSAGES = 100
+
 export const useChat = () => {
   const isChatOpen = useState<boolean>('global-chat-open', () => false)
   const messages = useState<ChatMessage[]>('global-chat-messages', () => [])
   const isTyping = useState<boolean>('global-chat-typing', () => false)
 
   const { locale } = useI18n()
-  const { getModel } = useGemini()
+  const { sendChatMessage } = useGemini()
 
   const openChat = () => {
     isChatOpen.value = true
@@ -77,10 +79,14 @@ ${KNOWLEDGE_BASE}
     }
     messages.value = [...messages.value, userMsg]
 
+    // チャット履歴の上限を超えた場合、古いメッセージを削除
+    if (messages.value.length > MAX_CHAT_MESSAGES) {
+      messages.value = messages.value.slice(-MAX_CHAT_MESSAGES)
+    }
+
     isTyping.value = true
 
     try {
-      const model = getModel()
       const systemPrompt = buildSystemPrompt()
 
       const ackMessage = locale.value === 'en'
@@ -89,31 +95,19 @@ ${KNOWLEDGE_BASE}
         ? '明白了！我是玛娜助手。我在这里帮助您以温暖和尊重的态度探索和享受文化多样性。'
         : 'かしこまりました！まなアシスタントとして、文化の多様性を温かく、敬意を持って楽しむお手伝いをします。'
 
-      const history = messages.value
-        .filter(m => m.id !== userMsg.id)
-        .slice(-20)
-        .map(m => ({
-          role: m.role === 'user' ? 'user' as const : 'model' as const,
-          parts: [{ text: m.content }],
-        }))
+      const history = [
+        { role: 'user', parts: [{ text: systemPrompt }] },
+        { role: 'model', parts: [{ text: ackMessage }] },
+        ...messages.value
+          .filter(m => m.id !== userMsg.id)
+          .slice(-20)
+          .map(m => ({
+            role: m.role === 'user' ? 'user' as const : 'model' as const,
+            parts: [{ text: m.content }],
+          })),
+      ]
 
-      const chat = model.startChat({
-        history: [
-          { role: 'user', parts: [{ text: systemPrompt }] },
-          { role: 'model', parts: [{ text: ackMessage }] },
-          ...history,
-        ],
-      })
-
-      const result = await Promise.race([
-        chat.sendMessage(text.trim()),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('Request timed out')), 30_000)
-        )
-      ])
-      const reply = result.response.text()?.trim()
-
-      if (!reply) throw new Error('No response from AI')
+      const reply = await sendChatMessage(text.trim(), history)
 
       const assistantMsg: ChatMessage = {
         id: `msg-${Date.now()}-assistant`,

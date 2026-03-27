@@ -295,21 +295,8 @@ const {
 const { user, userDisplayName, userPhotoURL, initAuth } = useAuth()
 const { openDrawer } = useDrawer()
 const { addHistory } = useUserHistory()
-const { translateText, getTranslation, isTranslating, hasTranslation } = useTranslation()
+const { translateText, getTranslation, isTranslating, hasTranslation, needsTranslation, isTitleTranslated, getTranslatedTitle } = useTranslation()
 const { t, locale } = useI18n()
-
-// === 自動翻訳（スレッドタイトル） ===
-const needsTranslation = computed(() => locale.value !== 'ja')
-
-const isTitleTranslated = (threadId: string): boolean => {
-  if (!needsTranslation.value) return true
-  return !!getTranslation(`title:${threadId}`)
-}
-
-const getTranslatedTitle = (threadId: string, originalTitle: string): string => {
-  if (!needsTranslation.value) return originalTitle
-  return getTranslation(`title:${threadId}`) || originalTitle
-}
 
 const isLoginModalOpen = ref(false)
 const showTranslation = ref<Record<string, boolean>>({})
@@ -329,40 +316,12 @@ let unsubscribePosts: (() => void) | null = null
 let unsubscribeThread: (() => void) | null = null
 let unsubscribeCategory: (() => void) | null = null
 
-// カラーパレット
-const themeMap: Record<string, ThreadTheme> = {
-  transport: { dot: 'tw-bg-[#A5D1E1]', textBg: 'tw-bg-[#5FB3D5]' },
-  public:    { dot: 'tw-bg-[#F4A7B9]', textBg: 'tw-bg-[#E95295]' },
-  spa:       { dot: 'tw-bg-[#7DB9DE]', textBg: 'tw-bg-[#3E91FF]' },
-  cafe:      { dot: 'tw-bg-[#F5B169]', textBg: 'tw-bg-[#F39800]' },
-  shopping:  { dot: 'tw-bg-[#CE93D8]', textBg: 'tw-bg-[#9C27B0]' },
-  hotel:     { dot: 'tw-bg-[#81C784]', textBg: 'tw-bg-[#4CAF50]' },
-  culture:   { dot: 'tw-bg-[#E57373]', textBg: 'tw-bg-[#F44336]' },
-  trash:     { dot: 'tw-bg-[#90A4AE]', textBg: 'tw-bg-[#607D8B]' },
-  new:       { dot: 'tw-bg-[#B28FCE]', textBg: 'tw-bg-[#9C27B0]' }
-}
-const getTheme = (id: string): ThreadTheme => themeMap[id] || themeMap.new
+import { getCategoryTheme } from '~/constants/categoryThemes'
+const getTheme = (id: string) => getCategoryTheme(id)
 
-// Formatters
-const formatDate = (date: FirebaseTimestamp | Date | string | null) => {
-  if (!date) return ''
-  const d = (typeof date === 'object' && 'seconds' in date) ? new Date(date.seconds * 1000) : new Date(date)
-
-  const now = new Date()
-  const diff = now.getTime() - d.getTime()
-
-  if (diff < 60000) return t('thread.just_now')
-  if (diff < 3600000) return t('thread.minutes_ago', { n: Math.floor(diff / 60000) })
-  if (diff < 86400000) return t('thread.hours_ago', { n: Math.floor(diff / 3600000) })
-
-  return d.toLocaleDateString(locale.value, { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-}
-
-const formatDateShort = (date: FirebaseTimestamp | Date | string | null) => {
-  if (!date) return ''
-  const d = (typeof date === 'object' && 'seconds' in date) ? new Date(date.seconds * 1000) : new Date(date)
-  return d.toLocaleDateString(locale.value, { month: 'numeric', day: 'numeric' })
-}
+import { formatRelativeDate, formatFirestoreDate } from '~/utils/formatDate'
+const formatDate = (date: FirebaseTimestamp | Date | string | null) => formatRelativeDate(date, locale.value, t)
+const formatDateShort = (date: FirebaseTimestamp | Date | string | null) => formatFirestoreDate(date, locale.value, { month: 'numeric', day: 'numeric' })
 
 // Computed Infos
 const currentThreadInfo = computed(() => {
@@ -383,10 +342,13 @@ const siblings = computed(() => {
 // Lifecycle
 onMounted(async () => {
   initAuth() 
-  const storedLikes = localStorage.getItem('ru-mana-liked-posts')
+  const likeKey = user.value ? `ru-mana-liked-posts-${user.value.uid}` : 'ru-mana-liked-posts'
+  const storedLikes = localStorage.getItem(likeKey)
   if (storedLikes) {
     try {
-      likedPostIds.value = JSON.parse(storedLikes)
+      const parsed = JSON.parse(storedLikes)
+      // 上限500件に制限
+      likedPostIds.value = Array.isArray(parsed) ? parsed.slice(-500) : []
     } catch (e) {
       likedPostIds.value = []
     }
@@ -485,7 +447,7 @@ const handleSubmit = async () => {
     inputBody.value = ''
     if (textareaRef.value) textareaRef.value.style.height = 'auto'
   } catch (e) {
-    alert(t('thread.send_failed'))
+    console.warn('Send failed — user notified via console')
     console.error(e)
   } finally {
     isSending.value = false
@@ -520,7 +482,7 @@ const confirmDelete = async (postId: string) => {
       await deletePost(tid.value, postId)
       activeMenuId.value = null
     } catch (e) {
-      alert(t('thread.delete_failed'))
+      console.error('Delete failed')
     }
   }
 }
@@ -531,11 +493,13 @@ const handleLike = async (postId: string) => {
   if (isLiked(postId)) return
   try {
     likedPostIds.value.push(postId)
-    localStorage.setItem('ru-mana-liked-posts', JSON.stringify(likedPostIds.value))
+    const saveLikeKey = user.value ? `ru-mana-liked-posts-${user.value.uid}` : 'ru-mana-liked-posts'
+    localStorage.setItem(saveLikeKey, JSON.stringify(likedPostIds.value.slice(-500)))
     await likePost(tid.value, postId)
   } catch (e) {
     likedPostIds.value = likedPostIds.value.filter(id => id !== postId)
-    localStorage.setItem('ru-mana-liked-posts', JSON.stringify(likedPostIds.value))
+    const saveLikeKey = user.value ? `ru-mana-liked-posts-${user.value.uid}` : 'ru-mana-liked-posts'
+    localStorage.setItem(saveLikeKey, JSON.stringify(likedPostIds.value.slice(-500)))
     console.error("Like failed", e)
   }
 }
