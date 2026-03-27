@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
 
 export const useTranslation = () => {
   const translations = useState<Record<string, string>>('ai-translations', () => ({}))
@@ -48,7 +48,7 @@ export const useTranslation = () => {
         sourceText,
         targetLang,
         translatedText,
-        createdAt: new Date()
+        createdAt: serverTimestamp()
       })
     } catch (e) {
       console.warn('Firestore cache write failed:', e)

@@ -48,7 +48,7 @@ export const useAuth = () => {
     try {
       await signInWithPopup($auth, provider);
     } catch (error: unknown) {
-      const code = (error as { code?: string })?.code;
+      const code = (error && typeof error === 'object' && 'code' in error) ? (error as { code: string }).code : undefined;
       // ポップアップがブロックされた場合のみリダイレクトにフォールバック
       if (
         code === "auth/popup-blocked" ||
@@ -111,7 +111,7 @@ export const useAuth = () => {
   // ユーザーアイコン取得
   const userPhotoURL = computed(() => {
     if (user.value?.photoURL) return user.value.photoURL;
-    const seed = user.value?.uid || "guest";
+    const seed = encodeURIComponent(user.value?.uid || "guest");
     return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
   });
 

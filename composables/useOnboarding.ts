@@ -29,7 +29,9 @@ export const useOnboarding = () => {
   const markCompleted = (pageId: string) => {
     try {
       localStorage.setItem(STORAGE_PREFIX + pageId, 'done')
-    } catch {}
+    } catch (e) {
+      console.warn('Failed to save onboarding state:', e)
+    }
   }
 
   const start = (pageId: string, steps: OnboardingStep[]) => {

@@ -86,7 +86,7 @@ export const useFirestore = () => {
   const MAX_THREAD_TITLE_LENGTH = 200;
 
   const addPost = async (threadId: string, threadTitle: string, postData: Omit<Post, 'id' | 'createdAt' | 'likes'>) => {
-    if (postData.body.length > MAX_POST_BODY_LENGTH) {
+    if (!postData.body || postData.body.length > MAX_POST_BODY_LENGTH) {
       throw new Error(`Post body exceeds maximum length of ${MAX_POST_BODY_LENGTH} characters`);
     }
     const batch = writeBatch($firestore);
@@ -110,6 +110,9 @@ export const useFirestore = () => {
   };
 
   const updatePost = async (threadId: string, postId: string, body: string) => {
+    if (!body || body.length > MAX_POST_BODY_LENGTH) {
+      throw new Error(`Post body is empty or exceeds maximum length of ${MAX_POST_BODY_LENGTH} characters`);
+    }
     const postRef = doc($firestore, `threads/${threadId}/posts`, postId);
     await updateDoc(postRef, { body });
   };
@@ -153,7 +156,7 @@ export const useFirestore = () => {
    */
   const getUserPoints = async (userId: string): Promise<number> => {
     const userDoc = await getDoc(doc($firestore, 'users', userId));
-    return userDoc.exists() ? (userDoc.data().points || 0) : 0;
+    return userDoc.exists() ? (userDoc.data()?.points ?? 0) : 0;
   };
 
   /**
@@ -260,11 +263,11 @@ export const useFirestore = () => {
    * スレッドドキュメントを作成し、直後に最初の投稿を追加します
    */
   const createThread = async (categoryId: string, title: string, body: string, user: FirebaseUserInfo) => {
-    if (title.length > MAX_THREAD_TITLE_LENGTH) {
-      throw new Error(`Thread title exceeds maximum length of ${MAX_THREAD_TITLE_LENGTH} characters`);
+    if (!title || title.length > MAX_THREAD_TITLE_LENGTH) {
+      throw new Error(`Thread title is empty or exceeds maximum length of ${MAX_THREAD_TITLE_LENGTH} characters`);
     }
-    if (body.length > MAX_POST_BODY_LENGTH) {
-      throw new Error(`Post body exceeds maximum length of ${MAX_POST_BODY_LENGTH} characters`);
+    if (!body || body.length > MAX_POST_BODY_LENGTH) {
+      throw new Error(`Post body is empty or exceeds maximum length of ${MAX_POST_BODY_LENGTH} characters`);
     }
     // 1. Create Thread Document
     const threadRef = await addDoc(collection($firestore, 'threads'), {

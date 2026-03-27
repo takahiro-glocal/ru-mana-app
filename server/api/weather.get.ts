@@ -28,11 +28,21 @@ export default defineEventHandler(async (event) => {
 
   try {
     const data = await $fetch(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${latNum}&lon=${lonNum}&units=metric&lang=${safeLang}&appid=${apiKey}`
+      'https://api.openweathermap.org/data/2.5/weather',
+      {
+        query: {
+          lat: latNum,
+          lon: lonNum,
+          units: 'metric',
+          lang: safeLang,
+          appid: apiKey
+        }
+      }
     )
     return data
-  } catch (e: any) {
-    console.error('Weather API error:', e.message)
+  } catch (e: unknown) {
+    if (e instanceof Error && 'statusCode' in e) throw e
+    console.error('Weather API error:', e instanceof Error ? e.message : 'Unknown error')
     throw createError({ statusCode: 502, statusMessage: 'Weather service unavailable' })
   }
 })
