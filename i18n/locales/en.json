@@ -631,12 +631,16 @@
       "step1_desc": "An app to learn Japanese culture and manners in a fun way. Let us show you the main features.",
       "step2_title": "The 4 Pillars",
       "step2_desc": "Shiru, Miru, Kiku, Iku — Explore Japanese culture through 4 different perspectives.",
-      "step3_title": "Help & Updates",
-      "step3_desc": "Quick access to emergency help and the latest thread updates.",
-      "step4_title": "Disaster Map & SNS",
-      "step4_desc": "Find nearby shelters and facilities on the map. Access social media links here.",
-      "step5_title": "Language Switcher",
-      "step5_desc": "Switch between Japanese, English, and Chinese anytime."
+      "step3_title": "Help Button",
+      "step3_desc": "Tap here to access the help page. Find emergency contacts and support quickly.",
+      "step4_title": "Latest Threads",
+      "step4_desc": "Check the latest thread updates right here.",
+      "step5_title": "Disaster Map",
+      "step5_desc": "Find nearby shelters and facilities on the map.",
+      "step6_title": "SNS Links",
+      "step6_desc": "Access official social media accounts from here.",
+      "step7_title": "Language Switcher",
+      "step7_desc": "Switch between Japanese, English, and Chinese anytime."
     },
     "shiru": {
       "step1_title": "Welcome to Shiru Mana",
@@ -645,6 +649,14 @@
       "step2_desc": "Tap on categories like Transport, Hot Springs, Dining, and more to explore.",
       "step3_title": "Thread Count",
       "step3_desc": "See how many discussions are happening in each category."
+    },
+    "shiru_category": {
+      "step1_title": "Category Page",
+      "step1_desc": "This is the detail page for the selected category. Tap the icon to go back to Shiru Mana.",
+      "step2_title": "Switch Tabs",
+      "step2_desc": "Toggle between \"Manner Guide\" and \"Q&A\" using the tabs.",
+      "step3_title": "Create a Thread",
+      "step3_desc": "In the Q&A tab, create a thread to ask questions or share your thoughts."
     },
     "trouble": {
       "step1_title": "Emergency Help",

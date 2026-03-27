@@ -107,8 +107,8 @@
           </div>
 
           <!-- モバイル: おたすけボタン + Update を横並び -->
-          <div data-onboarding="trouble-update" class="md:tw-hidden tw-flex tw-gap-3">
-            <NuxtLink :to="localePath('/trouble')" class="tw-flex tw-items-center tw-gap-3 tw-bg-white tw-rounded-2xl tw-p-3 tw-shadow-sm tw-border-2 tw-border-[#E4007F] active:tw-scale-95 tw-transition-transform tw-flex-shrink-0">
+          <div class="md:tw-hidden tw-flex tw-gap-3">
+            <NuxtLink data-onboarding="trouble-btn" :to="localePath('/trouble')" class="tw-flex tw-items-center tw-gap-3 tw-bg-white tw-rounded-2xl tw-p-3 tw-shadow-sm tw-border-2 tw-border-[#E4007F] active:tw-scale-95 tw-transition-transform tw-flex-shrink-0">
               <div class="tw-bg-[#E4007F] tw-text-white tw-w-10 tw-h-10 tw-rounded-full tw-flex tw-items-center tw-justify-center">
                 <span class="tw-font-black tw-text-xl">!</span>
               </div>
@@ -117,7 +117,7 @@
                 <div class="tw-text-gray-500 tw-text-[10px] tw-font-bold">{{ $t('common.trouble') }}</div>
               </div>
             </NuxtLink>
-            <div class="tw-flex-1 tw-bg-[#2C3E50] tw-rounded-2xl tw-p-3 tw-text-white tw-shadow-sm tw-min-w-0">
+            <div data-onboarding="update-feed" class="tw-flex-1 tw-bg-[#2C3E50] tw-rounded-2xl tw-p-3 tw-text-white tw-shadow-sm tw-min-w-0">
               <div class="tw-flex tw-items-center tw-gap-1 tw-text-[#E4007F] tw-mb-1 tw-font-bold tw-text-xs">
                 <ArrowUp class="tw-w-3 tw-h-3" /> Update
               </div>
@@ -132,7 +132,7 @@
 
           <!-- PC: 従来の3カラムレイアウト -->
           <div class="tw-hidden md:tw-grid tw-grid-cols-10 tw-gap-4">
-            <div class="tw-col-span-4 tw-bg-[#2C3E50] tw-rounded-3xl tw-p-6 tw-text-white tw-shadow-lg">
+            <div data-onboarding="update-feed" class="tw-col-span-4 tw-bg-[#2C3E50] tw-rounded-3xl tw-p-6 tw-text-white tw-shadow-lg">
               <div class="tw-flex tw-items-center tw-gap-2 tw-text-[#E4007F] tw-mb-3 tw-font-bold">
                 <ArrowUp class="tw-w-5 tw-h-5" /> Update
               </div>
@@ -147,7 +147,7 @@
               <div class="tw-font-bold tw-mb-1 tw-text-lg">{{ $t('dashboard.today_event') }}</div>
               <p class="tw-text-[11px] tw-leading-relaxed">{{ todayEvent }}</p>
             </div>
-            <div class="tw-col-span-3 tw-flex tw-flex-col tw-items-center tw-justify-center">
+            <div data-onboarding="trouble-btn" class="tw-col-span-3 tw-flex tw-flex-col tw-items-center tw-justify-center">
               <NuxtLink :to="localePath('/trouble')" class="tw-relative tw-w-28 tw-h-28 tw-rounded-full tw-bg-white tw-border-[6px] tw-border-[#E4007F] tw-flex tw-flex-col tw-items-center tw-justify-center tw-shadow-xl active:tw-scale-95 tw-transition-transform">
                 <div class="tw-bg-[#E4007F] tw-text-white tw-w-10 tw-h-10 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-mb-1">
                   <span class="tw-font-black tw-text-2xl">!</span>
@@ -186,11 +186,11 @@
               <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800" class="tw-w-full tw-h-full tw-object-cover" />
             </div>
             <div class="tw-w-full md:tw-w-24 tw-flex tw-flex-row md:tw-flex-col tw-gap-3">
-              <NuxtLink data-onboarding="disaster-sns" :to="localePath('/disaster-prevention')" class="tw-flex-1 tw-bg-[#BCAF92] tw-rounded-2xl tw-p-3 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md tw-cursor-pointer hover:tw-opacity-90 tw-transition-opacity">
+              <NuxtLink data-onboarding="disaster-map" :to="localePath('/disaster-prevention')" class="tw-flex-1 tw-bg-[#BCAF92] tw-rounded-2xl tw-p-3 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md tw-cursor-pointer hover:tw-opacity-90 tw-transition-opacity">
                 <MapIcon class="tw-w-10 tw-h-10" />
                 <span class="tw-text-[9px] tw-font-bold tw-mt-1">{{ $t('dashboard.disaster_map') }}</span>
               </NuxtLink>
-              <div class="tw-flex-1 tw-bg-[#D9A65D] tw-rounded-2xl tw-p-3 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md">
+              <div data-onboarding="sns-links" class="tw-flex-1 tw-bg-[#D9A65D] tw-rounded-2xl tw-p-3 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-white tw-shadow-md">
                 <div class="tw-grid tw-grid-cols-2 tw-gap-3">
                   <a v-for="sns in snsLinks" :key="sns.label" :href="sns.url" target="_blank" rel="noopener noreferrer" class="tw-p-1.5 tw-rounded-lg hover:tw-bg-white/20 tw-transition-all">
                     <component :is="sns.icon" class="tw-w-5 tw-h-5" />
@@ -263,9 +263,11 @@ const { start: startOnboarding } = useOnboarding();
 const homeOnboardingSteps = [
   { id: 'welcome', target: '[data-onboarding="pillars"]', titleKey: 'onboarding.home.step1_title', descKey: 'onboarding.home.step1_desc' },
   { id: 'pillars', target: '[data-onboarding="pillars"]', titleKey: 'onboarding.home.step2_title', descKey: 'onboarding.home.step2_desc' },
-  { id: 'trouble-update', target: '[data-onboarding="trouble-update"]', titleKey: 'onboarding.home.step3_title', descKey: 'onboarding.home.step3_desc' },
-  { id: 'disaster-sns', target: '[data-onboarding="disaster-sns"]', titleKey: 'onboarding.home.step4_title', descKey: 'onboarding.home.step4_desc' },
-  { id: 'lang-switcher', target: '[data-onboarding="lang-switcher"]', titleKey: 'onboarding.home.step5_title', descKey: 'onboarding.home.step5_desc' },
+  { id: 'trouble-btn', target: '[data-onboarding="trouble-btn"]', titleKey: 'onboarding.home.step3_title', descKey: 'onboarding.home.step3_desc' },
+  { id: 'update-feed', target: '[data-onboarding="update-feed"]', titleKey: 'onboarding.home.step4_title', descKey: 'onboarding.home.step4_desc' },
+  { id: 'disaster-map', target: '[data-onboarding="disaster-map"]', titleKey: 'onboarding.home.step5_title', descKey: 'onboarding.home.step5_desc' },
+  { id: 'sns-links', target: '[data-onboarding="sns-links"]', titleKey: 'onboarding.home.step6_title', descKey: 'onboarding.home.step6_desc' },
+  { id: 'lang-switcher', target: '[data-onboarding="lang-switcher"]', titleKey: 'onboarding.home.step7_title', descKey: 'onboarding.home.step7_desc' },
 ];
 
 const startHomeOnboarding = () => startOnboarding('home', homeOnboardingSteps);
