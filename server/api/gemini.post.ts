@@ -5,6 +5,15 @@ let genAIInstance: GoogleGenerativeAI | null = null
 // 許可するモデル名のホワイトリスト
 const ALLOWED_MODELS = ['gemini-2.5-flash']
 
+// 許可するモードのホワイトリスト
+const ALLOWED_MODES = ['generate', 'chat']
+
+// 許可する履歴ロールのホワイトリスト
+const ALLOWED_ROLES = ['user', 'model']
+
+// 履歴の最大エントリ数
+const MAX_HISTORY_LENGTH = 100
+
 // IPごとのレート制限（1分あたりの最大リクエスト数）
 const MAX_REQUESTS_PER_MINUTE = 20
 const rateLimitMap = new Map<string, number[]>()
@@ -58,13 +67,21 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'prompt is required' })
   }
 
-  if (prompt.length > 10_000) {
-    throw createError({ statusCode: 400, statusMessage: 'prompt too long' })
+  // Null バイト等の制御文字を除去
+  const sanitizedPrompt = prompt.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '').trim()
+
+  if (sanitizedPrompt.length === 0 || sanitizedPrompt.length > 10_000) {
+    throw createError({ statusCode: 400, statusMessage: 'Invalid prompt length' })
   }
 
   // モデル名バリデーション
   if (!ALLOWED_MODELS.includes(modelName)) {
     throw createError({ statusCode: 400, statusMessage: 'Invalid model name' })
+  }
+
+  // モードバリデーション
+  if (!ALLOWED_MODES.includes(mode)) {
+    throw createError({ statusCode: 400, statusMessage: 'Invalid mode' })
   }
 
   if (!genAIInstance) {
@@ -75,15 +92,23 @@ export default defineEventHandler(async (event) => {
 
   try {
     if (mode === 'chat' && Array.isArray(history)) {
-      // history の基本的な構造バリデーション
+      // history の構造バリデーション
+      if (history.length > MAX_HISTORY_LENGTH) {
+        throw createError({ statusCode: 400, statusMessage: 'History too long' })
+      }
       for (const entry of history) {
-        if (!entry || typeof entry.role !== 'string' || !Array.isArray(entry.parts)) {
+        if (!entry || typeof entry.role !== 'string' || !ALLOWED_ROLES.includes(entry.role) || !Array.isArray(entry.parts)) {
           throw createError({ statusCode: 400, statusMessage: 'Invalid history format' })
+        }
+        for (const part of entry.parts) {
+          if (!part || typeof part.text !== 'string') {
+            throw createError({ statusCode: 400, statusMessage: 'Invalid history part format' })
+          }
         }
       }
       const chat = model.startChat({ history })
       const result = await Promise.race([
-        chat.sendMessage(prompt),
+        chat.sendMessage(sanitizedPrompt),
         new Promise<never>((_, reject) =>
           setTimeout(() => reject(new Error('Request timed out')), 30_000)
         )
@@ -91,16 +116,16 @@ export default defineEventHandler(async (event) => {
       return { text: result.response.text()?.trim() }
     } else {
       const result = await Promise.race([
-        model.generateContent(prompt),
+        model.generateContent(sanitizedPrompt),
         new Promise<never>((_, reject) =>
           setTimeout(() => reject(new Error('Request timed out')), 30_000)
         )
       ])
       return { text: result.response.text()?.trim() }
     }
-  } catch (e: any) {
-    if (e.statusCode) throw e
-    console.error('Gemini API error:', e.message)
+  } catch (e: unknown) {
+    if (e instanceof Error && 'statusCode' in e) throw e
+    console.error('Gemini API error:', e instanceof Error ? e.message : 'Unknown error')
     throw createError({ statusCode: 502, statusMessage: 'AI service unavailable' })
   }
 })

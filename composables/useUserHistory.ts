@@ -10,7 +10,8 @@ export const useUserHistory = () => {
       const stored = localStorage.getItem(historyKey);
       if (stored) {
         try {
-          history.value = JSON.parse(stored);
+          const parsed = JSON.parse(stored);
+          history.value = Array.isArray(parsed) ? parsed : [];
         } catch (e) {
           console.error('Failed to parse history', e);
           history.value = [];

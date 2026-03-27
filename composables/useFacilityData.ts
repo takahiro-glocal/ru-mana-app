@@ -41,6 +41,7 @@ export const useFacilityData = () => {
     if (tileIndex.value) return
     try {
       const res = await fetch('/data/tiles/index.json')
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
       tileIndex.value = await res.json()
     } catch (e) {
       console.error('Failed to load tile index:', e)

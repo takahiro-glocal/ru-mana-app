@@ -48,7 +48,7 @@ export const useAuth = () => {
     try {
       await signInWithPopup($auth, provider);
     } catch (error: unknown) {
-      const code = (error as { code?: string })?.code;
+      const code = (error && typeof error === 'object' && 'code' in error) ? (error as { code: string }).code : undefined;
       // ポップアップがブロックされた場合のみリダイレクトにフォールバック
       if (
         code === "auth/popup-blocked" ||

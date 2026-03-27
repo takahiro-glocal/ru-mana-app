@@ -110,6 +110,9 @@ export const useFirestore = () => {
   };
 
   const updatePost = async (threadId: string, postId: string, body: string) => {
+    if (body.length > MAX_POST_BODY_LENGTH) {
+      throw new Error(`Post body exceeds maximum length of ${MAX_POST_BODY_LENGTH} characters`);
+    }
     const postRef = doc($firestore, `threads/${threadId}/posts`, postId);
     await updateDoc(postRef, { body });
   };
@@ -153,7 +156,7 @@ export const useFirestore = () => {
    */
   const getUserPoints = async (userId: string): Promise<number> => {
     const userDoc = await getDoc(doc($firestore, 'users', userId));
-    return userDoc.exists() ? (userDoc.data().points || 0) : 0;
+    return userDoc.exists() ? (userDoc.data()?.points ?? 0) : 0;
   };
 
   /**
