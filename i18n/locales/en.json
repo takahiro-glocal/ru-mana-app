@@ -658,7 +658,9 @@
       "step2_title": "Switch Tabs",
       "step2_desc": "Toggle between \"Manner Guide\" and \"Q&A\" using the tabs.",
       "step3_title": "Create a Thread",
-      "step3_desc": "In the Q&A tab, create a thread to ask questions or share your thoughts."
+      "step3_desc": "In the Q&A tab, create a thread to ask questions or share your thoughts.",
+      "step4_title": "View a Thread",
+      "step4_desc": "Tap a thread to view its details and post comments. Try opening one that interests you."
     },
     "trouble": {
       "step1_title": "Emergency Help",
