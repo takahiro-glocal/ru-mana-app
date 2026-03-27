@@ -97,7 +97,12 @@ const tooltipStyle = ref<Record<string, string>>({})
 const updatePosition = () => {
   if (!currentStep.value) return
 
-  const el = document.querySelector(currentStep.value.target)
+  // Find the first visible element matching the selector (skip hidden mobile/desktop elements)
+  const els = document.querySelectorAll(currentStep.value.target)
+  const el = Array.from(els).find(e => {
+    const r = e.getBoundingClientRect()
+    return r.width > 0 && r.height > 0
+  }) || null
   if (!el) {
     // Target not found — center tooltip
     spotlightRect.value = { x: -100, y: -100, width: 0, height: 0 }
@@ -321,5 +326,11 @@ onUnmounted(() => {
 .onboarding-fade-enter-from,
 .onboarding-fade-leave-to {
   opacity: 0;
+}
+
+@media (max-width: 767px) {
+  .onboarding-tooltip-desc {
+    margin-bottom: 1.5rem;
+  }
 }
 </style>

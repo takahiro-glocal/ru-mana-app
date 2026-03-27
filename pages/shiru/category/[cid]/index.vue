@@ -3,7 +3,7 @@
     <header class="tw-bg-white tw-border-b tw-border-gray-100 tw-p-4 md:tw-px-8 md:tw-py-6 tw-z-30 tw-flex-shrink-0">
       <div class="tw-max-w-7xl tw-mx-auto tw-flex tw-justify-between tw-items-center">
         <div class="tw-flex tw-items-center tw-gap-4">
-          <div class="tw-bg-[#85C441] tw-p-2 tw-rounded-xl md:tw-p-3 md:tw-rounded-2xl tw-cursor-pointer" @click="() => $router.push(localePath('/shiru'))">
+          <div data-onboarding="category-header" class="tw-bg-[#85C441] tw-p-2 tw-rounded-xl md:tw-p-3 md:tw-rounded-2xl tw-cursor-pointer" @click="() => $router.push(localePath('/shiru'))">
             <Lightbulb class="tw-w-6 md:tw-w-10 tw-h-6 md:tw-h-10 tw-text-white" />
           </div>
           <div>
@@ -71,7 +71,7 @@
                   </div>
                   <h3 class="tw-text-xl tw-font-black tw-text-gray-800">{{ getCategoryName(cat.id) }}</h3>
                   
-                  <div class="tw-mt-4 tw-bg-white/60 tw-backdrop-blur-sm tw-p-1 tw-rounded-full tw-flex tw-text-[10px] tw-font-bold tw-shadow-sm">
+                  <div data-onboarding="category-tabs" class="tw-mt-4 tw-bg-white/60 tw-backdrop-blur-sm tw-p-1 tw-rounded-full tw-flex tw-text-[10px] tw-font-bold tw-shadow-sm">
                     <button
                       @click="activeTab = 'guides'"
                       :class="['tw-flex-1 tw-py-2 tw-rounded-full tw-transition-all', activeTab === 'guides' ? 'tw-bg-white tw-shadow-sm tw-text-gray-800' : 'tw-text-gray-400']"
@@ -90,8 +90,8 @@
                 <div class="tw-flex-1 tw-overflow-y-auto tw-p-5 tw-bg-white">
                   <div v-if="activeTab === 'threads'">
                     
-                    <div class="tw-mb-4" v-if="cat.id === cid">
-                      <button 
+                    <div data-onboarding="category-create" class="tw-mb-4" v-if="cat.id === cid">
+                      <button
                         @click="openCreateModal"
                         :class="['tw-w-full tw-py-3 tw-rounded-xl tw-font-bold tw-text-white tw-shadow-md tw-flex tw-items-center tw-justify-center tw-gap-2 active:tw-scale-95 tw-transition-all', getTheme(cat.id).btnBg || 'tw-bg-[#85C441]']"
                       >
@@ -175,7 +175,7 @@
               </button>
             </div>
 
-            <div class="tw-bg-gray-200 tw-p-1.5 tw-rounded-full tw-flex tw-gap-1">
+            <div data-onboarding="category-tabs" class="tw-bg-gray-200 tw-p-1.5 tw-rounded-full tw-flex tw-gap-1">
                <button @click="activeTab = 'guides'" :class="['tw-px-6 tw-py-2 tw-rounded-full tw-text-xs tw-font-bold tw-transition-all', activeTab === 'guides' ? 'tw-bg-white tw-shadow-sm tw-text-gray-800' : 'tw-text-gray-400']">{{ $t('shiru.tab_rules') }}</button>
                <button @click="activeTab = 'threads'" :class="['tw-px-6 tw-py-2 tw-rounded-full tw-text-xs tw-font-bold tw-transition-all', activeTab === 'threads' ? 'tw-bg-white tw-shadow-sm tw-text-gray-800' : 'tw-text-gray-400']">{{ $t('shiru.tab_qa') }}</button>
             </div>
@@ -250,6 +250,7 @@
       </main>
     </div>
 
+    <OnboardingTrigger @click="startCategoryOnboarding" />
     <AuthModal :is-open="isLoginModalOpen" @close="isLoginModalOpen = false" />
     <ThreadCreateModal
       :is-open="isCreateModalOpen"
@@ -292,6 +293,15 @@ const {
 } = useFirestore()
 
 const { loadGuides, getGuidesByCategory, isLoading: isGuideLoading } = useCultureGuides()
+const { start: startOnboarding } = useOnboarding()
+
+const categoryOnboardingSteps = [
+  { id: 'category-header', target: '[data-onboarding="category-header"]', titleKey: 'onboarding.shiru_category.step1_title', descKey: 'onboarding.shiru_category.step1_desc' },
+  { id: 'category-tabs', target: '[data-onboarding="category-tabs"]', titleKey: 'onboarding.shiru_category.step2_title', descKey: 'onboarding.shiru_category.step2_desc' },
+  { id: 'category-create', target: '[data-onboarding="category-create"]', titleKey: 'onboarding.shiru_category.step3_title', descKey: 'onboarding.shiru_category.step3_desc' },
+]
+
+const startCategoryOnboarding = () => startOnboarding('shiru-category', categoryOnboardingSteps)
 
 const cid = computed(() => route.params.cid as string)
 const carouselRef = ref<HTMLElement | null>(null)
