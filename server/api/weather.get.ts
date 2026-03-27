@@ -1,3 +1,6 @@
+// サポートする言語のホワイトリスト
+const ALLOWED_LANGS = ['ja', 'en', 'zh']
+
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const apiKey = config.openWeatherApiKey as string
@@ -20,9 +23,12 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Invalid coordinates' })
   }
 
+  // 言語パラメータのバリデーション
+  const safeLang = typeof lang === 'string' && ALLOWED_LANGS.includes(lang) ? lang : 'ja'
+
   try {
     const data = await $fetch(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${latNum}&lon=${lonNum}&units=metric&lang=${lang || 'ja'}&appid=${apiKey}`
+      `https://api.openweathermap.org/data/2.5/weather?lat=${latNum}&lon=${lonNum}&units=metric&lang=${safeLang}&appid=${apiKey}`
     )
     return data
   } catch (e: any) {

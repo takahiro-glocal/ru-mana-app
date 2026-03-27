@@ -37,7 +37,10 @@ service cloud.firestore {
         allow create: if isAuthenticated()
           && request.resource.data.userId == request.auth.uid
           && maxStringLength(request.resource.data.body, 5000);
-        allow update: if isOwner(resource.data.userId);
+        // オーナーは全フィールド編集可、他ユーザーは likes のみ更新可
+        allow update: if isOwner(resource.data.userId)
+          || (isAuthenticated()
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']));
         allow delete: if isOwner(resource.data.userId);
       }
     }

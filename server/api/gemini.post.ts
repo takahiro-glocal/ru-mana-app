@@ -2,19 +2,42 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 
 let genAIInstance: GoogleGenerativeAI | null = null
 
-// サーバーサイドレート制限（1分あたりの最大リクエスト数）
-const MAX_REQUESTS_PER_MINUTE = 30
-const requestTimestamps: number[] = []
+// 許可するモデル名のホワイトリスト
+const ALLOWED_MODELS = ['gemini-2.5-flash']
 
-const checkRateLimit = () => {
+// IPごとのレート制限（1分あたりの最大リクエスト数）
+const MAX_REQUESTS_PER_MINUTE = 20
+const rateLimitMap = new Map<string, number[]>()
+
+// 定期的に古いエントリを掃除（メモリリーク防止）
+const CLEANUP_INTERVAL = 5 * 60_000
+let lastCleanup = Date.now()
+
+const checkRateLimit = (clientIp: string) => {
   const now = Date.now()
-  while (requestTimestamps.length > 0 && now - requestTimestamps[0] > 60_000) {
-    requestTimestamps.shift()
+
+  // 定期クリーンアップ
+  if (now - lastCleanup > CLEANUP_INTERVAL) {
+    for (const [ip, timestamps] of rateLimitMap.entries()) {
+      const filtered = timestamps.filter(t => now - t < 60_000)
+      if (filtered.length === 0) {
+        rateLimitMap.delete(ip)
+      } else {
+        rateLimitMap.set(ip, filtered)
+      }
+    }
+    lastCleanup = now
   }
-  if (requestTimestamps.length >= MAX_REQUESTS_PER_MINUTE) {
+
+  const timestamps = rateLimitMap.get(clientIp) || []
+  const recent = timestamps.filter(t => now - t < 60_000)
+
+  if (recent.length >= MAX_REQUESTS_PER_MINUTE) {
     throw createError({ statusCode: 429, statusMessage: 'Rate limit exceeded. Please wait a moment.' })
   }
-  requestTimestamps.push(now)
+
+  recent.push(now)
+  rateLimitMap.set(clientIp, recent)
 }
 
 export default defineEventHandler(async (event) => {
@@ -25,7 +48,8 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 500, statusMessage: 'Gemini API key not configured' })
   }
 
-  checkRateLimit()
+  const clientIp = getRequestIP(event, { xForwardedFor: true }) || 'unknown'
+  checkRateLimit(clientIp)
 
   const body = await readBody(event)
   const { prompt, history, modelName = 'gemini-2.5-flash', mode = 'generate' } = body
@@ -34,9 +58,13 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'prompt is required' })
   }
 
-  // 入力長制限
   if (prompt.length > 10_000) {
     throw createError({ statusCode: 400, statusMessage: 'prompt too long' })
+  }
+
+  // モデル名バリデーション
+  if (!ALLOWED_MODELS.includes(modelName)) {
+    throw createError({ statusCode: 400, statusMessage: 'Invalid model name' })
   }
 
   if (!genAIInstance) {
@@ -47,6 +75,12 @@ export default defineEventHandler(async (event) => {
 
   try {
     if (mode === 'chat' && Array.isArray(history)) {
+      // history の基本的な構造バリデーション
+      for (const entry of history) {
+        if (!entry || typeof entry.role !== 'string' || !Array.isArray(entry.parts)) {
+          throw createError({ statusCode: 400, statusMessage: 'Invalid history format' })
+        }
+      }
       const chat = model.startChat({ history })
       const result = await Promise.race([
         chat.sendMessage(prompt),

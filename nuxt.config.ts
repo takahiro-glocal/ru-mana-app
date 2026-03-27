@@ -151,7 +151,9 @@ export default defineNuxtConfig({
   },
   ssr: false,
   nitro: {
-    preset: process.env.NITRO_PRESET || 'static',
+    // 本番デプロイ時は NITRO_PRESET=firebase を設定すること
+    // （server/api/ ルートを有効にするためサーバーランタイムが必要）
+    preset: process.env.NITRO_PRESET || 'firebase',
   },
   devtools: { enabled: false },
 })
