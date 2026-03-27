@@ -50,7 +50,7 @@
                 </div>
               </div>
             </div>
-            <LanguageSwitcher />
+            <LanguageSwitcher data-onboarding="lang-switcher" />
             <div v-if="user" data-onboarding="account-icon" @click="openDrawer()" class="tw-cursor-pointer">
               <img :src="userPhotoURL" class="tw-w-10 tw-h-10 tw-rounded-full tw-border-2 tw-border-[#BCAF92]" />
             </div>

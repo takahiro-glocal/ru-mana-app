@@ -77,7 +77,7 @@
         </div>
       </div>
 
-      <div class="md:tw-hidden tw-flex tw-flex-col tw-items-center tw-min-h-[600px]">
+      <div data-onboarding="shiru-categories" class="md:tw-hidden tw-flex tw-flex-col tw-items-center tw-min-h-[600px]">
         <div ref="scrollContainer"
           class="tw-flex tw-overflow-x-auto tw-snap-x tw-snap-mandatory tw-scrollbar-hide tw-w-full tw-gap-6 tw-py-4"
           @scroll="handleScroll">
@@ -93,7 +93,7 @@
               </div>
               <div class="tw-flex-1 tw-p-6 tw-flex tw-flex-col tw-justify-between tw-items-center">
                 <div class="tw-w-full tw-text-center tw-mt-4">
-                  <p class="tw-text-gray-400 tw-text-sm font-bold">{{ getThreadCount(cat.id) }} Threads</p>
+                  <p data-onboarding="shiru-thread-count" class="tw-text-gray-400 tw-text-sm font-bold">{{ getThreadCount(cat.id) }} Threads</p>
                   <p class="tw-text-gray-400 tw-text-xs tw-mt-1">{{ $t('shiru.latest_threads') }}</p>
                 </div>
                 <button @click="() => $router.push(localePath(`/shiru/category/${cat.id}`))"

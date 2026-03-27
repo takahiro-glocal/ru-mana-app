@@ -119,7 +119,7 @@
     </div>
 
     <!-- ===== Mobile: Bottom Category Sheet ===== -->
-    <div class="md:tw-hidden tw-absolute tw-bottom-16 tw-left-0 tw-right-0 tw-z-40">
+    <div data-onboarding="disaster-search" class="md:tw-hidden tw-absolute tw-bottom-16 tw-left-0 tw-right-0 tw-z-40">
       <div class="tw-px-4 tw-pb-2">
         <div class="tw-flex tw-gap-2 tw-overflow-x-auto tw-scrollbar-hide tw-pb-1">
           <button
