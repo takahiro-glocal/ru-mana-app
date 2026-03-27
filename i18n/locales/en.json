@@ -640,7 +640,9 @@
       "step6_title": "SNS Links",
       "step6_desc": "Access official social media accounts from here.",
       "step7_title": "Language Switcher",
-      "step7_desc": "Switch between Japanese, English, and Chinese anytime."
+      "step7_desc": "Switch between Japanese, English, and Chinese anytime.",
+      "step8_title": "Mana Assistant",
+      "step8_desc": "Tap your account icon to open the menu, then use \"Mana Assistant\" to chat with the AI support bot."
     },
     "shiru": {
       "step1_title": "Welcome to Shiru Mana",

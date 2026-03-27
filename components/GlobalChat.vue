@@ -1,19 +1,5 @@
 <template>
   <div>
-    <!-- FAB Button -->
-    <button
-      v-show="!isChatOpen"
-      @click="openChat"
-      class="tw-hidden md:tw-fixed md:tw-flex tw-bottom-8 tw-right-8 tw-z-[55] tw-w-14 tw-h-14 tw-bg-[#4B3E8E] tw-rounded-full tw-shadow-lg tw-items-center tw-justify-center tw-text-white hover:tw-bg-[#3d3275] active:tw-scale-90 tw-transition-all"
-      :aria-label="$t('chat.open')"
-    >
-      <MessageCircle class="tw-w-6 tw-h-6" />
-      <span
-        v-if="messages.length === 0"
-        class="tw-absolute -tw-top-1 -tw-right-1 tw-w-4 tw-h-4 tw-bg-[#E4007F] tw-rounded-full tw-animate-pulse"
-      ></span>
-    </button>
-
     <!-- Chat Panel Backdrop (mobile only) -->
     <Transition name="chat-fade">
       <div
