@@ -108,8 +108,9 @@
 
                     <div v-else class="tw-divide-y tw-divide-gray-50">
                       <div
-                        v-for="thread in currentThreads"
+                        v-for="(thread, tIdx) in currentThreads"
                         :key="thread.id"
+                        :data-onboarding="tIdx === 0 && cat.id === cid ? 'category-thread-item' : undefined"
                         class="tw-group tw-flex tw-items-start tw-justify-between tw-py-4 active:tw-bg-gray-50 transition-colors"
                         @click="() => $router.push(localePath(`/shiru/category/${cat.id}/thread/${thread.id}`))"
                       >
@@ -189,7 +190,7 @@
                 {{ $t('shiru.no_threads_create') }}
              </div>
              <div v-else class="tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 tw-gap-x-12">
-                <div v-for="thread in currentThreads" :key="thread.id" class="tw-flex tw-items-center tw-justify-between tw-py-4 tw-border-b tw-border-gray-100 tw-cursor-pointer hover:tw-bg-gray-50 tw-px-2" @click="() => $router.push(localePath(`/shiru/category/${cid}/thread/${thread.id}`))">
+                <div v-for="(thread, tIdx) in currentThreads" :key="thread.id" :data-onboarding="tIdx === 0 ? 'category-thread-item' : undefined" class="tw-flex tw-items-center tw-justify-between tw-py-4 tw-border-b tw-border-gray-100 tw-cursor-pointer hover:tw-bg-gray-50 tw-px-2" @click="() => $router.push(localePath(`/shiru/category/${cid}/thread/${thread.id}`))">
                     <div class="tw-flex tw-items-center tw-gap-3 tw-flex-1 tw-min-w-0">
                       <div :class="['tw-w-2 tw-h-2 tw-rounded-full tw-flex-shrink-0', getTheme(cid).dot]"></div>
                       <div v-if="needsTranslation && !isTitleTranslated(thread.id)" class="tw-h-5 tw-bg-gray-200 tw-rounded tw-animate-pulse tw-flex-1"></div>
@@ -299,6 +300,7 @@ const categoryOnboardingSteps = [
   { id: 'category-header', target: '[data-onboarding="category-header"]', titleKey: 'onboarding.shiru_category.step1_title', descKey: 'onboarding.shiru_category.step1_desc' },
   { id: 'category-tabs', target: '[data-onboarding="category-tabs"]', titleKey: 'onboarding.shiru_category.step2_title', descKey: 'onboarding.shiru_category.step2_desc' },
   { id: 'category-create', target: '[data-onboarding="category-create"]', titleKey: 'onboarding.shiru_category.step3_title', descKey: 'onboarding.shiru_category.step3_desc' },
+  { id: 'category-thread-item', target: '[data-onboarding="category-thread-item"]', titleKey: 'onboarding.shiru_category.step4_title', descKey: 'onboarding.shiru_category.step4_desc' },
 ]
 
 const startCategoryOnboarding = () => startOnboarding('shiru-category', categoryOnboardingSteps)
@@ -306,7 +308,7 @@ const startCategoryOnboarding = () => startOnboarding('shiru-category', category
 // Switch to threads tab when onboarding step targets category-create (Q&A tab content)
 const { currentStep: onboardingCurrentStep, isActive: onboardingIsActive } = useOnboarding()
 watch([onboardingCurrentStep, onboardingIsActive], ([step, active]) => {
-  if (active && step?.id === 'category-create') {
+  if (active && (step?.id === 'category-create' || step?.id === 'category-thread-item')) {
     activeTab.value = 'threads'
   }
 })

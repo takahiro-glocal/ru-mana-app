@@ -130,7 +130,13 @@ const applyPosition = (el: Element) => {
   let left: string
   let transform = ''
 
-  if (spaceBelow >= tooltipH + gap) {
+  // When the target element is taller than the available viewport, center the tooltip on screen
+  const availableH = viewH - bottomReserved
+  if (rect.height > availableH * 0.7) {
+    top = `${Math.max(gap, (availableH - tooltipH) / 2)}px`
+    left = '50%'
+    transform = 'translateX(-50%)'
+  } else if (spaceBelow >= tooltipH + gap) {
     top = `${rect.bottom + gap}px`
     left = `${Math.max(16, Math.min(rect.left, viewW - tooltipW - 16))}px`
   } else if (spaceAbove >= tooltipH + gap) {
