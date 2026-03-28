@@ -156,7 +156,9 @@ export default defineNuxtConfig({
     preset: process.env.NITRO_PRESET || 'firebase',
     firebase: {
       gen: 2,
-      region: 'asia-northeast1',
+      httpsOptions: {
+        region: 'asia-northeast1',
+      },
     },
   },
   devtools: { enabled: false },
