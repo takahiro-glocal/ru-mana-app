@@ -10,7 +10,7 @@
     "generate": "npm run build:tiles && nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "deploy": "nuxt build && cd .output/server && npm install && cd ../.. && firebase deploy --only hosting && (firebase deploy --only functions || true)",
+    "deploy": "nuxt build && cd .output/server && npm install && cd ../.. && firebase deploy --only hosting && node scripts/deploy-functions.mjs",
     "generate:presentations": "node scripts/generate-presentations.mjs"
   },
   "dependencies": {
