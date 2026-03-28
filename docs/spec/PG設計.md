@@ -265,7 +265,7 @@ npm run dev          # http://localhost:3000
 npm run build        # .output/public/ に静的ファイル + .output/server/ に Cloud Functions コード生成
 
 # デプロイ
-npm run deploy       # build + server npm install + firebase deploy --only hosting,functions
+npm run deploy       # build + server npm install + hosting deploy + functions deploy
 
 # プレビュー
 npm run preview      # ローカルで本番ビルドを確認
