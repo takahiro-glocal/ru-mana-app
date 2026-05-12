@@ -78,14 +78,16 @@
 
 ### 3.2 ベース色・テキスト色
 
-| 名称 | HEX | 用途 |
-|------|-----|------|
-| Beige Background | `#F9F5E7` (`ru-bg`) | 全体背景（クリームベージュ） |
-| White Surface | `#FFFFFF` | カード・モーダル・セクション分け |
-| Primary Purple | `#4B3E8E` | 見出し・チャット・主要アクセント |
-| Warm Gold | `#BCAF92` | アイコン・補助ボタン |
-| Dark Text | `#2C3E50` | 本文の濃いテキスト |
-| Subtext Gray | `#6B7280` 系 | 補助テキスト |
+| 名称 | HEX | Tailwind | 用途 |
+|------|-----|---------|------|
+| Beige Background | `#F9F5E7` | `ru-bg` | 全体背景（クリームベージュ） |
+| White Surface | `#FFFFFF` | — | カード・モーダル・セクション分け |
+| Primary Purple | `#4B3E8E` | `ru-primary` | 見出し・チャット・主要アクセント |
+| Warm Gold | `#BCAF92` | — | アイコン・補助ボタン |
+| Dark Text | `#2C3E50` | — | 本文の濃いテキスト |
+| Subtext Gray | `#6B7280` 系 | — | 補助テキスト |
+
+> 実装時は HEX 直書き（`tw-text-[#4B3E8E]` 等）ではなく、可能な限り Tailwind カスタムカラー名（`tw-text-ru-primary` 等）を使うこと。HEX 直書きが残っている既存箇所も順次置き換えていく。
 
 ### 3.3 配色ルール
 
@@ -228,7 +230,7 @@
 
 - ライブラリ: `lucide-vue-next`
 - サイズ: 一般は 20〜24px、フィーチャーカード内は 40〜48px
-- ストロークウィジェット: デフォルト
+- ストロークウェイト: デフォルト
 
 ### 8.5 モバイル ボトムナビ
 
